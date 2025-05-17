@@ -159,7 +159,7 @@
         .save-button:hover {
             background-color: #388e3c; /* Darker green on hover */
             transform: translateY(-2px); /* Slight lift effect */
-        }
+         }
          .save-button:active {
              transform: translateY(0);
          }
@@ -1622,11 +1622,12 @@ const firebaseConfig = {
 
             // Use the date as the key, and nest grade data under 'grades'
             const dateKey = attendanceDate.replace(/-/g, ''); // Remove hyphens for a valid key
+            const gradeKey = selectedGrade.replace('.', '-'); // Replace dot with hyphen for Firebase key
 
             showLoading(); // Show loading indicator
 
              // Save the grade-specific records
-            database.ref(`attendance/${dateKey}/grades/${selectedGrade}`).set(gradeAttendanceData)
+            database.ref(`attendance/${dateKey}/grades/${gradeKey}`).set(gradeAttendanceData)
                 .then(() => {
                     console.log(`Attendance data saved for ${selectedGrade} on ${attendanceDate} successfully!`);
                     // Now, save the date metadata (notes, etc.) - use update to avoid overwriting other grades
@@ -1665,6 +1666,8 @@ const firebaseConfig = {
                  return;
              }
 
+            const gradeKey = selectedGrade.replace('.', '-'); // Replace dot with hyphen for Firebase key
+
 
             // Clear previous data display and reset table (filtered by current grade selection)
             populateAttendanceTable(); // This will populate with students filtered by the attendance-grade-filter
@@ -1679,7 +1682,7 @@ const firebaseConfig = {
 
                     if (dateData) {
                          // Load grade-specific records
-                        const gradeAttendanceData = dateData.grades && dateData.grades[selectedGrade];
+                        const gradeAttendanceData = dateData.grades && dateData.grades[gradeKey]; // Use gradeKey
                         if (gradeAttendanceData && gradeAttendanceData.records) {
                             console.log(`Loaded attendance data for ${selectedGrade} on ${date}:`, gradeAttendanceData.records);
 
