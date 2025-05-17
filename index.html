@@ -51,7 +51,7 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            z-index: 10009; /* Increased z-index */
+            z-index: 10009; 
             display: none; 
         }
         @keyframes spin {
@@ -66,7 +66,7 @@
             border-radius: 8px;
             color: white;
             font-size: 0.9rem;
-            z-index: 10010; /* Increased z-index */
+            z-index: 10010; 
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -75,7 +75,6 @@
         .toast.success { background-color: #10B981; }
         .toast.error { background-color: #EF4444; }
         
-        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -101,11 +100,11 @@
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             width: 90%;
-            max-width: 700px; /* Max width for submission details */
+            max-width: 700px; 
             max-height: 80vh;
             overflow-y: auto;
         }
-        .modal-content-lg { /* For student history potentially */
+        .modal-content-lg {
              max-width: 900px;
         }
 
@@ -129,12 +128,12 @@
             cursor: pointer;
         }
         .file-input-button {
-            background-color: #E6F5F0; /* Lighter green for button */
+            background-color: #E6F5F0; 
             color: #059669;
             padding: 0.5rem 1rem;
-            border-radius: 0.375rem; /* rounded-md */
-            font-size: 0.875rem; /* text-sm */
-            font-weight: 500; /* font-medium */
+            border-radius: 0.375rem; 
+            font-size: 0.875rem; 
+            font-weight: 500; 
             border: 1px solid #A7F3D0;
             cursor: pointer;
         }
@@ -152,12 +151,12 @@
         }
         .file-name-display {
             margin-top: 0.25rem;
-            font-size: 0.75rem; /* text-xs */
-            color: #4B5563; /* text-gray-600 */
+            font-size: 0.75rem; 
+            color: #4B5563; 
         }
         .file-remove-btn {
             margin-left: 8px;
-            color: #EF4444; /* red-500 */
+            color: #EF4444; 
             cursor: pointer;
             font-weight: bold;
         }
@@ -406,9 +405,9 @@
 
     <script>
         // --- CONFIGURATION ---
-        const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbybawCUEgO5kW8Y184kKj237wDbHDJGwXT_lAVdnfnNgerdcjFCRHRCvsgVhfFug5tc/exec"; // Replace with your deployed Apps Script URL
-        const SHEET_ID = "1rQ8tqFHWSX8n9MwnCo7hUQ0oG3VLpiJygSeVdOmzxr0"; // Your Google Sheet ID
-        const FOLDER_ID = "1WGRl8BPk5_pIbA1n8np8gA3wNxIt7zEW"; // Your Google Drive Folder ID
+        const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxIIdhLQKwjMwFpW-YislqRfjO_-gh5jQfIuz_DwvnLpOfoHlherbGow0LcDVLo-cXc/exec"; 
+        const SHEET_ID = "1rQ8tqFHWSX8n9MwnCo7hUQ0oG3VLpiJygSeVdOmzxr0"; 
+        const FOLDER_ID = "1WGRl8BPk5_pIbA1n8np8gA3wNxIt7zEW"; 
         const HISTORY_ITEMS_PER_PAGE = 10;
 
         // --- DOM ELEMENTS ---
@@ -424,19 +423,15 @@
         const summaryContent = document.getElementById('summaryContent');
         const teacherNotesSection = document.getElementById('teacherNotesSection');
         const teacherNotesTextarea = document.getElementById('teacherNotes');
-        
         const historyGradeFilter = document.getElementById('historyGradeFilter');
         const loadHistoryBtn = document.getElementById('loadHistoryBtn');
         const historyTableBody = document.getElementById('historyTableBody');
         const paginationControls = document.getElementById('paginationControls');
-        
         const exportExcelBtn = document.getElementById('exportExcelBtn');
         const exportPdfBtn = document.getElementById('exportPdfBtn');
         const loader = document.getElementById('loader');
         const toastElement = document.getElementById('toast');
         document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-        // Modal Elements
         const submissionDetailModal = document.getElementById('submissionDetailModal');
         const closeSubmissionDetailModalBtn = document.getElementById('closeSubmissionDetailModalBtn');
         const modalSubmissionDate = document.getElementById('modalSubmissionDate');
@@ -444,8 +439,6 @@
         const modalGradeLevel = document.getElementById('modalGradeLevel');
         const modalTeacherNotes = document.getElementById('modalTeacherNotes');
         const submissionDetailTableBody = document.getElementById('submissionDetailTableBody');
-
-        // Student History Elements
         const studentHistorySearchInput = document.getElementById('studentHistorySearch');
         const studentSearchResultsDiv = document.getElementById('studentSearchResults');
         const studentHistoryNameDisplay = document.getElementById('studentHistoryNameDisplay');
@@ -455,14 +448,12 @@
         const loadStudentHistoryBtn = document.getElementById('loadStudentHistoryBtn');
         const studentHistoryTableContainer = document.getElementById('studentHistoryTableContainer');
         const studentHistoryTableBody = document.getElementById('studentHistoryTableBody');
-
-        // Tab Elements
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
-
+        
         // --- APP STATE ---
-        let students = []; // For daily attendance entry
-        let allLoadedStudentsForSearch = []; // Stores all students loaded for a grade for student history search
+        let students = []; 
+        let allLoadedStudentsForSearch = []; 
         let attendanceData = {}; 
         let currentHistoryPage = 1;
         let totalHistoryPages = 1;
@@ -470,13 +461,11 @@
         // --- UTILITY FUNCTIONS ---
         function showLoader() { loader.style.display = 'block'; }
         function hideLoader() { loader.style.display = 'none'; }
-
         function showToast(message, type = 'success') {
             toastElement.textContent = message;
             toastElement.className = `toast ${type} show`;
             setTimeout(() => { toastElement.className = 'toast'; }, 3000);
         }
-        
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
             const date = new Date(dateString);
@@ -492,23 +481,22 @@
         function initializeControls() {
             const today = new Date().toISOString().split('T')[0];
             datePicker.value = today;
-
             const currentYear = new Date().getFullYear();
-            academicYearSelect.innerHTML = ''; // Clear previous
-            studentHistoryAcademicYearSelect.innerHTML = ''; // Clear previous
+            academicYearSelect.innerHTML = ''; 
+            studentHistoryAcademicYearSelect.innerHTML = ''; 
             for (let i = 0; i < 5; i++) {
                 const year = currentYear - i;
                 const option = document.createElement('option');
                 option.value = year;
-                option.textContent = year + 543; // BE
+                option.textContent = year + 543; 
                 academicYearSelect.appendChild(option.cloneNode(true));
                 studentHistoryAcademicYearSelect.appendChild(option);
             }
             academicYearSelect.value = currentYear;
-            studentHistoryAcademicYearSelect.value = currentYear; // Default student history year
-            studentHistorySemesterSelect.value = semesterSelect.value; // Sync semester
+            studentHistoryAcademicYearSelect.value = currentYear; 
+            studentHistorySemesterSelect.value = semesterSelect.value; 
         }
-
+        
         // --- TAB NAVIGATION ---
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -540,15 +528,54 @@
                 sheetId: SHEET_ID
             };
 
+            console.groupCollapsed("loadStudents Fetch Details"); // Group console logs for this fetch
+            console.log("Attempting to load students...");
+            console.log("API Endpoint:", API_ENDPOINT);
+            console.log("Request Payload:", JSON.stringify(payload, null, 2));
+
+
             try {
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
-                    body: JSON.stringify(payload),
-                    headers: { 'Content-Type': 'application/json' }
+                    mode: 'cors', // Explicitly set CORS mode
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(payload)
                 });
-                const result = await response.json();
+
+                console.log("Fetch initiated. Waiting for response...");
+                console.log("Response Status:", response.status);
+                console.log("Response OK:", response.ok);
+                console.log("Response Type:", response.type); // 'cors', 'opaque', 'basic'
+                // Log all response headers
+                // console.groupCollapsed("Response Headers");
+                // response.headers.forEach((value, name) => {
+                //    console.log(`${name}: ${value}`);
+                // });
+                // console.groupEnd();
+
+
+                if (!response.ok) {
+                    const errorText = await response.text(); // Attempt to get more info if not ok
+                    console.error("Server responded with an error. Status:", response.status, "Response text:", errorText);
+                    let detailedMessage = `เกิดข้อผิดพลาดจากเซิร์ฟเวอร์ (โค้ด: ${response.status}).`;
+                    if (response.status === 0 || response.type === 'opaque') { 
+                        detailedMessage = "การร้องขอถูกบล็อก อาจเป็นปัญหา CORS หรือเครือข่าย ตรวจสอบ Network tab และการตั้งค่า CORS ของ Apps Script (โดยเฉพาะการตอบสนองต่อ OPTIONS request และ Access-Control-Allow-Origin header)";
+                    } else if (errorText.toLowerCase().includes("script function not found")) {
+                         detailedMessage += " ไม่พบฟังก์ชันใน Apps Script ตรวจสอบชื่อฟังก์ชัน ('getStudents') และการ Deploy (ต้องเป็น New Version)";
+                    } else if (errorText.toLowerCase().includes("authorization")) {
+                         detailedMessage += " ปัญหาการยืนยันตัวตนหรือสิทธิ์การเข้าถึง Apps Script (ตรวจสอบ 'Execute as' และ 'Who has access' ในการ Deploy)";
+                    } else if (errorText) {
+                        detailedMessage += ` เนื้อหาข้อผิดพลาด: ${errorText.substring(0,100)}...`;
+                    }
+                    throw new Error(detailedMessage);
+                }
+                
+                const result = await response.json(); // This can throw SyntaxError if response is not JSON
 
                 if (result.success && result.data) {
+                    console.log("Students data received successfully:", result.data);
                     students = result.data;
                     allLoadedStudentsForSearch = [...result.data]; 
                     if (students.length === 0) {
@@ -566,12 +593,26 @@
                         studentHistoryTableBody.innerHTML = '';
                     }
                 } else {
-                    showToast(result.message || 'เกิดข้อผิดพลาดในการโหลดรายชื่อนักเรียน', 'error');
+                    console.error('API call successful but reported an error:', result.message, result);
+                    showToast(result.message || 'เกิดข้อผิดพลาดในการโหลดรายชื่อนักเรียน (ข้อมูลไม่ถูกต้องจาก API)', 'error');
                 }
             } catch (error) {
-                showToast('การเชื่อมต่อกับเซิร์ฟเวอร์ล้มเหลว (โหลดนักเรียน)', 'error');
-                console.error('Fetch error (loadStudents):', error);
+                console.error('Raw Fetch error object (loadStudents):', error); 
+                let errorMessage = 'การเชื่อมต่อกับเซิร์ฟเวอร์ล้มเหลว (โหลดนักเรียน)';
+
+                if (error.name === 'TypeError' && error.message.toLowerCase().includes("failed to fetch")) {
+                    errorMessage = 'Fetch error (loadStudents): Failed to fetch. This often indicates a network error or a CORS preflight failure. Check the Network tab in Developer Tools for the failed request (especially the OPTIONS preflight request) and its status (e.g., net::ERR_FAILED, CORS error). Also, ensure your Apps Script is deployed correctly with "New version" and has the correct CORS headers (Access-Control-Allow-Origin).';
+                } else if (error.name === 'SyntaxError' && error.message.toLowerCase().includes("unexpected token")) {
+                    errorMessage = 'Fetch error (loadStudents): Server response was not valid JSON. This might indicate a server-side script error producing an HTML error page instead of JSON. Check Network tab for the actual response body from the server.';
+                } else if (error && error.message) {
+                    errorMessage = error.message; // Use the message from the error thrown in the try block
+                } else {
+                    errorMessage = 'Fetch error (loadStudents): An unknown network or CORS error occurred. Please check the Network tab in your browser developer tools for more details on the failed request(s), especially the OPTIONS preflight request. Ensure the Apps Script is deployed correctly with "New version" and appropriate CORS headers.';
+                }
+                console.error("Final error message to user:", errorMessage);
+                showToast(errorMessage, 'error');
             } finally {
+                console.groupEnd(); // End "loadStudents Fetch Details" group
                 hideLoader();
             }
         }
@@ -726,6 +767,7 @@
             try {
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
+                    mode: 'cors',
                     body: JSON.stringify(payload),
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -770,7 +812,6 @@
                 <div class="p-3 bg-orange-100 rounded-lg text-center"><p class="text-2xl font-bold text-orange-700">${absentCount}</p><p class="text-sm text-orange-600">ขาด</p></div>`;
         }
 
-        // --- SUBMISSION HISTORY & DETAILS ---
         async function loadAttendanceSubmissionHistory(page = 1) {
             showLoader();
             currentHistoryPage = page;
@@ -782,7 +823,7 @@
                 gradeFilter: historyGradeFilter.value
             };
             try {
-                const response = await fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
+                const response = await fetch(API_ENDPOINT, { method: 'POST', mode: 'cors', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
                 const result = await response.json();
                 if (result.success) {
                     totalHistoryPages = result.totalPages || 1;
@@ -842,7 +883,7 @@
 
             const payload = { action: 'getSubmissionDetails', sheetId: SHEET_ID, submissionId: submissionId };
             try {
-                const response = await fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
+                const response = await fetch(API_ENDPOINT, { method: 'POST', mode: 'cors', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
                 const result = await response.json();
                 if (result.success && result.data) {
                     renderSubmissionDetailTable(result.data);
@@ -920,7 +961,6 @@
             paginationControls.appendChild(createButton('ถัดไป', currentHistoryPage + 1, currentHistoryPage === totalHistoryPages));
         }
 
-        // --- STUDENT ATTENDANCE HISTORY ---
         studentHistorySearchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             studentSearchResultsDiv.innerHTML = '';
@@ -979,7 +1019,7 @@
             };
 
             try {
-                const response = await fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
+                const response = await fetch(API_ENDPOINT, { method: 'POST', mode: 'cors', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
                 const result = await response.json();
                 if (result.success && result.data) {
                     renderStudentHistoryTable(result.data);
@@ -1026,8 +1066,6 @@
             });
         }
 
-
-        // --- DATA EXPORT ---
         function exportToExcel() { 
             showLoader();
             const payload = {
@@ -1037,6 +1075,7 @@
 
             fetch(API_ENDPOINT, {
                 method: 'POST', 
+                mode: 'cors',
                 body: JSON.stringify(payload),
                 headers: { 'Content-Type': 'application/json' }
             })
@@ -1133,7 +1172,6 @@
             }
         }
         
-        // --- EVENT LISTENERS ---
         loadStudentsBtn.addEventListener('click', loadStudents);
         saveAttendanceBtn.addEventListener('click', saveAttendance);
         loadHistoryBtn.addEventListener('click', () => loadAttendanceSubmissionHistory(1));
@@ -1142,11 +1180,8 @@
         exportPdfBtn.addEventListener('click', exportToPdf);
         loadStudentHistoryBtn.addEventListener('click', loadStudentIndividualHistory);
 
-
-        // --- INITIAL LOAD ---
         initializeControls();
         loadAttendanceSubmissionHistory(); 
-
     </script>
 </body>
 </html>
