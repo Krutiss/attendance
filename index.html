@@ -574,7 +574,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
@@ -618,6 +619,15 @@
                     <select id="academic-year">
                         </select>
                 </div>
+                 <div>
+                     <label for="attendance-grade-filter">เลือกระดับชั้น:</label>
+                     <select id="attendance-grade-filter" onchange="populateAttendanceTable()">
+                         <option value="">ทุกระดับชั้น</option>
+                         <option value="P.4">ป.4</option>
+                         <option value="P.5">ป.5</option>
+                         <option value="P.6">ป.6</option>
+                     </select>
+                 </div>
             </div>
 
             <table class="attendance-table" id="attendance-table">
@@ -683,6 +693,15 @@
                      <select id="analysis-academic-year">
                          </select>
                  </div>
+                  <div>
+                     <label for="analysis-grade-filter">เลือกระดับชั้น:</label>
+                     <select id="analysis-grade-filter">
+                         <option value="">ทุกระดับชั้น</option>
+                         <option value="P.4">ป.4</option>
+                         <option value="P.5">ป.5</option>
+                         <option value="P.6">ป.6</option>
+                     </select>
+                 </div>
                  <button onclick="generateComparativeReport()">สร้างรายงาน</button>
              </div>
 
@@ -746,6 +765,7 @@ const firebaseConfig = {
   appId: "1:687349069254:web:1bf765f9f0bafb86f1eec7",
   measurementId: "G-TZJ0F2EXTE"
 };
+
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -755,7 +775,7 @@ const firebaseConfig = {
         const attendanceRef = database.ref('attendance'); // Reference to the 'attendance' node
         // --- End Firebase Configuration ---
 
-        let students = []; // Array to hold student data loaded from Firebase
+        let students = []; // Array to hold ALL student data loaded from Firebase
 
         // Get references to the main content and login containers
         const mainAppContent = document.getElementById('main-app-content');
@@ -763,6 +783,10 @@ const firebaseConfig = {
         const loginError = document.getElementById('login-error');
         const dailyReportContainer = document.getElementById('daily-report-container');
         const comparativeAnalysisContainer = document.getElementById('comparative-analysis-container');
+
+        // Get references to the grade filter selects
+        const attendanceGradeFilterSelect = document.getElementById('attendance-grade-filter');
+        const analysisGradeFilterSelect = document.getElementById('analysis-grade-filter');
 
 
         // Variable to store the unsubscribe function for the student listener
@@ -855,6 +879,8 @@ const firebaseConfig = {
                  document.getElementById('analysis-academic-year').innerHTML = ''; // Clear analysis academic years
                  document.getElementById('analysis-semester').value = '1'; // Reset analysis semester
                  document.getElementById('comparative-analysis-body').innerHTML = ''; // Clear analysis table body
+                 attendanceGradeFilterSelect.value = ''; // Reset grade filters
+                 analysisGradeFilterSelect.value = '';
             }
         });
 
@@ -868,7 +894,7 @@ const firebaseConfig = {
              if (currentDate) {
                  loadAttendance(currentDate);
              } else {
-                 // If no date is set, just populate the table with students
+                 // If no date is set, just populate the table with students (filtered by grade)
                  populateAttendanceTable();
                  calculatePresentPercentage();
              }
@@ -918,17 +944,23 @@ const firebaseConfig = {
             }
         }
 
-        // Function to populate the attendance table using the loaded students array
+        // Function to populate the attendance table using the loaded students array (with optional grade filter)
         function populateAttendanceTable() {
             const tbody = document.getElementById('student-attendance-body');
             tbody.innerHTML = ''; // Clear existing rows
 
-            if (students.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่พบข้อมูลนักเรียน กรุณาเพิ่มข้อมูลนักเรียนในส่วนจัดการข้อมูลนักเรียน</td></tr>';
+            const selectedGrade = attendanceGradeFilterSelect.value;
+            const filteredStudents = selectedGrade
+                ? students.filter(student => student.grade === selectedGrade)
+                : students; // Show all students if no grade is selected
+
+
+            if (filteredStudents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่พบข้อมูลนักเรียนสำหรับระดับชั้นที่เลือก</td></tr>';
                 return;
             }
 
-            students.forEach(student => {
+            filteredStudents.forEach(student => {
                 const row = document.createElement('tr');
                 row.setAttribute('data-student-id', student.id); // Add data attribute for ID
 
@@ -947,6 +979,7 @@ const firebaseConfig = {
                 `;
                 tbody.appendChild(row);
             });
+            calculatePresentPercentage(); // Recalculate percentage after populating
         }
 
         // Function to update row color based on status selection
@@ -982,8 +1015,10 @@ const firebaseConfig = {
                 }
             });
 
-            const totalStudents = students.length;
-            const percentage = totalStudents > 0 ? (presentCount / totalStudents) * 100 : 0;
+             // Calculate percentage based on the currently displayed students
+            const currentlyDisplayedStudents = document.querySelectorAll('#student-attendance-body tr').length;
+            const percentage = currentlyDisplayedStudents > 0 ? (presentCount / currentlyDisplayedStudents) * 100 : 0;
+
             document.getElementById('present-percentage').textContent = `${percentage.toFixed(0)}%`;
         }
 
@@ -1074,8 +1109,8 @@ const firebaseConfig = {
             const teacherNotesTextarea = document.getElementById('teacher-notes');
             const tbody = document.getElementById('student-attendance-body');
 
-            // Clear previous data display and reset table
-            populateAttendanceTable(); // Reset table to default status
+            // Clear previous data display and reset table (filtered by current grade selection)
+            populateAttendanceTable(); // This will populate with students filtered by the attendance-grade-filter
             teacherNotesTextarea.value = ''; // Clear notes
 
             database.ref('attendance/' + dateKey).once('value')
@@ -1087,6 +1122,7 @@ const firebaseConfig = {
                         // Populate the table with loaded data
                         if (attendanceData.records) {
                             attendanceData.records.forEach(record => {
+                                // Only update rows for students currently displayed (based on grade filter)
                                 const row = tbody.querySelector(`tr[data-student-id='${record.studentId}']`);
                                 if (row) {
                                     const statusSelect = row.querySelector('.status-select');
@@ -1209,7 +1245,7 @@ const firebaseConfig = {
                 id: studentId,
                 number: studentNumber,
                 name: studentName,
-                grade: studentGrade,
+                grade: studentGrade, // Added grade
                 photo: photoURL // Store the photo URL
             };
 
@@ -1221,7 +1257,7 @@ const firebaseConfig = {
                     studentIdInput.value = '';
                     studentNumberInput.value = '';
                     studentNameInput.value = '';
-                    studentGradeSelect.value = '';
+                    studentGradeSelect.value = ''; // Clear grade selection
                     studentPhotoInput.value = ''; // Clear the file input
                     // No need to call loadStudents() here, the listener will handle the update
                 })
@@ -1260,7 +1296,9 @@ const firebaseConfig = {
                 }
                 // Render the student list and populate the attendance table whenever data changes
                 renderStudentList();
+                // Populate attendance table based on the current grade filter
                 populateAttendanceTable();
+
 
                 // After students are updated, reload attendance for the current date IF daily report is visible
                  if (dailyReportContainer.style.display !== 'none') {
@@ -1447,6 +1485,7 @@ const firebaseConfig = {
          function exportComparativeReportPdf() {
               const analysisSemester = document.getElementById('analysis-semester').value;
               const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+              const analysisGrade = analysisGradeFilterSelect.value; // Get selected grade for report title
 
               const { jsPDF } = window.jspdf;
               const doc = new jsPDF();
@@ -1476,7 +1515,7 @@ const firebaseConfig = {
               doc.setFontSize(18);
               doc.text(`รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5`, 14, 22);
               doc.setFontSize(12);
-              doc.text(`ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}`, 14, 30);
+              doc.text(`ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}${analysisGrade ? ` (ชั้น ${analysisGrade})` : ' (ทุกระดับชั้น)'}`, 14, 30);
 
 
               // Add table
@@ -1496,7 +1535,7 @@ const firebaseConfig = {
               });
 
               // Save the PDF
-              doc.save(`รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}.pdf`);
+              doc.save(`รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}${analysisGrade ? `_ชั้น${analysisGrade}` : ''}.pdf`);
          }
 
 
@@ -1568,13 +1607,14 @@ const firebaseConfig = {
          function exportComparativeReportCsv() {
               const analysisSemester = document.getElementById('analysis-semester').value;
               const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+              const analysisGrade = analysisGradeFilterSelect.value; // Get selected grade for report title
 
               const table = document.querySelector('#comparative-analysis-container .analysis-table');
               let csvContent = "data:text/csv;charset=utf-8,%EF%BB% শিক্ষকদের"; // Add BOM for UTF-8 in Excel
 
               // Add title and period info
               csvContent += `"รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5"\n`;
-              csvContent += `"ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}"\n\n`;
+              csvContent += `"ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}${analysisGrade ? ` (ชั้น ${analysisGrade})` : ' (ทุกระดับชั้น)'}"\n\n`;
 
 
               // Get header
@@ -1596,7 +1636,7 @@ const firebaseConfig = {
              const encodedUri = encodeURI(csvContent);
              const link = document.createElement("a");
              link.setAttribute("href", encodedUri);
-             link.setAttribute("download", `รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}.csv`);
+             link.setAttribute("download", `รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}${analysisGrade ? `_ชั้น${analysisGrade}` : ''}.csv`);
              document.body.appendChild(link); // Required for Firefox
              link.click(); // Trigger the download
              document.body.removeChild(link); // Clean up
@@ -1621,6 +1661,7 @@ const firebaseConfig = {
 
             const analysisSemester = document.getElementById('analysis-semester').value;
             const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+            const analysisGrade = analysisGradeFilterSelect.value; // Get the selected grade for filtering
             const comparativeAnalysisBody = document.getElementById('comparative-analysis-body');
             comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message
 
@@ -1631,16 +1672,21 @@ const firebaseConfig = {
                     const attendanceData = snapshot.val();
                     const studentAttendanceSummary = {};
 
-                    // Initialize summary for each student
+                    // Initialize summary for each student, filtering by selected grade
                     students.forEach(student => {
-                        studentAttendanceSummary[student.id] = {
-                            present: 0,
-                            sick: 0,
-                            leave: 0,
-                            absent: 0,
-                            total: 0
-                        };
+                         if (!analysisGrade || student.grade === analysisGrade) {
+                            studentAttendanceSummary[student.id] = {
+                                present: 0,
+                                sick: 0,
+                                leave: 0,
+                                absent: 0,
+                                total: 0
+                            };
+                         }
                     });
+
+                     const filteredStudents = students.filter(student => !analysisGrade || student.grade === analysisGrade);
+
 
                     if (attendanceData) {
                         // Process attendance data for the selected semester and academic year
@@ -1656,10 +1702,14 @@ const firebaseConfig = {
 
                             if (recordAcademicYear == analysisAcademicYear && recordSemester == analysisSemester && record.records) {
                                 record.records.forEach(studentRecord => {
-                                    if (studentAttendanceSummary[studentRecord.studentId]) {
-                                        studentAttendanceSummary[studentRecord.studentId][studentRecord.status]++;
-                                        studentAttendanceSummary[studentRecord.studentId].total++;
-                                    }
+                                    // Only include records for students in the selected grade (if filter is applied)
+                                    const student = students.find(s => s.id === studentRecord.studentId);
+                                     if (student && (!analysisGrade || student.grade === analysisGrade)) {
+                                        if (studentAttendanceSummary[studentRecord.studentId]) {
+                                            studentAttendanceSummary[studentRecord.studentId][studentRecord.status]++;
+                                            studentAttendanceSummary[studentRecord.studentId].total++;
+                                        }
+                                     }
                                 });
                             }
                         }
@@ -1668,13 +1718,13 @@ const firebaseConfig = {
                     // Populate the comparative analysis table
                     comparativeAnalysisBody.innerHTML = ''; // Clear loading message
 
-                    if (students.length === 0) {
-                         comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">ไม่พบข้อมูลนักเรียน</td></tr>';
+                    if (filteredStudents.length === 0) {
+                         comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">ไม่พบข้อมูลนักเรียนสำหรับระดับชั้นที่เลือก</td></tr>';
                          return;
                     }
 
 
-                    students.forEach(student => {
+                    filteredStudents.forEach(student => {
                         const summary = studentAttendanceSummary[student.id] || { present: 0, sick: 0, leave: 0, absent: 0, total: 0 };
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -1690,7 +1740,8 @@ const firebaseConfig = {
                         comparativeAnalysisBody.appendChild(row);
                     });
 
-                     if (students.length > 0 && Object.keys(studentAttendanceSummary).every(key => studentAttendanceSummary[key].total === 0)) {
+                     // Check if there are students displayed but no attendance data for the period
+                     if (filteredStudents.length > 0 && Object.keys(studentAttendanceSummary).every(key => studentAttendanceSummary[key].total === 0)) {
                           comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">ไม่พบข้อมูลการเข้าเรียนสำหรับภาคเรียนและปีการศึกษาที่เลือก</td></tr>';
                      }
 
