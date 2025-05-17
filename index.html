@@ -217,7 +217,7 @@
             border-radius: 8px;
             border: 1px solid #dcedc8; /* Subtle border */
         }
-        .student-form input {
+        .student-form input, .student-form select { /* Added select to form styling */
             padding: 10px; /* Increased padding */
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -491,7 +491,7 @@
                 padding: 10px; /* Reduced padding */
             }
             .controls select, .controls input[type="date"],
-            .student-form input, .student-form button {
+            .student-form input, .student-form button, .student-form select { /* Added select */
                  margin-right: 0;
                  margin-bottom: 10px; /* Consistent margin */
                  width: 100%; /* Full width */
@@ -693,6 +693,12 @@
                 <input type="text" id="student-id" placeholder="เลขประจำตัว">
                 <input type="number" id="student-number" placeholder="เลขที่">
                 <input type="text" id="student-name" placeholder="ชื่อ-นามสกุล">
+                 <select id="student-grade">
+                     <option value="">เลือกระดับชั้น</option>
+                     <option value="P.4">ป.4</option>
+                     <option value="P.5">ป.5</option>
+                     <option value="P.6">ป.6</option>
+                 </select>
                 <button onclick="addOrUpdateStudent()">เพิ่ม/แก้ไข นักเรียน</button>
             </div>
 
@@ -709,7 +715,6 @@
 const firebaseConfig = {
   apiKey: "AIzaSyBrGSCIQjT1V-dmR3LQaB-hkrSi_yWcg_I",
   authDomain: "attendance-system-c5235.firebaseapp.com",
-    databaseURL: "https://attendance-system-c5235-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "attendance-system-c5235",
   storageBucket: "attendance-system-c5235.firebasestorage.app",
   messagingSenderId: "687349069254",
@@ -1109,7 +1114,10 @@ const firebaseConfig = {
                 listItem.setAttribute('data-student-id', student.id); // Use student ID as data attribute
 
                 listItem.innerHTML = `
-                    <span>${student.number}. ${student.name} (ID: ${student.id})</span>
+                    <span>
+                        ${student.number}. ${student.name} (ID: ${student.id})
+                        ${student.grade ? ` - ชั้น ${student.grade}` : ''}
+                    </span>
                     <div>
                         <button class="edit-button" onclick="editStudent('${student.id}')">แก้ไข</button>
                         <button class="delete-button" onclick="deleteStudent('${student.id}')">ลบ</button>
@@ -1130,13 +1138,17 @@ const firebaseConfig = {
             const studentIdInput = document.getElementById('student-id');
             const studentNumberInput = document.getElementById('student-number');
             const studentNameInput = document.getElementById('student-name');
+            const studentGradeSelect = document.getElementById('student-grade');
+
 
             const studentId = studentIdInput.value.trim();
             const studentNumber = parseInt(studentNumberInput.value.trim(), 10);
             const studentName = studentNameInput.value.trim();
+            const studentGrade = studentGradeSelect.value;
 
-            if (!studentId || !studentName || isNaN(studentNumber)) {
-                alert("กรุณากรอกข้อมูลนักเรียนให้ครบถ้วน (เลขประจำตัว, เลขที่, ชื่อ-นามสกุล)");
+
+            if (!studentId || !studentName || isNaN(studentNumber) || !studentGrade) {
+                alert("กรุณากรอกข้อมูลนักเรียนให้ครบถ้วน (เลขประจำตัว, เลขที่, ชื่อ-นามสกุล, ระดับชั้น)");
                 return;
             }
 
@@ -1144,6 +1156,7 @@ const firebaseConfig = {
                 id: studentId,
                 number: studentNumber,
                 name: studentName,
+                grade: studentGrade, // Added grade
                 photo: '' // Placeholder for photo URL
             };
 
@@ -1155,6 +1168,7 @@ const firebaseConfig = {
                     studentIdInput.value = '';
                     studentNumberInput.value = '';
                     studentNameInput.value = '';
+                    studentGradeSelect.value = ''; // Clear grade selection
                     // No need to call loadStudents() here, the listener will handle the update
                 })
                 .catch((error) => {
@@ -1237,6 +1251,7 @@ const firebaseConfig = {
                 document.getElementById('student-id').value = student.id;
                 document.getElementById('student-number').value = student.number;
                 document.getElementById('student-name').value = student.name;
+                document.getElementById('student-grade').value = student.grade || ''; // Populate grade
                 // TODO: Populate photo input if implemented
             }
         }
