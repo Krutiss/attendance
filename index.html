@@ -75,19 +75,20 @@
              transform: translateY(0);
          }
 
-        .attendance-table, .analysis-table {
+        .attendance-table, .analysis-table, .student-history-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle table shadow */
         }
         .attendance-table th, .attendance-table td,
-        .analysis-table th, .analysis-table td {
+        .analysis-table th, .analysis-table td,
+        .student-history-table th, .student-history-table td {
             border: 1px solid #e0e0e0; /* Lighter border */
             padding: 12px; /* Increased padding */
             text-align: left;
         }
-        .attendance-table th, .analysis-table th {
+        .attendance-table th, .analysis-table th, .student-history-table th {
             background-color: #4caf50; /* Green */
             color: white;
             font-weight: bold;
@@ -95,11 +96,13 @@
             letter-spacing: 0.5px;
         }
          .attendance-table tbody tr:nth-child(even),
-         .analysis-table tbody tr:nth-child(even) {
+         .analysis-table tbody tr:nth-child(even),
+         .student-history-table tbody tr:nth-child(even) {
              background-color: #f9f9f9; /* Slightly different background for even rows */
          }
          .attendance-table tbody tr:hover,
-         .analysis-table tbody tr:hover {
+         .analysis-table tbody tr:hover,
+         .student-history-table tbody tr:hover {
              background-color: #e0f2f7; /* Highlight row on hover */
          }
 
@@ -494,6 +497,46 @@
          }
           .analysis-table tbody tr:hover {
              background-color: #e0f2f7;
+             cursor: pointer; /* Indicate clickable rows */
+         }
+
+         /* Student History Detail Section */
+         .student-history-detail {
+             margin-top: 30px;
+             border-top: 1px solid #eee;
+             padding-top: 20px;
+             display: none; /* Hidden by default */
+         }
+         .student-history-detail h3 {
+             color: #1b5e20;
+             margin-bottom: 15px;
+         }
+         .student-history-detail .back-button {
+             padding: 8px 15px;
+             background-color: #546e7a; /* Blue Grey */
+             color: white;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             transition: background-color 0.3s ease;
+             margin-bottom: 15px;
+         }
+          .student-history-detail .back-button:hover {
+              background-color: #455a64; /* Darker Blue Grey */
+          }
+         .student-history-detail .history-list {
+             list-style: none;
+             padding: 0;
+         }
+         .student-history-detail .history-item {
+             padding: 10px;
+             border-bottom: 1px solid #eee;
+         }
+         .student-history-detail .history-item:last-child {
+             border-bottom: none;
+         }
+         .student-history-detail .history-item span {
+             margin-right: 15px;
          }
 
 
@@ -558,7 +601,8 @@
                 margin: 10px 0;
             }
              .attendance-table th, .attendance-table td,
-             .analysis-table th, .analysis-table td {
+             .analysis-table th, .analysis-table td,
+             .student-history-table th, .student-history-table td {
                  padding: 8px; /* Reduced table padding */
                  font-size: 0.9rem; /* Slightly smaller font */
              }
@@ -677,51 +721,73 @@
                      <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
                  </div>
             </div>
-            <h2>รายงานสรุปเวลาเรียน</h2>
-             <p>แสดงข้อมูลสรุปการเข้าเรียนของนักเรียนแต่ละคน ตลอดภาคเรียน/ปีการศึกษาที่เลือก</p>
+            <div id="comparative-summary-view">
+                <h2>รายงานสรุปเวลาเรียน</h2>
+                 <p>แสดงข้อมูลสรุปการเข้าเรียนของนักเรียนแต่ละคน ตลอดภาคเรียน/ปีการศึกษาที่เลือก</p>
 
-             <div class="controls">
-                 <div>
-                     <label for="analysis-semester">ภาคเรียน:</label>
-                     <select id="analysis-semester">
-                         <option value="1">ภาคเรียนที่ 1</option>
-                         <option value="2">ภาคเรียนที่ 2</option>
-                     </select>
-                 </div>
-                 <div>
-                     <label for="analysis-academic-year">ปีการศึกษา:</label>
-                     <select id="analysis-academic-year">
+                 <div class="controls">
+                     <div>
+                         <label for="analysis-semester">ภาคเรียน:</label>
+                         <select id="analysis-semester">
+                             <option value="1">ภาคเรียนที่ 1</option>
+                             <option value="2">ภาคเรียนที่ 2</option>
                          </select>
+                     </div>
+                     <div>
+                         <label for="analysis-academic-year">ปีการศึกษา:</label>
+                         <select id="analysis-academic-year">
+                             </select>
+                     </div>
+                      <div>
+                         <label for="analysis-grade-filter">เลือกระดับชั้น:</label>
+                         <select id="analysis-grade-filter">
+                             <option value="">ทุกระดับชั้น</option>
+                             <option value="P.4">ป.4</option>
+                             <option value="P.5">ป.5</option>
+                             <option value="P.6">ป.6</option>
+                         </select>
+                     </div>
+                     <button onclick="generateComparativeReport()">สร้างรายงาน</button>
                  </div>
-                  <div>
-                     <label for="analysis-grade-filter">เลือกระดับชั้น:</label>
-                     <select id="analysis-grade-filter">
-                         <option value="">ทุกระดับชั้น</option>
-                         <option value="P.4">ป.4</option>
-                         <option value="P.5">ป.5</option>
-                         <option value="P.6">ป.6</option>
-                     </select>
-                 </div>
-                 <button onclick="generateComparativeReport()">สร้างรายงาน</button>
+
+
+                <table class="analysis-table">
+                    <thead>
+                        <tr>
+                            <th>เลขประจำตัว</th>
+                            <th>เลขที่</th>
+                            <th>ชื่อ-นามสกุล</th>
+                            <th>มาเรียน</th>
+                            <th>ป่วย</th>
+                            <th>ลา</th>
+                            <th>ขาด</th>
+                            <th>รวมวัน</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparative-analysis-body">
+                        </tbody>
+                </table>
+            </div>
+
+             <div class="student-history-detail" id="student-history-detail">
+                 <button class="back-button" onclick="hideStudentHistory()">ย้อนกลับ</button>
+                 <h3 id="student-history-title">ประวัติการเข้าเรียนของนักเรียน: </h3>
+
+                 <table class="student-history-table">
+                     <thead>
+                         <tr>
+                             <th>วันที่</th>
+                             <th>สถานะ</th>
+                             <th>ภาคเรียน</th>
+                             <th>ปีการศึกษา</th>
+                         </tr>
+                     </thead>
+                     <tbody id="student-history-body">
+                         </tbody>
+                 </table>
              </div>
 
 
-            <table class="analysis-table">
-                <thead>
-                    <tr>
-                        <th>เลขประจำตัว</th>
-                        <th>เลขที่</th>
-                        <th>ชื่อ-นามสกุล</th>
-                        <th>มาเรียน</th>
-                        <th>ป่วย</th>
-                        <th>ลา</th>
-                        <th>ขาด</th>
-                        <th>รวมวัน</th>
-                    </tr>
-                </thead>
-                <tbody id="comparative-analysis-body">
-                    </tbody>
-            </table>
         </div>
 
 
@@ -787,6 +853,12 @@ const firebaseConfig = {
         // Get references to the grade filter selects
         const attendanceGradeFilterSelect = document.getElementById('attendance-grade-filter');
         const analysisGradeFilterSelect = document.getElementById('analysis-grade-filter');
+
+        // Get references for comparative analysis views
+        const comparativeSummaryView = document.getElementById('comparative-summary-view');
+        const studentHistoryDetail = document.getElementById('student-history-detail');
+        const studentHistoryTitle = document.getElementById('student-history-title');
+        const studentHistoryBody = document.getElementById('student-history-body');
 
 
         // Variable to store the unsubscribe function for the student listener
@@ -881,6 +953,9 @@ const firebaseConfig = {
                  document.getElementById('comparative-analysis-body').innerHTML = ''; // Clear analysis table body
                  attendanceGradeFilterSelect.value = ''; // Reset grade filters
                  analysisGradeFilterSelect.value = '';
+                 studentHistoryBody.innerHTML = ''; // Clear student history
+                 studentHistoryDetail.style.display = 'none'; // Hide history view
+                 comparativeSummaryView.style.display = 'block'; // Show summary view
             }
         });
 
@@ -903,11 +978,23 @@ const firebaseConfig = {
         function showComparativeAnalysis() {
             dailyReportContainer.style.display = 'none';
             comparativeAnalysisContainer.style.display = 'block';
+             // Ensure the summary view is shown and detail view is hidden
+             comparativeSummaryView.style.display = 'block';
+             studentHistoryDetail.style.display = 'none';
+
              // Populate academic years for the analysis controls if not already done
              populateAcademicYearsForAnalysis();
              // Clear the analysis table initially
              document.getElementById('comparative-analysis-body').innerHTML = '';
         }
+
+        function hideStudentHistory() {
+            studentHistoryDetail.style.display = 'none';
+            comparativeSummaryView.style.display = 'block';
+             // Re-generate the comparative report when going back
+             generateComparativeReport();
+        }
+
 
          // Function to populate academic years for the analysis controls
         function populateAcademicYearsForAnalysis() {
@@ -1311,6 +1398,11 @@ const firebaseConfig = {
                      }
                  }
 
+                 // If the comparative analysis is visible and not showing history, regenerate the summary
+                 if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
+                      generateComparativeReport();
+                 }
+
 
             }, (error) => {
                 console.error("Error in student listener:", error);
@@ -1398,9 +1490,12 @@ const firebaseConfig = {
             // Determine which report is currently visible to export
             if (dailyReportContainer.style.display !== 'none') {
                 exportDailyReportPdf();
-            } else if (comparativeAnalysisContainer.style.display !== 'none') {
+            } else if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
                 exportComparativeReportPdf();
-            } else {
+            } else if (studentHistoryDetail.style.display !== 'none') {
+                 exportStudentHistoryPdf();
+            }
+            else {
                 alert("กรุณาเลือกรายงานที่ต้องการส่งออก"); // Please select a report to export
             }
         }
@@ -1538,6 +1633,73 @@ const firebaseConfig = {
               doc.save(`รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}${analysisGrade ? `_ชั้น${analysisGrade}` : ''}.pdf`);
          }
 
+         // Function to export the Student History Detail to PDF
+         function exportStudentHistoryPdf() {
+             const studentId = studentHistoryDetail.getAttribute('data-student-id');
+             const student = students.find(s => s.id === studentId);
+             if (!student) {
+                 alert("ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ");
+                 return;
+             }
+
+             const { jsPDF } = window.jspdf;
+             const doc = new jsPDF();
+
+             // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
+
+             // Add title
+             doc.setFontSize(18);
+             doc.text(`ประวัติการเข้าเรียนของนักเรียน`, 14, 22);
+             doc.setFontSize(14);
+             doc.text(`ชื่อ: ${student.name} (ID: ${student.id})`, 14, 30);
+             if (student.grade) {
+                 doc.text(`ระดับชั้น: ${student.grade}`, 14, 38);
+             }
+
+
+             // Get table data from the student history table
+             const table = document.querySelector('#student-history-detail .student-history-table');
+              if (!table) {
+                  alert("ไม่พบข้อมูลประวัติการเข้าเรียน");
+                  return;
+              }
+             const header = [];
+             const rows = [];
+
+             // Get header
+             table.querySelectorAll('thead th').forEach(th => {
+                 header.push(th.textContent.trim());
+             });
+
+             // Get row data
+             table.querySelectorAll('tbody tr').forEach(tr => {
+                 const rowData = [];
+                 tr.querySelectorAll('td').forEach(td => {
+                     rowData.push(td.textContent.trim());
+                 });
+                 rows.push(rowData);
+             });
+
+             // Add table
+             doc.autoTable({
+                 startY: student.grade ? 46 : 40, // Adjust startY based on whether grade is shown
+                 head: [header],
+                 body: rows,
+                 theme: 'striped',
+                 headStyles: { fillColor: [76, 175, 80] }, // Green header
+                 styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
+                 didDrawPage: function (data) {
+                     // Footer
+                     let pageNumber = doc.internal.getNumberOfPages();
+                     doc.setFontSize(10);
+                     doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                 }
+             });
+
+             // Save the PDF
+             doc.save(`ประวัติการเข้าเรียน_${student.id}.pdf`);
+         }
+
 
         // Function to export attendance data to CSV (for Excel)
         function exportToCsv() {
@@ -1550,9 +1712,12 @@ const firebaseConfig = {
              // Determine which report is currently visible to export
             if (dailyReportContainer.style.display !== 'none') {
                 exportDailyReportCsv();
-            } else if (comparativeAnalysisContainer.style.display !== 'none') {
+            } else if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
                 exportComparativeReportCsv();
-            } else {
+            } else if (studentHistoryDetail.style.display !== 'none') {
+                 exportStudentHistoryCsv();
+            }
+            else {
                 alert("กรุณาเลือกรายงานที่ต้องการส่งออก"); // Please select a report to export
             }
         }
@@ -1637,6 +1802,57 @@ const firebaseConfig = {
              const link = document.createElement("a");
              link.setAttribute("href", encodedUri);
              link.setAttribute("download", `รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}${analysisGrade ? `_ชั้น${analysisGrade}` : ''}.csv`);
+             document.body.appendChild(link); // Required for Firefox
+             link.click(); // Trigger the download
+             document.body.removeChild(link); // Clean up
+         }
+
+         // Function to export the Student History Detail to CSV
+         function exportStudentHistoryCsv() {
+              const studentId = studentHistoryDetail.getAttribute('data-student-id');
+             const student = students.find(s => s.id === studentId);
+             if (!student) {
+                 alert("ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ");
+                 return;
+             }
+
+             const table = document.querySelector('#student-history-detail .student-history-table');
+             if (!table) {
+                 alert("ไม่พบข้อมูลประวัติการเข้าเรียน");
+                 return;
+             }
+
+             let csvContent = "data:text/csv;charset=utf-8,%EF%BB% শিক্ষকদের"; // Add BOM for UTF-8 in Excel
+
+             // Add title and student info
+             csvContent += `"ประวัติการเข้าเรียนของนักเรียน"\n`;
+             csvContent += `"ชื่อ: ${student.name} (ID: ${student.id})"\n`;
+             if (student.grade) {
+                 csvContent += `"ระดับชั้น: ${student.grade}"\n`;
+             }
+             csvContent += `\n`; // Add a blank line for separation
+
+
+              // Get header
+              table.querySelectorAll('thead th').forEach(th => {
+                  csvContent += `"${th.textContent.trim()}",`;
+              });
+              csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+
+              // Get row data
+              table.querySelectorAll('tbody tr').forEach(tr => {
+                  const rowData = [];
+                  tr.querySelectorAll('td').forEach(td => {
+                      rowData.push(td.textContent.trim());
+                  });
+                  csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
+              });
+
+
+             const encodedUri = encodeURI(csvContent);
+             const link = document.createElement("a");
+             link.setAttribute("href", encodedUri);
+             link.setAttribute("download", `ประวัติการเข้าเรียน_${student.id}.csv`);
              document.body.appendChild(link); // Required for Firefox
              link.click(); // Trigger the download
              document.body.removeChild(link); // Clean up
@@ -1737,6 +1953,10 @@ const firebaseConfig = {
                             <td>${summary.absent}</td>
                             <td>${summary.total}</td>
                         `;
+                         // Add click listener to the row to show history
+                         row.style.cursor = 'pointer'; // Indicate clickable
+                         row.onclick = () => showStudentHistory(student.id);
+
                         comparativeAnalysisBody.appendChild(row);
                     });
 
@@ -1753,6 +1973,94 @@ const firebaseConfig = {
                     errorMessage.textContent = `เกิดข้อผิดพลาดในการสร้างรายงานสรุป: ${error.message}`;
                     errorMessage.style.display = 'block';
                      comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+                });
+        }
+
+        // Function to show detailed attendance history for a specific student
+        function showStudentHistory(studentId) {
+             // Check if user is logged in before showing history
+            if (!auth.currentUser) {
+                alert("กรุณาเข้าสู่ระบบก่อนดูประวัติการเข้าเรียน"); // Please log in before viewing history
+                return;
+            }
+
+            const student = students.find(s => s.id === studentId);
+            if (!student) {
+                console.error("Student not found for history view:", studentId);
+                return;
+            }
+
+            // Hide the summary view and show the history detail view
+            comparativeSummaryView.style.display = 'none';
+            studentHistoryDetail.style.display = 'block';
+             studentHistoryDetail.setAttribute('data-student-id', studentId); // Store student ID
+
+            // Set the title
+            studentHistoryTitle.textContent = `ประวัติการเข้าเรียนของนักเรียน: ${student.name} (ID: ${student.id})`;
+
+            // Clear previous history data
+            studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message
+
+
+            // Fetch all attendance records to find the student's history
+            attendanceRef.once('value')
+                .then((snapshot) => {
+                    const attendanceData = snapshot.val();
+                    const studentHistoryRecords = [];
+
+                    if (attendanceData) {
+                        for (const dateKey in attendanceData) {
+                            const record = attendanceData[dateKey];
+                            if (record.records) {
+                                const studentRecord = record.records.find(rec => rec.studentId === studentId);
+                                if (studentRecord) {
+                                    studentHistoryRecords.push({
+                                        date: record.date,
+                                        status: studentRecord.status,
+                                        semester: record.semester,
+                                        academicYear: record.academicYear
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    // Sort history records by date (most recent first)
+                    studentHistoryRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    // Populate the student history table
+                    studentHistoryBody.innerHTML = ''; // Clear loading message
+
+                    if (studentHistoryRecords.length === 0) {
+                        studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่พบประวัติการเข้าเรียนสำหรับนักเรียนนี้</td></tr>';
+                    } else {
+                        studentHistoryRecords.forEach(history => {
+                            const row = document.createElement('tr');
+                             let statusText = history.status;
+                             // Convert status value to Thai text for display
+                             if (history.status === 'present') statusText = 'มาเรียน';
+                             else if (history.status === 'sick') statusText = 'ป่วย';
+                             else if (history.status === 'leave') statusText = 'ลา';
+                             else if (history.status === 'absent') statusText = 'ขาด';
+
+
+                            row.innerHTML = `
+                                <td>${history.date}</td>
+                                <td>${statusText}</td>
+                                <td>${history.semester}</td>
+                                <td>${parseInt(history.academicYear) + 543}</td>
+                            `;
+                            studentHistoryBody.appendChild(row);
+                        });
+                    }
+
+                })
+                .catch((error) => {
+                     console.error("Error loading student history:", error);
+                     const errorMessage = document.getElementById('error-message');
+                    errorMessage.textContent = `เกิดข้อผิดพลาดในการโหลดประวัติการเข้าเรียน: ${error.message}`;
+                    errorMessage.style.display = 'block';
+                     studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
                 });
         }
 
