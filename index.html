@@ -539,13 +539,37 @@
              margin-right: 15px;
          }
 
+         /* Dashboard Section */
+         .dashboard-container {
+              max-width: 900px;
+             margin: 20px auto;
+             background-color: #ffffff;
+             padding: 30px;
+             border-radius: 12px;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+             display: none; /* Hidden by default */
+         }
+         .dashboard-container h2 {
+             color: #1b5e20;
+             text-align: center;
+             margin-bottom: 25px;
+             border-bottom: 2px solid #4caf50;
+             padding-bottom: 10px;
+             margin-top: 0;
+         }
+         .chart-container {
+             width: 100%;
+             max-height: 400px; /* Limit chart height */
+             margin-bottom: 20px;
+         }
+
 
         /* Responsive adjustments */
         @media (max-width: 768px) { /* Adjusted breakpoint for tablets */
             body {
                 padding: 10px; /* Reduced padding on smaller screens */
             }
-            .container, .student-management-container, .login-container {
+            .container, .student-management-container, .login-container, .dashboard-container { /* Added dashboard */
                 padding: 20px; /* Reduced container padding */
             }
             .controls, .student-form {
@@ -621,6 +645,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -641,7 +666,7 @@
                  <div class="header-buttons">
                      <button class="view-button" onclick="showDailyReport()">ดูรายงานรายวัน</button>
                      <button class="view-button" onclick="showComparativeAnalysis()">ดูรายงานสรุป</button>
-                     <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
+                     <button class="view-button" onclick="showDashboard()">ดูแดชบอร์ด</button> <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
                  </div>
             </div>
             <h2>ชั้นประถมศึกษาปีที่ 5</h2>
@@ -718,7 +743,7 @@
                  <div class="header-buttons">
                      <button class="view-button" onclick="showDailyReport()">ดูรายงานรายวัน</button>
                      <button class="view-button" onclick="showComparativeAnalysis()">ดูรายงานสรุป</button>
-                     <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
+                      <button class="view-button" onclick="showDashboard()">ดูแดชบอร์ด</button> <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
                  </div>
             </div>
             <div id="comparative-summary-view">
@@ -790,6 +815,45 @@
 
         </div>
 
+        <div class="container dashboard-container" id="dashboard-container">
+            <div class="app-header">
+                 <h1>ระบบบันทึกเวลาเรียน</h1>
+                 <div class="header-buttons">
+                     <button class="view-button" onclick="showDailyReport()">ดูรายงานรายวัน</button>
+                     <button class="view-button" onclick="showComparativeAnalysis()">ดูรายงานสรุป</button>
+                      <button class="view-button" onclick="showDashboard()">ดูแดชบอร์ด</button> <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
+                 </div>
+            </div>
+            <h2>แดชบอร์ดสรุปการเข้าเรียน</h2>
+             <p>แสดงแนวโน้มการเข้าเรียนของนักเรียนตามช่วงเวลาที่เลือก</p>
+
+             <div class="controls">
+                 <div>
+                     <label for="dashboard-start-date">วันที่เริ่มต้น:</label>
+                     <input type="date" id="dashboard-start-date">
+                 </div>
+                 <div>
+                     <label for="dashboard-end-date">วันที่สิ้นสุด:</label>
+                     <input type="date" id="dashboard-end-date">
+                 </div>
+                  <div>
+                     <label for="dashboard-grade-filter">เลือกระดับชั้น:</label>
+                     <select id="dashboard-grade-filter">
+                         <option value="">ทุกระดับชั้น</option>
+                         <option value="P.4">ป.4</option>
+                         <option value="P.5">ป.5</option>
+                         <option value="P.6">ป.6</option>
+                     </select>
+                 </div>
+                 <button onclick="generateAttendanceChart()">สร้างแผนภูมิ</button>
+             </div>
+
+             <div class="chart-container">
+                 <canvas id="attendanceChart"></canvas>
+             </div>
+
+        </div>
+
 
         <div class="student-management-container">
             <h2>จัดการข้อมูลนักเรียน</h2>
@@ -842,6 +906,8 @@ const firebaseConfig = {
         // --- End Firebase Configuration ---
 
         let students = []; // Array to hold ALL student data loaded from Firebase
+        let attendanceChart = null; // Variable to hold the Chart.js instance
+
 
         // Get references to the main content and login containers
         const mainAppContent = document.getElementById('main-app-content');
@@ -849,10 +915,14 @@ const firebaseConfig = {
         const loginError = document.getElementById('login-error');
         const dailyReportContainer = document.getElementById('daily-report-container');
         const comparativeAnalysisContainer = document.getElementById('comparative-analysis-container');
+        const dashboardContainer = document.getElementById('dashboard-container'); // New Dashboard Container
+
 
         // Get references to the grade filter selects
         const attendanceGradeFilterSelect = document.getElementById('attendance-grade-filter');
         const analysisGradeFilterSelect = document.getElementById('analysis-grade-filter');
+        const dashboardGradeFilterSelect = document.getElementById('dashboard-grade-filter'); // New Dashboard Grade Filter
+
 
         // Get references for comparative analysis views
         const comparativeSummaryView = document.getElementById('comparative-summary-view');
@@ -953,9 +1023,16 @@ const firebaseConfig = {
                  document.getElementById('comparative-analysis-body').innerHTML = ''; // Clear analysis table body
                  attendanceGradeFilterSelect.value = ''; // Reset grade filters
                  analysisGradeFilterSelect.value = '';
+                 dashboardGradeFilterSelect.value = ''; // Reset dashboard grade filter
                  studentHistoryBody.innerHTML = ''; // Clear student history
                  studentHistoryDetail.style.display = 'none'; // Hide history view
                  comparativeSummaryView.style.display = 'block'; // Show summary view
+
+                 // Destroy Chart.js instance on logout
+                 if (attendanceChart) {
+                     attendanceChart.destroy();
+                     attendanceChart = null;
+                 }
             }
         });
 
@@ -964,6 +1041,7 @@ const firebaseConfig = {
         function showDailyReport() {
             dailyReportContainer.style.display = 'block';
             comparativeAnalysisContainer.style.display = 'none';
+            dashboardContainer.style.display = 'none'; // Hide dashboard
              // Reload attendance for the current date when switching back to daily view
              const currentDate = document.getElementById('attendance-date').value;
              if (currentDate) {
@@ -973,11 +1051,17 @@ const firebaseConfig = {
                  populateAttendanceTable();
                  calculatePresentPercentage();
              }
+             // Destroy chart if exists
+             if (attendanceChart) {
+                 attendanceChart.destroy();
+                 attendanceChart = null;
+             }
         }
 
         function showComparativeAnalysis() {
             dailyReportContainer.style.display = 'none';
             comparativeAnalysisContainer.style.display = 'block';
+            dashboardContainer.style.display = 'none'; // Hide dashboard
              // Ensure the summary view is shown and detail view is hidden
              comparativeSummaryView.style.display = 'block';
              studentHistoryDetail.style.display = 'none';
@@ -986,7 +1070,30 @@ const firebaseConfig = {
              populateAcademicYearsForAnalysis();
              // Clear the analysis table initially
              document.getElementById('comparative-analysis-body').innerHTML = '';
+             // Destroy chart if exists
+             if (attendanceChart) {
+                 attendanceChart.destroy();
+                 attendanceChart = null;
+             }
         }
+
+        function showDashboard() {
+            dailyReportContainer.style.display = 'none';
+            comparativeAnalysisContainer.style.display = 'none';
+            dashboardContainer.style.display = 'block'; // Show dashboard
+
+            // Set default date range for dashboard (e.g., last 30 days)
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 30);
+
+            document.getElementById('dashboard-end-date').value = endDate.toISOString().split('T')[0];
+            document.getElementById('dashboard-start-date').value = startDate.toISOString().split('T')[0];
+
+            // Generate the chart with default settings
+            generateAttendanceChart();
+        }
+
 
         function hideStudentHistory() {
             studentHistoryDetail.style.display = 'none';
@@ -1401,6 +1508,11 @@ const firebaseConfig = {
                  // If the comparative analysis is visible and not showing history, regenerate the summary
                  if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
                       generateComparativeReport();
+                 }
+
+                 // If the dashboard is visible, regenerate the chart
+                 if (dashboardContainer.style.display !== 'none') {
+                      generateAttendanceChart();
                  }
 
 
@@ -2061,6 +2173,193 @@ const firebaseConfig = {
                     errorMessage.textContent = `เกิดข้อผิดพลาดในการโหลดประวัติการเข้าเรียน: ${error.message}`;
                     errorMessage.style.display = 'block';
                      studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+                });
+        }
+
+        // --- Dashboard Functions ---
+
+        // Function to generate the attendance trend chart
+        function generateAttendanceChart() {
+             // Check if user is logged in before generating chart
+            if (!auth.currentUser) {
+                console.log("User not logged in, cannot generate chart.");
+                return;
+            }
+
+             if (students.length === 0) {
+                 console.log("No student data found, cannot generate chart.");
+                 // Optionally display a message in the dashboard area
+                 return;
+             }
+
+
+            const startDateInput = document.getElementById('dashboard-start-date').value;
+            const endDateInput = document.getElementById('dashboard-end-date').value;
+            const dashboardGrade = dashboardGradeFilterSelect.value; // Get the selected grade for filtering
+
+            if (!startDateInput || !endDateInput) {
+                alert("กรุณาเลือกช่วงวันที่สำหรับแดชบอร์ด"); // Please select a date range for the dashboard
+                return;
+            }
+
+            const startDate = new Date(startDateInput);
+            const endDate = new Date(endDateInput);
+
+             if (startDate > endDate) {
+                 alert("วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด"); // Start date cannot be after end date
+                 return;
+             }
+
+
+            // Fetch all attendance records
+            attendanceRef.once('value')
+                .then((snapshot) => {
+                    const attendanceData = snapshot.val();
+                    const dailyAttendanceCounts = {}; // To store counts per day
+
+                    // Initialize counts for each date in the range
+                    let currentDate = new Date(startDate);
+                    while (currentDate <= endDate) {
+                        const dateKey = currentDate.toISOString().split('T')[0].replace(/-/g, '');
+                        dailyAttendanceCounts[dateKey] = { present: 0, totalStudents: 0 };
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+
+                    if (attendanceData) {
+                        // Process attendance data within the selected date range and grade filter
+                        for (const dateKey in attendanceData) {
+                            const recordDate = new Date(dateKey.substring(0, 4) + '-' + dateKey.substring(4, 6) + '-' + dateKey.substring(6, 8));
+
+                            if (recordDate >= startDate && recordDate <= endDate && dailyAttendanceCounts[dateKey]) {
+                                const record = attendanceData[dateKey];
+                                if (record.records) {
+                                     let studentsOnThisDay = 0;
+                                    record.records.forEach(studentRecord => {
+                                         const student = students.find(s => s.id === studentRecord.studentId);
+                                         // Only count students in the selected grade (if filter is applied)
+                                         if (student && (!dashboardGrade || student.grade === dashboardGrade)) {
+                                             studentsOnThisDay++;
+                                            if (studentRecord.status === 'present') {
+                                                dailyAttendanceCounts[dateKey].present++;
+                                            }
+                                         }
+                                    });
+                                     dailyAttendanceCounts[dateKey].totalStudents = studentsOnThisDay;
+                                }
+                            }
+                        }
+                    }
+
+                    // Prepare data for Chart.js
+                    const labels = [];
+                    const presentData = [];
+                    const totalData = [];
+                    const percentageData = [];
+
+                    // Sort date keys
+                    const sortedDateKeys = Object.keys(dailyAttendanceCounts).sort();
+
+                    sortedDateKeys.forEach(dateKey => {
+                        const date = new Date(dateKey.substring(0, 4) + '-' + dateKey.substring(4, 6) + '-' + dateKey.substring(6, 8));
+                        labels.push(date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })); // Format date for label (e.g., 17 พ.ค.)
+
+                        const counts = dailyAttendanceCounts[dateKey];
+                        presentData.push(counts.present);
+                        totalData.push(counts.totalStudents);
+                        const percentage = counts.totalStudents > 0 ? (counts.present / counts.totalStudents) * 100 : 0;
+                        percentageData.push(percentage.toFixed(1)); // Percentage rounded to 1 decimal place
+                    });
+
+
+                    const ctx = document.getElementById('attendanceChart').getContext('2d');
+
+                    // Destroy previous chart instance if it exists
+                    if (attendanceChart) {
+                        attendanceChart.destroy();
+                    }
+
+                    // Create the chart
+                    attendanceChart = new Chart(ctx, {
+                        type: 'line', // Line chart for trends
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'จำนวนนักเรียนที่มาเรียน',
+                                    data: presentData,
+                                    borderColor: '#4caf50', // Green
+                                    backgroundColor: 'rgba(76, 175, 80, 0.2)', // Light green with opacity
+                                    fill: true,
+                                    tension: 0.1
+                                },
+                                {
+                                     label: 'จำนวนนักเรียนทั้งหมด (ระดับชั้นที่เลือก)',
+                                     data: totalData,
+                                     borderColor: '#0288d1', // Blue
+                                     backgroundColor: 'rgba(2, 136, 209, 0.2)', // Light blue with opacity
+                                     fill: true,
+                                     tension: 0.1
+                                },
+                                {
+                                     label: 'เปอร์เซ็นต์การมาเรียน (%)',
+                                     data: percentageData,
+                                     borderColor: '#ff9800', // Orange
+                                     backgroundColor: 'rgba(255, 152, 0, 0.2)', // Light orange with opacity
+                                     fill: false, // No fill for percentage line
+                                     tension: 0.1,
+                                     yAxisID: 'percentage-y-axis' // Use a secondary Y-axis
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false, // Allow chart to resize freely
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'วันที่'
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'จำนวนนักเรียน'
+                                    }
+                                },
+                                'percentage-y-axis': { // Secondary Y-axis for percentage
+                                     position: 'right',
+                                     beginAtZero: true,
+                                     max: 100,
+                                     title: {
+                                         display: true,
+                                         text: 'เปอร์เซ็นต์ (%)'
+                                     },
+                                     grid: {
+                                         drawOnChartArea: false, // Only draw grid lines for the primary Y-axis
+                                     },
+                                 }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: `แนวโน้มการเข้าเรียน ${dashboardGrade ? `(ชั้น ${dashboardGrade})` : '(ทุกระดับชั้น)'} (${startDateInput} ถึง ${endDateInput})`
+                                }
+                            }
+                        }
+                    });
+
+
+                })
+                .catch((error) => {
+                    console.error("Error generating attendance chart:", error);
+                     const errorMessage = document.getElementById('error-message');
+                    errorMessage.textContent = `เกิดข้อผิดพลาดในการสร้างแผนภูมิ: ${error.message}`;
+                    errorMessage.style.display = 'block';
                 });
         }
 
