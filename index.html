@@ -185,7 +185,7 @@
             display: none; /* Hidden by default */
             padding: 10px;
             background-color: #ffcdd2; /* Light red background */
-            border: 1px solid #ef9a9a; /* Red border */
+            border: 1px solid #ef9a9a;
             border-radius: 5px;
         }
 
@@ -217,7 +217,9 @@
             border-radius: 8px;
             border: 1px solid #dcedc8; /* Subtle border */
         }
-        .student-form input, .student-form select { /* Added select to form styling */
+        .student-form input[type="text"],
+        .student-form input[type="number"],
+        .student-form select { /* Added select to form styling */
             padding: 10px; /* Increased padding */
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -226,6 +228,16 @@
             font-family: 'Sarabun', sans-serif;
             font-size: 1rem;
         }
+         .student-form input[type="file"] {
+             padding: 8px; /* Slightly less padding for file input */
+             border: 1px solid #ccc;
+             border-radius: 5px;
+             flex-grow: 1;
+             min-width: 180px;
+             font-family: 'Sarabun', sans-serif;
+             font-size: 1rem;
+             background-color: #ffffff; /* White background for file input */
+         }
          .student-form button {
             padding: 10px 20px;
             background-color: #4caf50;
@@ -267,6 +279,14 @@
             margin-right: 15px; /* Increased margin */
             font-size: 1rem;
         }
+         .student-item .student-photo-preview {
+             width: 40px;
+             height: 40px;
+             border-radius: 50%; /* Circular photo */
+             margin-right: 10px;
+             object-fit: cover; /* Cover the area */
+             border: 2px solid #4caf50; /* Green border */
+         }
         .student-item button {
             padding: 6px 12px; /* Adjusted padding */
             margin-left: 8px; /* Increased margin */
@@ -554,7 +574,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
@@ -699,6 +719,10 @@
                      <option value="P.5">ป.5</option>
                      <option value="P.6">ป.6</option>
                  </select>
+                <div>
+                    <label for="student-photo">รูปโปรไฟล์:</label>
+                    <input type="file" id="student-photo" accept="image/*">
+                </div>
                 <button onclick="addOrUpdateStudent()">เพิ่ม/แก้ไข นักเรียน</button>
             </div>
 
@@ -715,9 +739,8 @@
 const firebaseConfig = {
   apiKey: "AIzaSyBrGSCIQjT1V-dmR3LQaB-hkrSi_yWcg_I",
   authDomain: "attendance-system-c5235.firebaseapp.com",
-    databaseURL: "https://attendance-system-c5235-default-rtdb.asia-southeast1.firebasedatabase.app", 
   projectId: "attendance-system-c5235",
-  storageBucket: "attendance-system-c5235.firebasestorage.app",
+  storageBucket: "attendance-system-c5235.firebasestorage.app", // Make sure this is correct
   messagingSenderId: "687349069254",
   appId: "1:687349069254:web:1bf765f9f0bafb86f1eec7",
   measurementId: "G-TZJ0F2EXTE"
@@ -727,6 +750,7 @@ const firebaseConfig = {
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const auth = firebase.auth(); // Get Firebase Auth instance
+        const storage = firebase.storage(); // Get Firebase Storage instance
         const studentsRef = database.ref('students'); // Reference to the 'students' node
         const attendanceRef = database.ref('attendance'); // Reference to the 'attendance' node
         // --- End Firebase Configuration ---
@@ -1115,6 +1139,7 @@ const firebaseConfig = {
                 listItem.setAttribute('data-student-id', student.id); // Use student ID as data attribute
 
                 listItem.innerHTML = `
+                    ${student.photo ? `<img src="${student.photo}" alt="รูปโปรไฟล์" class="student-photo-preview">` : ''}
                     <span>
                         ${student.number}. ${student.name} (ID: ${student.id})
                         ${student.grade ? ` - ชั้น ${student.grade}` : ''}
@@ -1129,7 +1154,7 @@ const firebaseConfig = {
         }
 
         // Function to add or update a student in Firebase
-        function addOrUpdateStudent() {
+        async function addOrUpdateStudent() { // Made function async to use await
              // Check if user is logged in before saving
             if (!auth.currentUser) {
                 alert("กรุณาเข้าสู่ระบบก่อนจัดการข้อมูลนักเรียน"); // Please log in before managing student data
@@ -1140,12 +1165,14 @@ const firebaseConfig = {
             const studentNumberInput = document.getElementById('student-number');
             const studentNameInput = document.getElementById('student-name');
             const studentGradeSelect = document.getElementById('student-grade');
+            const studentPhotoInput = document.getElementById('student-photo');
 
 
             const studentId = studentIdInput.value.trim();
             const studentNumber = parseInt(studentNumberInput.value.trim(), 10);
             const studentName = studentNameInput.value.trim();
             const studentGrade = studentGradeSelect.value;
+            const photoFile = studentPhotoInput.files[0]; // Get the selected file
 
 
             if (!studentId || !studentName || isNaN(studentNumber) || !studentGrade) {
@@ -1153,12 +1180,37 @@ const firebaseConfig = {
                 return;
             }
 
+            let photoURL = '';
+
+            // If a photo file is selected, upload it
+            if (photoFile) {
+                try {
+                    const storageRef = storage.ref(`student_photos/${studentId}/${photoFile.name}`);
+                    const snapshot = await storageRef.put(photoFile); // Upload the file
+                    photoURL = await snapshot.ref.getDownloadURL(); // Get the download URL
+                    console.log("Photo uploaded successfully:", photoURL);
+                } catch (error) {
+                    console.error("Error uploading photo:", error);
+                     const errorMessage = document.getElementById('error-message');
+                    errorMessage.textContent = `เกิดข้อผิดพลาดในการอัปโหลดรูปโปรไฟล์: ${error.message}`;
+                    errorMessage.style.display = 'block';
+                    return; // Stop if photo upload fails
+                }
+            } else {
+                 // If no new photo is selected, check if the student already has a photo URL
+                 const existingStudent = students.find(s => s.id === studentId);
+                 if (existingStudent && existingStudent.photo) {
+                     photoURL = existingStudent.photo; // Keep the existing photo URL
+                 }
+            }
+
+
             const studentData = {
                 id: studentId,
                 number: studentNumber,
                 name: studentName,
-                grade: studentGrade, // Added grade
-                photo: '' // Placeholder for photo URL
+                grade: studentGrade,
+                photo: photoURL // Store the photo URL
             };
 
             // Use student ID as the key in Firebase
@@ -1169,7 +1221,8 @@ const firebaseConfig = {
                     studentIdInput.value = '';
                     studentNumberInput.value = '';
                     studentNameInput.value = '';
-                    studentGradeSelect.value = ''; // Clear grade selection
+                    studentGradeSelect.value = '';
+                    studentPhotoInput.value = ''; // Clear the file input
                     // No need to call loadStudents() here, the listener will handle the update
                 })
                 .catch((error) => {
@@ -1252,30 +1305,45 @@ const firebaseConfig = {
                 document.getElementById('student-id').value = student.id;
                 document.getElementById('student-number').value = student.number;
                 document.getElementById('student-name').value = student.name;
-                document.getElementById('student-grade').value = student.grade || ''; // Populate grade
-                // TODO: Populate photo input if implemented
+                document.getElementById('student-grade').value = student.grade || '';
+
+                // Note: File inputs are read-only for security.
+                // We cannot programmatically set the selected file.
+                // The user will need to re-select the photo if they want to change it.
+                // We could display the current photo URL or a preview here if needed.
+                console.log("Editing student. Existing photo URL:", student.photo);
             }
         }
 
         // Function to delete a student from Firebase
-        function deleteStudent(studentId) {
+        async function deleteStudent(studentId) { // Made function async to use await
              // Check if user is logged in before deleting
             if (!auth.currentUser) {
                 alert("กรุณาเข้าสู่ระบบก่อนลบข้อมูลนักเรียน"); // Please log in before deleting student data
                 return;
             }
             if (confirm(`คุณต้องการลบนักเรียน เลขประจำตัว ${studentId} ใช่หรือไม่?`)) {
-                studentsRef.child(studentId).remove()
-                    .then(() => {
-                        console.log("Student data deleted successfully:", studentId);
-                        // No need to call loadStudents() here, the listener will handle the update
-                    })
-                    .catch((error) => {
-                        console.error("Error deleting student data:", error);
-                         const errorMessage = document.getElementById('error-message');
-                        errorMessage.textContent = `เกิดข้อผิดพลาดในการลบข้อมูลนักเรียน: ${error.message}`;
-                        errorMessage.style.display = 'block';
-                    });
+
+                try {
+                     // Optional: Delete the photo from Storage first
+                     const studentToDelete = students.find(s => s.id === studentId);
+                     if (studentToDelete && studentToDelete.photo) {
+                         const photoUrl = studentToDelete.photo;
+                         // Get the storage reference from the download URL
+                         const photoRef = storage.refFromURL(photoUrl);
+                         await photoRef.delete();
+                         console.log("Student photo deleted from Storage:", studentId);
+                     }
+
+                    await studentsRef.child(studentId).remove(); // Delete data from Realtime Database
+                    console.log("Student data deleted successfully:", studentId);
+                    // No need to call loadStudents() here, the listener will handle the update
+                } catch (error) {
+                    console.error("Error deleting student data or photo:", error);
+                     const errorMessage = document.getElementById('error-message');
+                    errorMessage.textContent = `เกิดข้อผิดพลาดในการลบข้อมูลนักเรียน: ${error.message}`;
+                    errorMessage.style.display = 'block';
+                }
             }
         }
 
