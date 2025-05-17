@@ -239,29 +239,47 @@
             display: none; /* Hidden by default */
         }
 
-        /* Header with Logout */
+        /* Header with Logout and View Toggle */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap; /* Allow wrapping */
         }
         .app-header h1 {
             margin: 0;
             text-align: left; /* Align title to the left in header */
+            flex-grow: 1; /* Allow title to take available space */
+            margin-bottom: 10px; /* Add margin for wrapping */
         }
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+        .header-buttons button {
+             padding: 8px 15px;
+             border: none;
+             border-radius: 4px;
+             cursor: pointer;
+             transition: background-color 0.3s ease;
+        }
+        .view-button {
+             background-color: #0288d1; /* Blue */
+             color: white;
+        }
+         .view-button:hover {
+             background-color: #0277bd; /* Darker Blue */
+         }
         .logout-button {
-            padding: 8px 15px;
             background-color: #f44336; /* Red */
             color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
         }
          .logout-button:hover {
             background-color: #d32f2f; /* Darker Red */
         }
+
 
         /* Export Buttons */
         .export-buttons {
@@ -281,6 +299,39 @@
         }
         .export-buttons button:hover {
             background-color: #01579b; /* Darker Blue */
+        }
+
+        /* Comparative Analysis Section */
+        .comparative-analysis-container {
+             max-width: 900px;
+            margin: 20px auto; /* Add margin top and bottom */
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+             display: none; /* Hidden by default */
+        }
+        .comparative-analysis-container h2 {
+             color: #1b5e20; /* Dark green */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .analysis-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .analysis-table th, .analysis-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .analysis-table th {
+            background-color: #4caf50; /* Green */
+            color: white;
+        }
+        .analysis-table td {
+            background-color: #f9f9f9;
         }
 
 
@@ -330,6 +381,14 @@
                 width: 100%;
                 margin: 10px 0; /* Stack buttons vertically */
             }
+             .header-buttons {
+                 flex-direction: column;
+                 width: 100%;
+                 gap: 5px;
+             }
+             .header-buttons button {
+                 width: 100%;
+             }
         }
     </style>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -351,10 +410,14 @@
     </div>
 
     <div id="main-app-content" style="display: none;">
-        <div class="container">
+        <div class="container" id="daily-report-container">
             <div class="app-header">
                  <h1>ระบบบันทึกเวลาเรียน</h1>
-                 <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
+                 <div class="header-buttons">
+                     <button class="view-button" onclick="showDailyReport()">ดูรายงานรายวัน</button>
+                     <button class="view-button" onclick="showComparativeAnalysis()">ดูรายงานสรุป</button>
+                     <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
+                 </div>
             </div>
             <h2>ชั้นประถมศึกษาปีที่ 5</h2>
 
@@ -415,6 +478,54 @@
 
         </div>
 
+        <div class="container comparative-analysis-container" id="comparative-analysis-container">
+             <div class="app-header">
+                 <h1>ระบบบันทึกเวลาเรียน</h1>
+                 <div class="header-buttons">
+                     <button class="view-button" onclick="showDailyReport()">ดูรายงานรายวัน</button>
+                     <button class="view-button" onclick="showComparativeAnalysis()">ดูรายงานสรุป</button>
+                     <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
+                 </div>
+            </div>
+            <h2>รายงานสรุปเวลาเรียน</h2>
+             <p>แสดงข้อมูลสรุปการเข้าเรียนของนักเรียนแต่ละคน ตลอดภาคเรียน/ปีการศึกษาที่เลือก</p>
+
+             <div class="controls">
+                 <div>
+                     <label for="analysis-semester">ภาคเรียน:</label>
+                     <select id="analysis-semester">
+                         <option value="1">ภาคเรียนที่ 1</option>
+                         <option value="2">ภาคเรียนที่ 2</option>
+                     </select>
+                 </div>
+                 <div>
+                     <label for="analysis-academic-year">ปีการศึกษา:</label>
+                     <select id="analysis-academic-year">
+                         </select>
+                 </div>
+                 <button onclick="generateComparativeReport()">สร้างรายงาน</button>
+             </div>
+
+
+            <table class="analysis-table">
+                <thead>
+                    <tr>
+                        <th>เลขประจำตัว</th>
+                        <th>เลขที่</th>
+                        <th>ชื่อ-นามสกุล</th>
+                        <th>มาเรียน</th>
+                        <th>ป่วย</th>
+                        <th>ลา</th>
+                        <th>ขาด</th>
+                        <th>รวมวัน</th>
+                    </tr>
+                </thead>
+                <tbody id="comparative-analysis-body">
+                    </tbody>
+            </table>
+        </div>
+
+
         <div class="student-management-container">
             <h2>จัดการข้อมูลนักเรียน</h2>
 
@@ -438,7 +549,6 @@
 const firebaseConfig = {
   apiKey: "AIzaSyBrGSCIQjT1V-dmR3LQaB-hkrSi_yWcg_I",
   authDomain: "attendance-system-c5235.firebaseapp.com",
-    databaseURL: "https://attendance-system-c5235-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "attendance-system-c5235",
   storageBucket: "attendance-system-c5235.firebasestorage.app",
   messagingSenderId: "687349069254",
@@ -451,6 +561,7 @@ const firebaseConfig = {
         const database = firebase.database();
         const auth = firebase.auth(); // Get Firebase Auth instance
         const studentsRef = database.ref('students'); // Reference to the 'students' node
+        const attendanceRef = database.ref('attendance'); // Reference to the 'attendance' node
         // --- End Firebase Configuration ---
 
         let students = []; // Array to hold student data loaded from Firebase
@@ -459,6 +570,9 @@ const firebaseConfig = {
         const mainAppContent = document.getElementById('main-app-content');
         const loginContainer = document.getElementById('login-container');
         const loginError = document.getElementById('login-error');
+        const dailyReportContainer = document.getElementById('daily-report-container');
+        const comparativeAnalysisContainer = document.getElementById('comparative-analysis-container');
+
 
         // Variable to store the unsubscribe function for the student listener
         let studentsListener = null;
@@ -526,6 +640,9 @@ const firebaseConfig = {
                     loadAttendance(event.target.value);
                 });
 
+                // Show the daily report by default after login
+                showDailyReport();
+
 
             } else {
                 // User is signed out.
@@ -544,13 +661,57 @@ const firebaseConfig = {
                  document.getElementById('present-percentage').textContent = '0%';
                  document.getElementById('academic-year').innerHTML = ''; // Clear academic years
                  document.getElementById('semester').value = '1'; // Reset semester
+                 document.getElementById('analysis-academic-year').innerHTML = ''; // Clear analysis academic years
+                 document.getElementById('analysis-semester').value = '1'; // Reset analysis semester
+                 document.getElementById('comparative-analysis-body').innerHTML = ''; // Clear analysis table body
             }
         });
 
 
+        // --- View Toggling Functions ---
+        function showDailyReport() {
+            dailyReportContainer.style.display = 'block';
+            comparativeAnalysisContainer.style.display = 'none';
+             // Reload attendance for the current date when switching back to daily view
+             const currentDate = document.getElementById('attendance-date').value;
+             if (currentDate) {
+                 loadAttendance(currentDate);
+             } else {
+                 // If no date is set, just populate the table with students
+                 populateAttendanceTable();
+                 calculatePresentPercentage();
+             }
+        }
+
+        function showComparativeAnalysis() {
+            dailyReportContainer.style.display = 'none';
+            comparativeAnalysisContainer.style.display = 'block';
+             // Populate academic years for the analysis controls if not already done
+             populateAcademicYearsForAnalysis();
+             // Clear the analysis table initially
+             document.getElementById('comparative-analysis-body').innerHTML = '';
+        }
+
+         // Function to populate academic years for the analysis controls
+        function populateAcademicYearsForAnalysis() {
+            const yearSelect = document.getElementById('analysis-academic-year');
+             if (yearSelect.options.length > 0) return; // Avoid repopulating
+
+            const currentYear = new Date().getFullYear();
+            const startYear = (new Date().getMonth() >= 4) ? currentYear : currentYear - 1;
+            for (let i = 0; i < 5; i++) {
+                const year = startYear - i;
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `ปีการศึกษา ${year + 543}`;
+                yearSelect.appendChild(option);
+            }
+        }
+
+
         // --- Attendance and Student Management Functions ---
 
-        // Function to populate academic years
+        // Function to populate academic years (for daily report controls)
         function populateAcademicYears() {
             const yearSelect = document.getElementById('academic-year');
             yearSelect.innerHTML = ''; // Clear existing options
@@ -872,14 +1033,17 @@ const firebaseConfig = {
                 renderStudentList();
                 populateAttendanceTable();
 
-                // After students are updated, reload attendance for the current date
-                 const currentDate = document.getElementById('attendance-date').value;
-                 if (currentDate) {
-                     loadAttendance(currentDate);
-                 } else {
-                     // If no date is set, calculate percentage for the default empty state
-                     calculatePresentPercentage();
+                // After students are updated, reload attendance for the current date IF daily report is visible
+                 if (dailyReportContainer.style.display !== 'none') {
+                     const currentDate = document.getElementById('attendance-date').value;
+                     if (currentDate) {
+                         loadAttendance(currentDate);
+                     } else {
+                         // If no date is set, calculate percentage for the default empty state
+                         calculatePresentPercentage();
+                     }
                  }
+
 
             }, (error) => {
                 console.error("Error in student listener:", error);
@@ -948,79 +1112,148 @@ const firebaseConfig = {
                 return;
             }
 
-            const attendanceDate = document.getElementById('attendance-date').value;
-            if (!attendanceDate) {
-                alert("กรุณาเลือกวันที่ต้องการส่งออกข้อมูล"); // Please select a date to export
-                return;
+            // Determine which report is currently visible to export
+            if (dailyReportContainer.style.display !== 'none') {
+                exportDailyReportPdf();
+            } else if (comparativeAnalysisContainer.style.display !== 'none') {
+                exportComparativeReportPdf();
+            } else {
+                alert("กรุณาเลือกรายงานที่ต้องการส่งออก"); // Please select a report to export
             }
+        }
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.setFont('Sarabun', 'normal'); // Set Thai font (assuming Sarabun is available/embedded) - Note: Font embedding requires more advanced setup
-
-            // Get table data
-            const table = document.getElementById('attendance-table');
-            const header = [];
-            const rows = [];
-
-            // Get header
-            table.querySelectorAll('thead th').forEach(th => {
-                header.push(th.textContent.trim());
-            });
-
-            // Get row data
-            table.querySelectorAll('tbody tr').forEach(tr => {
-                const rowData = [];
-                tr.querySelectorAll('td').forEach((td, index) => {
-                    if (index === 3) { // Status column
-                         const selectElement = td.querySelector('.status-select');
-                         rowData.push(selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim());
-                    } else {
-                         rowData.push(td.textContent.trim());
-                    }
-                });
-                rows.push(rowData);
-            });
-
-            // Add title and date
-            doc.setFontSize(18);
-            doc.text(`รายงานบันทึกเวลาเรียน ชั้นประถมศึกษาปีที่ 5`, 14, 22);
-            doc.setFontSize(12);
-            doc.text(`วันที่: ${attendanceDate}`, 14, 30);
-
-            // Add table
-            doc.autoTable({
-                startY: 40,
-                head: [header],
-                body: rows,
-                theme: 'striped',
-                headStyles: { fillColor: [76, 175, 80] }, // Green header
-                styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table
-                didDrawPage: function (data) {
-                    // Footer
-                    let pageNumber = doc.internal.getNumberOfPages();
-                    doc.setFontSize(10);
-                    doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
-                }
-            });
-
-             // Add Notes section if available
-             const teacherNotes = document.getElementById('teacher-notes').value.trim();
-             if (teacherNotes) {
-                 let finalY = doc.lastAutoTable.finalY; // Get the end Y position of the table
-                 doc.setFontSize(12);
-                 doc.text('บันทึกเพิ่มเติม:', 14, finalY + 20);
-                 doc.setFontSize(10);
-                 // Split notes into lines to fit within page width
-                 const splitNotes = doc.splitTextToSize(teacherNotes, doc.internal.pageSize.width - 28); // 28 = left + right margin
-                 doc.text(splitNotes, 14, finalY + 28);
+         // Function to export the Daily Report to PDF
+         function exportDailyReportPdf() {
+             const attendanceDate = document.getElementById('attendance-date').value;
+             if (!attendanceDate) {
+                 alert("กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน");
+                 return;
              }
 
+             const { jsPDF } = window.jspdf;
+             const doc = new jsPDF();
 
-            // Save the PDF
-            doc.save(`รายงานบันทึกเวลาเรียน_${attendanceDate}.pdf`);
-        }
+             // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
+
+             // Get table data
+             const table = document.getElementById('attendance-table');
+             const header = [];
+             const rows = [];
+
+             // Get header
+             table.querySelectorAll('thead th').forEach(th => {
+                 header.push(th.textContent.trim());
+             });
+
+             // Get row data
+             table.querySelectorAll('tbody tr').forEach(tr => {
+                 const rowData = [];
+                 tr.querySelectorAll('td').forEach((td, index) => {
+                     if (index === 3) { // Status column
+                          const selectElement = td.querySelector('.status-select');
+                          rowData.push(selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim());
+                     } else {
+                          rowData.push(td.textContent.trim());
+                     }
+                 });
+                 rows.push(rowData);
+             });
+
+             // Add title and date
+             doc.setFontSize(18);
+             doc.text(`รายงานบันทึกเวลาเรียน ชั้นประถมศึกษาปีที่ 5`, 14, 22);
+             doc.setFontSize(12);
+             doc.text(`วันที่: ${attendanceDate}`, 14, 30);
+
+             // Add table
+             doc.autoTable({
+                 startY: 40,
+                 head: [header],
+                 body: rows,
+                 theme: 'striped',
+                 headStyles: { fillColor: [76, 175, 80] }, // Green header
+                 styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
+                 didDrawPage: function (data) {
+                     // Footer
+                     let pageNumber = doc.internal.getNumberOfPages();
+                     doc.setFontSize(10);
+                     doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                 }
+             });
+
+              // Add Notes section if available
+              const teacherNotes = document.getElementById('teacher-notes').value.trim();
+              if (teacherNotes) {
+                  let finalY = doc.lastAutoTable.finalY; // Get the end Y position of the table
+                  doc.setFontSize(12);
+                  doc.text('บันทึกเพิ่มเติม:', 14, finalY + 20);
+                  doc.setFontSize(10);
+                  // Split notes into lines to fit within page width
+                  const splitNotes = doc.splitTextToSize(teacherNotes, doc.internal.pageSize.width - 28); // 28 = left + right margin
+                  doc.text(splitNotes, 14, finalY + 28);
+              }
+
+
+             // Save the PDF
+             doc.save(`รายงานบันทึกเวลาเรียน_รายวัน_${attendanceDate}.pdf`);
+         }
+
+         // Function to export the Comparative Report to PDF
+         function exportComparativeReportPdf() {
+              const analysisSemester = document.getElementById('analysis-semester').value;
+              const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+
+              const { jsPDF } = window.jspdf;
+              const doc = new jsPDF();
+
+              // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
+
+              // Get table data from the analysis table
+              const table = document.querySelector('#comparative-analysis-container .analysis-table');
+              const header = [];
+              const rows = [];
+
+              // Get header
+              table.querySelectorAll('thead th').forEach(th => {
+                  header.push(th.textContent.trim());
+              });
+
+              // Get row data
+              table.querySelectorAll('tbody tr').forEach(tr => {
+                  const rowData = [];
+                  tr.querySelectorAll('td').forEach(td => {
+                      rowData.push(td.textContent.trim());
+                  });
+                  rows.push(rowData);
+              });
+
+              // Add title
+              doc.setFontSize(18);
+              doc.text(`รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5`, 14, 22);
+              doc.setFontSize(12);
+              doc.text(`ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}`, 14, 30);
+
+
+              // Add table
+              doc.autoTable({
+                  startY: 40,
+                  head: [header],
+                  body: rows,
+                  theme: 'striped',
+                  headStyles: { fillColor: [76, 175, 80] }, // Green header
+                  styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
+                  didDrawPage: function (data) {
+                      // Footer
+                      let pageNumber = doc.internal.getNumberOfPages();
+                      doc.setFontSize(10);
+                      doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                  }
+              });
+
+              // Save the PDF
+              doc.save(`รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}.pdf`);
+         }
+
 
         // Function to export attendance data to CSV (for Excel)
         function exportToCsv() {
@@ -1030,48 +1263,200 @@ const firebaseConfig = {
                 return;
             }
 
-            const attendanceDate = document.getElementById('attendance-date').value;
-             if (!attendanceDate) {
-                alert("กรุณาเลือกวันที่ต้องการส่งออกข้อมูล"); // Please select a date to export
+             // Determine which report is currently visible to export
+            if (dailyReportContainer.style.display !== 'none') {
+                exportDailyReportCsv();
+            } else if (comparativeAnalysisContainer.style.display !== 'none') {
+                exportComparativeReportCsv();
+            } else {
+                alert("กรุณาเลือกรายงานที่ต้องการส่งออก"); // Please select a report to export
+            }
+        }
+
+         // Function to export the Daily Report to CSV
+         function exportDailyReportCsv() {
+             const attendanceDate = document.getElementById('attendance-date').value;
+              if (!attendanceDate) {
+                 alert("กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน");
+                 return;
+             }
+
+             const table = document.getElementById('attendance-table');
+             let csvContent = "data:text/csv;charset=utf-8,%EF%BB%BF"; // Add BOM for UTF-8 in Excel
+
+             // Get header
+             table.querySelectorAll('thead th').forEach(th => {
+                 csvContent += `"${th.textContent.trim()}",`;
+             });
+             csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+
+             // Get row data
+             table.querySelectorAll('tbody tr').forEach(tr => {
+                 tr.querySelectorAll('td').forEach((td, index) => {
+                      if (index === 3) { // Status column
+                          const selectElement = td.querySelector('.status-select');
+                          csvContent += `"${selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim()}",`;
+                     } else {
+                          csvContent += `"${td.textContent.trim()}",`;
+                     }
+                 });
+                 csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+             });
+
+              // Add Notes section if available
+              const teacherNotes = document.getElementById('teacher-notes').value.trim();
+              if (teacherNotes) {
+                  csvContent += `\n"บันทึกเพิ่มเติม:",\n"${teacherNotes.replace(/"/g, '""')}"\n`; // Handle quotes in notes
+              }
+
+
+             const encodedUri = encodeURI(csvContent);
+             const link = document.createElement("a");
+             link.setAttribute("href", encodedUri);
+             link.setAttribute("download", `รายงานบันทึกเวลาเรียน_รายวัน_${attendanceDate}.csv`);
+             document.body.appendChild(link); // Required for Firefox
+             link.click(); // Trigger the download
+             document.body.removeChild(link); // Clean up
+         }
+
+         // Function to export the Comparative Report to CSV
+         function exportComparativeReportCsv() {
+              const analysisSemester = document.getElementById('analysis-semester').value;
+              const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+
+              const table = document.querySelector('#comparative-analysis-container .analysis-table');
+              let csvContent = "data:text/csv;charset=utf-8,%EF%BB%BF"; // Add BOM for UTF-8 in Excel
+
+              // Add title and period info
+              csvContent += `"รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5"\n`;
+              csvContent += `"ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}"\n\n`;
+
+
+              // Get header
+              table.querySelectorAll('thead th').forEach(th => {
+                  csvContent += `"${th.textContent.trim()}",`;
+              });
+              csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+
+              // Get row data
+              table.querySelectorAll('tbody tr').forEach(tr => {
+                  tr.querySelectorAll('td').forEach(td => {
+                      csvContent += `"${td.textContent.trim()}",`;
+                  });
+                  csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+              });
+
+
+             const encodedUri = encodeURI(csvContent);
+             const link = document.createElement("a");
+             link.setAttribute("href", encodedUri);
+             link.setAttribute("download", `รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}.csv`);
+             document.body.appendChild(link); // Required for Firefox
+             link.click(); // Trigger the download
+             document.body.removeChild(link); // Clean up
+         }
+
+
+        // --- Comparative Analysis Functions ---
+
+        // Function to generate the comparative attendance report
+        function generateComparativeReport() {
+             // Check if user is logged in before generating report
+            if (!auth.currentUser) {
+                alert("กรุณาเข้าสู่ระบบก่อนสร้างรายงาน"); // Please log in before generating report
                 return;
             }
 
-            const table = document.getElementById('attendance-table');
-            let csvContent = "data:text/csv;charset=utf-8,%EF%BB%BF"; // Add BOM for UTF-8 in Excel
-
-            // Get header
-            table.querySelectorAll('thead th').forEach(th => {
-                csvContent += `"${th.textContent.trim()}",`;
-            });
-            csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
-
-            // Get row data
-            table.querySelectorAll('tbody tr').forEach(tr => {
-                tr.querySelectorAll('td').forEach((td, index) => {
-                     if (index === 3) { // Status column
-                         const selectElement = td.querySelector('.status-select');
-                         csvContent += `"${selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim()}",`;
-                    } else {
-                         csvContent += `"${td.textContent.trim()}",`;
-                    }
-                });
-                csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
-            });
-
-             // Add Notes section if available
-             const teacherNotes = document.getElementById('teacher-notes').value.trim();
-             if (teacherNotes) {
-                 csvContent += `\n"บันทึกเพิ่มเติม:",\n"${teacherNotes.replace(/"/g, '""')}"\n`; // Handle quotes in notes
+             if (students.length === 0) {
+                 alert("ไม่พบข้อมูลนักเรียน ไม่สามารถสร้างรายงานสรุปได้"); // No student data found, cannot generate report
+                 return;
              }
 
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `รายงานบันทึกเวลาเรียน_${attendanceDate}.csv`);
-            document.body.appendChild(link); // Required for Firefox
-            link.click(); // Trigger the download
-            document.body.removeChild(link); // Clean up
+            const analysisSemester = document.getElementById('analysis-semester').value;
+            const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+            const comparativeAnalysisBody = document.getElementById('comparative-analysis-body');
+            comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message
+
+
+            // Fetch all attendance records
+            attendanceRef.once('value')
+                .then((snapshot) => {
+                    const attendanceData = snapshot.val();
+                    const studentAttendanceSummary = {};
+
+                    // Initialize summary for each student
+                    students.forEach(student => {
+                        studentAttendanceSummary[student.id] = {
+                            present: 0,
+                            sick: 0,
+                            leave: 0,
+                            absent: 0,
+                            total: 0
+                        };
+                    });
+
+                    if (attendanceData) {
+                        // Process attendance data for the selected semester and academic year
+                        for (const dateKey in attendanceData) {
+                            const record = attendanceData[dateKey];
+                            // Simple filtering by year and semester (assuming dateKey is YYYYMMDD)
+                            const recordYear = parseInt(dateKey.substring(0, 4));
+                            // You might need a more robust way to determine semester based on date
+                            // For now, we'll rely on the saved semester value in the record
+                            const recordSemester = record.semester;
+                            const recordAcademicYear = record.academicYear;
+
+
+                            if (recordAcademicYear == analysisAcademicYear && recordSemester == analysisSemester && record.records) {
+                                record.records.forEach(studentRecord => {
+                                    if (studentAttendanceSummary[studentRecord.studentId]) {
+                                        studentAttendanceSummary[studentRecord.studentId][studentRecord.status]++;
+                                        studentAttendanceSummary[studentRecord.studentId].total++;
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    // Populate the comparative analysis table
+                    comparativeAnalysisBody.innerHTML = ''; // Clear loading message
+
+                    if (students.length === 0) {
+                         comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">ไม่พบข้อมูลนักเรียน</td></tr>';
+                         return;
+                    }
+
+
+                    students.forEach(student => {
+                        const summary = studentAttendanceSummary[student.id] || { present: 0, sick: 0, leave: 0, absent: 0, total: 0 };
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${student.id}</td>
+                            <td>${student.number}</td>
+                            <td>${student.name}</td>
+                            <td>${summary.present}</td>
+                            <td>${summary.sick}</td>
+                            <td>${summary.leave}</td>
+                            <td>${summary.absent}</td>
+                            <td>${summary.total}</td>
+                        `;
+                        comparativeAnalysisBody.appendChild(row);
+                    });
+
+                     if (students.length > 0 && Object.keys(studentAttendanceSummary).every(key => studentAttendanceSummary[key].total === 0)) {
+                          comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">ไม่พบข้อมูลการเข้าเรียนสำหรับภาคเรียนและปีการศึกษาที่เลือก</td></tr>';
+                     }
+
+
+                })
+                .catch((error) => {
+                    console.error("Error generating comparative report:", error);
+                     const errorMessage = document.getElementById('error-message');
+                    errorMessage.textContent = `เกิดข้อผิดพลาดในการสร้างรายงานสรุป: ${error.message}`;
+                    errorMessage.style.display = 'block';
+                     comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+                });
         }
 
 
