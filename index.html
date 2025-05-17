@@ -865,7 +865,7 @@
                             <th>ลา</th>
                             <th>ขาด</th>
                             <th>รวมวัน</th>
-                        </tr>
+                            <th>เปอร์เซ็นต์ (%)</th> </tr>
                     </thead>
                     <tbody id="comparative-analysis-body">
                         </tbody>
@@ -873,8 +873,7 @@
             </div>
 
              <div class="student-history-detail" id="student-history-detail">
-                 <button class="back-button" onclick="hideStudentHistory()">ย้อนกลับ</button>
-                 <h3 id="student-history-title">ประวัติการเข้าเรียนของนักเรียน: </h3>
+                 <button class="back-button" onclick="hideStudentHistory()">ย้อนหลัง</button> <h3 id="student-history-title">ประวัติการเข้าเรียนของนักเรียน: </h3>
 
                  <table class="student-history-table">
                      <thead>
@@ -921,6 +920,12 @@
                          <option value="P.4">ป.4</option>
                          <option value="P.5">ป.5</option>
                          <option value="P.6">ป.6</option>
+                     </select>
+                 </div>
+                  <div>
+                     <label for="dashboard-chart-type">ประเภทแผนภูมิ:</label> <select id="dashboard-chart-type">
+                         <option value="daily-trend">แนวโน้มรายวัน</option>
+                         <option value="daily-status-summary">สรุปสถานะรายวัน</option>
                      </select>
                  </div>
                  <button onclick="generateAttendanceChart()">สร้างแผนภูมิ</button>
@@ -1060,6 +1065,9 @@ const firebaseConfig = {
         const studentListSortOrderSelect = document.getElementById('student-list-sort-order');
         const studentListSearchInput = document.getElementById('student-list-search');
 
+        // Get reference for dashboard chart type selector
+        const dashboardChartTypeSelect = document.getElementById('dashboard-chart-type');
+
 
         // Variable to store the unsubscribe function for the student listener
         let studentsListener = null;
@@ -1126,6 +1134,10 @@ const firebaseConfig = {
                 attendanceDateInput.addEventListener('change', (event) => {
                     loadAttendance(event.target.value);
                 });
+
+                // Add event listener to chart type selector
+                 dashboardChartTypeSelect.addEventListener('change', generateAttendanceChart);
+
 
                 // Show the daily report by default after login
                 showDailyReport();
@@ -1286,7 +1298,7 @@ const firebaseConfig = {
              if (selectedGrade) {
                  dailyReportGradeHeading.textContent = `ชั้นประถมศึกษาปีที่ ${selectedGrade.replace('P.', '')}`;
              } else {
-                 dailyReportGradeHeading.textContent = `ชั้นประถมศึกษาปีที่ 5`; // Default or show all
+                 dailyReportGradeHeading.textContent = `บันทึกเวลาเรียนรายวัน`; // Default heading
              }
 
 
@@ -1917,6 +1929,9 @@ const firebaseConfig = {
                 exportComparativeReportPdf();
             } else if (studentHistoryDetail.style.display !== 'none') {
                  exportStudentHistoryPdf();
+            } else if (dashboardContainer.style.display !== 'none') {
+                 // Exporting chart images is more complex, maybe export the underlying data?
+                 alert("การส่งออกแผนภูมิเป็น PDF ยังไม่รองรับในขณะนี้"); // Exporting chart to PDF is not supported at this time
             }
             else {
                 alert("กรุณาเลือกรายงานที่ต้องการส่งออก"); // Please select a report to export
@@ -2139,6 +2154,9 @@ const firebaseConfig = {
                 exportComparativeReportCsv();
             } else if (studentHistoryDetail.style.display !== 'none') {
                  exportStudentHistoryCsv();
+            } else if (dashboardContainer.style.display !== 'none') {
+                 // Exporting chart images is more complex, maybe export the underlying data?
+                 alert("การส่งออกแผนภูมิเป็น CSV ยังไม่รองรับในขณะนี้"); // Exporting chart to CSV is not supported at this time
             }
             else {
                 alert("กรุณาเลือกรายงานที่ต้องการส่งออก"); // Please select a report to export
@@ -2164,6 +2182,7 @@ const firebaseConfig = {
 
              // Get row data
              table.querySelectorAll('tbody tr').forEach(tr => {
+                 const rowData = [];
                  tr.querySelectorAll('td').forEach((td, index) => {
                       if (index === 3) { // Status column
                           const selectElement = td.querySelector('.status-select');
@@ -2302,7 +2321,7 @@ const firebaseConfig = {
             const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
             const analysisGrade = analysisGradeFilterSelect.value; // Get the selected grade for filtering
             const comparativeAnalysisBody = document.getElementById('comparative-analysis-body');
-            comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message
+            comparativeAnalysisBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message (colspan 9 for percentage column)
 
 
             // Fetch all attendance records
@@ -2358,13 +2377,15 @@ const firebaseConfig = {
                     comparativeAnalysisBody.innerHTML = ''; // Clear loading message
 
                     if (filteredStudents.length === 0) {
-                         comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">ไม่พบข้อมูลนักเรียนสำหรับระดับชั้นที่เลือก</td></tr>';
+                         comparativeAnalysisBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">ไม่พบข้อมูลนักเรียนสำหรับระดับชั้นที่เลือก</td></tr>'; // colspan 9
                          return;
                     }
 
 
                     filteredStudents.forEach(student => {
                         const summary = studentAttendanceSummary[student.id] || { present: 0, sick: 0, leave: 0, absent: 0, total: 0 };
+                         const attendancePercentage = summary.total > 0 ? ((summary.present / summary.total) * 100).toFixed(1) : 0; // Calculate percentage
+
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${student.id}</td>
@@ -2375,7 +2396,7 @@ const firebaseConfig = {
                             <td>${summary.leave}</td>
                             <td>${summary.absent}</td>
                             <td>${summary.total}</td>
-                        `;
+                            <td>${attendancePercentage}%</td> `;
                          // Add click listener to the row to show history
                          row.style.cursor = 'pointer'; // Indicate clickable
                          row.onclick = () => showStudentHistory(student.id);
@@ -2385,7 +2406,7 @@ const firebaseConfig = {
 
                      // Check if there are students displayed but no attendance data for the period
                      if (filteredStudents.length > 0 && Object.keys(studentAttendanceSummary).every(key => studentAttendanceSummary[key].total === 0)) {
-                          comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">ไม่พบข้อมูลการเข้าเรียนสำหรับภาคเรียนและปีการศึกษาที่เลือก</td></tr>';
+                          comparativeAnalysisBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">ไม่พบข้อมูลการเข้าเรียนสำหรับภาคเรียนและปีการศึกษาที่เลือก</td></tr>'; // colspan 9
                      }
 
 
@@ -2395,7 +2416,7 @@ const firebaseConfig = {
                      const errorMessage = document.getElementById('error-message');
                     errorMessage.textContent = `เกิดข้อผิดพลาดในการสร้างรายงานสรุป: ${error.message}`;
                     errorMessage.style.display = 'block';
-                     comparativeAnalysisBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+                     comparativeAnalysisBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>'; // colspan 9
                 });
         }
 
@@ -2507,6 +2528,8 @@ const firebaseConfig = {
             const startDateInput = document.getElementById('dashboard-start-date').value;
             const endDateInput = document.getElementById('dashboard-end-date').value;
             const dashboardGrade = dashboardGradeFilterSelect.value; // Get the selected grade for filtering
+            const chartType = dashboardChartTypeSelect.value; // Get the selected chart type
+
 
             if (!startDateInput || !endDateInput) {
                 alert("กรุณาเลือกช่วงวันที่สำหรับแดชบอร์ด"); // Please select a date range for the dashboard
@@ -2526,13 +2549,13 @@ const firebaseConfig = {
             attendanceRef.once('value')
                 .then((snapshot) => {
                     const attendanceData = snapshot.val();
-                    const dailyAttendanceCounts = {}; // To store counts per day
+                    const dailyAttendanceSummary = {}; // To store counts per day and status
 
                     // Initialize counts for each date in the range
                     let currentDate = new Date(startDate);
                     while (currentDate <= endDate) {
                         const dateKey = currentDate.toISOString().split('T')[0].replace(/-/g, '');
-                        dailyAttendanceCounts[dateKey] = { present: 0, totalStudents: 0 };
+                        dailyAttendanceSummary[dateKey] = { present: 0, sick: 0, leave: 0, absent: 0, totalStudents: 0 };
                         currentDate.setDate(currentDate.getDate() + 1);
                     }
 
@@ -2541,7 +2564,7 @@ const firebaseConfig = {
                         for (const dateKey in attendanceData) {
                             const recordDate = new Date(dateKey.substring(0, 4) + '-' + dateKey.substring(4, 6) + '-' + dateKey.substring(6, 8));
 
-                            if (recordDate >= startDate && recordDate <= endDate && dailyAttendanceCounts[dateKey]) {
+                            if (recordDate >= startDate && recordDate <= endDate && dailyAttendanceSummary[dateKey]) {
                                 const record = attendanceData[dateKey];
                                 if (record.records) {
                                      let studentsOnThisDay = 0;
@@ -2550,12 +2573,12 @@ const firebaseConfig = {
                                          // Only count students in the selected grade (if filter is applied)
                                          if (student && (!dashboardGrade || student.grade === dashboardGrade)) {
                                              studentsOnThisDay++;
-                                            if (studentRecord.status === 'present') {
-                                                dailyAttendanceCounts[dateKey].present++;
+                                            if (dailyAttendanceSummary[dateKey][studentRecord.status] !== undefined) {
+                                                dailyAttendanceSummary[dateKey][studentRecord.status]++;
                                             }
                                          }
                                     });
-                                     dailyAttendanceCounts[dateKey].totalStudents = studentsOnThisDay;
+                                     dailyAttendanceSummary[dateKey].totalStudents = studentsOnThisDay;
                                 }
                             }
                         }
@@ -2564,21 +2587,29 @@ const firebaseConfig = {
                     // Prepare data for Chart.js
                     const labels = [];
                     const presentData = [];
-                    const totalData = [];
-                    const percentageData = [];
+                    const sickData = [];
+                    const leaveData = [];
+                    const absentData = [];
+                    const totalStudentsData = []; // Data for total students
+                    const percentageData = []; // Data for percentage
+
 
                     // Sort date keys
-                    const sortedDateKeys = Object.keys(dailyAttendanceCounts).sort();
+                    const sortedDateKeys = Object.keys(dailyAttendanceSummary).sort();
 
                     sortedDateKeys.forEach(dateKey => {
                         const date = new Date(dateKey.substring(0, 4) + '-' + dateKey.substring(4, 6) + '-' + dateKey.substring(6, 8));
                         labels.push(date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })); // Format date for label (e.g., 17 พ.ค.)
 
-                        const counts = dailyAttendanceCounts[dateKey];
+                        const counts = dailyAttendanceSummary[dateKey];
                         presentData.push(counts.present);
-                        totalData.push(counts.totalStudents);
-                        const percentage = counts.totalStudents > 0 ? (counts.present / counts.totalStudents) * 100 : 0;
-                        percentageData.push(percentage.toFixed(1)); // Percentage rounded to 1 decimal place
+                        sickData.push(counts.sick);
+                        leaveData.push(counts.leave);
+                        absentData.push(counts.absent);
+                        totalStudentsData.push(counts.totalStudents); // Add total students data
+                         const percentage = counts.totalStudents > 0 ? ((counts.present / counts.totalStudents) * 100) : 0;
+                         percentageData.push(percentage.toFixed(1)); // Add percentage data
+
                     });
 
 
@@ -2589,80 +2620,162 @@ const firebaseConfig = {
                         attendanceChart.destroy();
                     }
 
-                    // Create the chart
-                    attendanceChart = new Chart(ctx, {
-                        type: 'line', // Line chart for trends
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    label: 'จำนวนนักเรียนที่มาเรียน',
-                                    data: presentData,
-                                    borderColor: '#4caf50', // Green
-                                    backgroundColor: 'rgba(76, 175, 80, 0.2)', // Light green with opacity
-                                    fill: true,
-                                    tension: 0.1
-                                },
-                                {
-                                     label: 'จำนวนนักเรียนทั้งหมด (ระดับชั้นที่เลือก)',
-                                     data: totalData,
-                                     borderColor: '#0288d1', // Blue
-                                     backgroundColor: 'rgba(2, 136, 209, 0.2)', // Light blue with opacity
-                                     fill: true,
-                                     tension: 0.1
-                                },
-                                {
-                                     label: 'เปอร์เซ็นต์การมาเรียน (%)',
-                                     data: percentageData,
-                                     borderColor: '#ff9800', // Orange
-                                     backgroundColor: 'rgba(255, 152, 0, 0.2)', // Light orange with opacity
-                                     fill: false, // No fill for percentage line
-                                     tension: 0.1,
-                                     yAxisID: 'percentage-y-axis' // Use a secondary Y-axis
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false, // Allow chart to resize freely
-                            scales: {
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'วันที่'
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'จำนวนนักเรียน'
-                                    }
-                                },
-                                'percentage-y-axis': { // Secondary Y-axis for percentage
-                                     position: 'right',
-                                     beginAtZero: true,
-                                     max: 100,
-                                     title: {
-                                         display: true,
-                                         text: 'เปอร์เซ็นต์ (%)'
+                    // Create the chart based on selected type
+                    if (chartType === 'daily-trend') {
+                        // Daily Trend Line Chart (Current implementation)
+                         attendanceChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: 'จำนวนนักเรียนที่มาเรียน',
+                                        data: presentData,
+                                        borderColor: '#4caf50',
+                                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                                        fill: true,
+                                        tension: 0.1
+                                    },
+                                     {
+                                         label: 'จำนวนนักเรียนทั้งหมด (ระดับชั้นที่เลือก)',
+                                         data: totalStudentsData,
+                                         borderColor: '#0288d1',
+                                         backgroundColor: 'rgba(2, 136, 209, 0.2)',
+                                         fill: true,
+                                         tension: 0.1
                                      },
-                                     grid: {
-                                         drawOnChartArea: false, // Only draw grid lines for the primary Y-axis
-                                     },
-                                 }
+                                    {
+                                         label: 'เปอร์เซ็นต์การมาเรียน (%)',
+                                         data: percentageData,
+                                         borderColor: '#ff9800',
+                                         backgroundColor: 'rgba(255, 152, 0, 0.2)',
+                                         fill: false,
+                                         tension: 0.1,
+                                         yAxisID: 'percentage-y-axis'
+                                     }
+                                ]
                             },
-                            plugins: {
-                                legend: {
-                                    position: 'top',
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'วันที่'
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'จำนวนนักเรียน'
+                                        }
+                                    },
+                                    'percentage-y-axis': {
+                                         position: 'right',
+                                         beginAtZero: true,
+                                         max: 100,
+                                         title: {
+                                             display: true,
+                                             text: 'เปอร์เซ็นต์ (%)'
+                                         },
+                                         grid: {
+                                             drawOnChartArea: false,
+                                         },
+                                     }
                                 },
-                                title: {
-                                    display: true,
-                                    text: `แนวโน้มการเข้าเรียน ${dashboardGrade ? `(ชั้น ${dashboardGrade})` : '(ทุกระดับชั้น)'} (${startDateInput} ถึง ${endDateInput})`
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: `แนวโน้มการเข้าเรียน ${dashboardGrade ? `(ชั้น ${dashboardGrade})` : '(ทุกระดับชั้น)'} (${startDateInput} ถึง ${endDateInput})`
+                                    },
+                                     tooltip: { // Add tooltips to show percentage on hover
+                                         callbacks: {
+                                             label: function(context) {
+                                                 let label = context.dataset.label || '';
+                                                 if (label) {
+                                                     label += ': ';
+                                                 }
+                                                 if (context.parsed.y !== null) {
+                                                      if (context.dataset.label === 'เปอร์เซ็นต์การมาเรียน (%)') {
+                                                          label += context.parsed.y + '%';
+                                                      } else {
+                                                          label += context.parsed.y;
+                                                      }
+                                                 }
+                                                 return label;
+                                             }
+                                         }
+                                     }
                                 }
                             }
-                        }
-                    });
+                        });
+
+                    } else if (chartType === 'daily-status-summary') {
+                        // Daily Status Summary Bar Chart
+                        attendanceChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: 'มาเรียน',
+                                        data: presentData,
+                                        backgroundColor: '#4caf50', // Green
+                                    },
+                                    {
+                                        label: 'ป่วย',
+                                        data: sickData,
+                                        backgroundColor: '#f44336', // Red
+                                    },
+                                    {
+                                        label: 'ลา',
+                                        data: leaveData,
+                                        backgroundColor: '#ffeb3b', // Yellow
+                                    },
+                                    {
+                                        label: 'ขาด',
+                                        data: absentData,
+                                        backgroundColor: '#ff9800', // Orange
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        stacked: true, // Stack bars
+                                        title: {
+                                            display: true,
+                                            text: 'วันที่'
+                                        }
+                                    },
+                                    y: {
+                                        stacked: true, // Stack bars
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'จำนวนนักเรียน'
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: `สรุปสถานะการเข้าเรียนรายวัน ${dashboardGrade ? `(ชั้น ${dashboardGrade})` : '(ทุกระดับชั้น)'} (${startDateInput} ถึง ${endDateInput})`
+                                    }
+                                }
+                            }
+                        });
+                    }
 
 
                 })
