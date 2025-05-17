@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบบันทึกเวลาเรียน - โรงเรียนบ้านหนองกก</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
             font-family: 'Sarabun', sans-serif;
@@ -639,6 +640,80 @@
              flex-grow: 1; /* Allow search input to grow */
          }
 
+         /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top */
+            display: none; /* Hidden by default */
+        }
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal-content h3 {
+            color: #1b5e20;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .modal-content p {
+            margin-bottom: 20px;
+        }
+        .modal-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .modal-buttons .confirm-button {
+            background-color: #f44336; /* Red for danger */
+            color: white;
+        }
+         .modal-buttons .confirm-button:hover {
+             background-color: #d32f2f;
+         }
+        .modal-buttons .cancel-button {
+            background-color: #ccc;
+            color: #333;
+        }
+         .modal-buttons .cancel-button:hover {
+             background-color: #bbb;
+         }
+
+         /* Loading Indicator Styles */
+         .loading-indicator {
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background-color: rgba(255, 255, 255, 0.8);
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             z-index: 1001; /* Above modal overlay */
+             display: none; /* Hidden by default */
+             font-size: 1.5rem;
+             color: #1b5e20;
+         }
+          .loading-indicator i {
+              margin-right: 10px;
+          }
+
 
         /* Responsive adjustments */
         @media (max-width: 768px) { /* Adjusted breakpoint for tablets */
@@ -857,7 +932,7 @@
                 <table class="analysis-table">
                     <thead>
                         <tr>
-                            <th>เลขประจำตัว</th>
+                             <th>รูป</th> <th>เลขประจำตัว</th>
                             <th>เลขที่</th>
                             <th>ชื่อ-นามสกุล</th>
                             <th>มาเรียน</th>
@@ -942,35 +1017,27 @@
             <h2>จัดการข้อมูลนักเรียน</h2>
 
             <div class="student-form">
-                <input type="text" id="student-id" placeholder="เลขประจำตัว">
-                <input type="number" id="student-number" placeholder="เลขที่">
-                <input type="text" id="student-name" placeholder="ชื่อ-นามสกุล">
-                 <select id="student-grade">
-                     <option value="">เลือกระดับชั้น</option>
+                 <input type="hidden" id="editing-student-id"> <input type="text" id="student-id" placeholder="เลขประจำตัว" title="ใส่เลขประจำตัวนักเรียน"> <input type="number" id="student-number" placeholder="เลขที่" title="ใส่เลขที่นักเรียน"> <input type="text" id="student-name" placeholder="ชื่อ-นามสกุล" title="ใส่ชื่อ-นามสกุลนักเรียน"> <select id="student-grade" title="เลือกระดับชั้นนักเรียน"> <option value="">เลือกระดับชั้น</option>
                      <option value="P.4">ป.4</option>
                      <option value="P.5">ป.5</option>
                      <option value="P.6">ป.6</option>
                  </select>
                 <div>
                     <label for="student-photo">รูปโปรไฟล์:</label>
-                    <input type="file" id="student-photo" accept="image/*">
-                </div>
-                <button onclick="addOrUpdateStudent()">เพิ่ม/แก้ไข นักเรียน</button>
-            </div>
+                    <input type="file" id="student-photo" accept="image/*" title="อัปโหลดรูปโปรไฟล์นักเรียน"> </div>
+                <button id="add-update-student-button" onclick="addOrUpdateStudent()">เพิ่มนักเรียน</button> <button id="cancel-edit-button" onclick="cancelEdit()" style="display: none;">ยกเลิกแก้ไข</button> </div>
 
             <div class="import-section">
                 <h3>นำเข้าข้อมูลนักเรียน (จากไฟล์ CSV)</h3>
                 <div class="import-form">
-                    <input type="file" id="import-csv-file" accept=".csv">
-                    <button onclick="importStudents()">นำเข้าข้อมูล</button>
+                    <input type="file" id="import-csv-file" accept=".csv" title="เลือกไฟล์ CSV เพื่อนำเข้าข้อมูลนักเรียน"> <button onclick="importStudents()">นำเข้าข้อมูล</button>
                 </div>
             </div>
 
             <div class="student-list-controls">
                  <div>
                      <label for="student-list-grade-filter">เลือกระดับชั้น:</label>
-                     <select id="student-list-grade-filter" onchange="renderStudentList()">
-                         <option value="">ทุกระดับชั้น</option>
+                     <select id="student-list-grade-filter" onchange="renderStudentList()" title="กรองรายชื่อนักเรียนตามระดับชั้น"> <option value="">ทุกระดับชั้น</option>
                          <option value="P.4">ป.4</option>
                          <option value="P.5">ป.5</option>
                          <option value="P.6">ป.6</option>
@@ -978,29 +1045,41 @@
                  </div>
                  <div>
                      <label for="student-list-sort-by">เรียงตาม:</label>
-                     <select id="student-list-sort-by" onchange="renderStudentList()">
-                         <option value="number">เลขที่</option>
+                     <select id="student-list-sort-by" onchange="renderStudentList()" title="เรียงรายชื่อนักเรียนตามเกณฑ์ที่เลือก"> <option value="number">เลขที่</option>
                          <option value="name">ชื่อ-นามสกุล</option>
                          <option value="id">เลขประจำตัว</option>
                      </select>
                  </div>
                  <div>
                      <label for="student-list-sort-order">ลำดับ:</label>
-                     <select id="student-list-sort-order" onchange="renderStudentList()">
-                         <option value="asc">น้อยไปมาก (A-Z)</option>
+                     <select id="student-list-sort-order" onchange="renderStudentList()" title="เลือกลำดับการเรียง (น้อยไปมาก/มากไปน้อย)"> <option value="asc">น้อยไปมาก (A-Z)</option>
                          <option value="desc">มากไปน้อย (Z-A)</option>
                      </select>
                  </div>
                   <div>
                      <label for="student-list-search">ค้นหา:</label>
-                     <input type="text" id="student-list-search" placeholder="ค้นหาด้วยชื่อหรือเลขประจำตัว" oninput="renderStudentList()">
-                 </div>
+                     <input type="text" id="student-list-search" placeholder="ค้นหาด้วยชื่อหรือเลขประจำตัว" oninput="renderStudentList()" title="ค้นหารายชื่อนักเรียนด้วยชื่อหรือเลขประจำตัว"> </div>
             </div>
 
 
             <ul class="student-list" id="student-list">
                 </ul>
         </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modal-title"></h3>
+            <p id="modal-message"></p>
+            <div class="modal-buttons">
+                <button class="confirm-button" id="modal-confirm-button">ตกลง</button>
+                <button class="cancel-button" id="modal-cancel-button">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-indicator" id="loading-indicator">
+        <i class="fas fa-spinner fa-spin"></i> กำลังโหลด...
     </div>
 
 
@@ -1068,9 +1147,98 @@ const firebaseConfig = {
         // Get reference for dashboard chart type selector
         const dashboardChartTypeSelect = document.getElementById('dashboard-chart-type');
 
+        // Get references for student form elements
+        const studentIdInput = document.getElementById('student-id');
+        const studentNumberInput = document.getElementById('student-number');
+        const studentNameInput = document.getElementById('student-name');
+        const studentGradeSelect = document.getElementById('student-grade');
+        const studentPhotoInput = document.getElementById('student-photo');
+        const addUpdateStudentButton = document.getElementById('add-update-student-button');
+        const cancelEditButton = document.getElementById('cancel-edit-button');
+        const editingStudentIdInput = document.getElementById('editing-student-id'); // Hidden input
+
+
+        // Get references for modal elements
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalConfirmButton = document.getElementById('modal-confirm-button');
+        const modalCancelButton = document.getElementById('modal-cancel-button');
+
+        // Get reference for loading indicator
+        const loadingIndicator = document.getElementById('loading-indicator');
+
 
         // Variable to store the unsubscribe function for the student listener
         let studentsListener = null;
+
+        // Variable to store the confirm callback for the modal
+        let currentConfirmCallback = null;
+
+
+        // --- UI Utility Functions ---
+
+        // Function to show the loading indicator
+        function showLoading() {
+            loadingIndicator.style.display = 'flex';
+        }
+
+        // Function to hide the loading indicator
+        function hideLoading() {
+            loadingIndicator.style.display = 'none';
+        }
+
+        // Function to show a modal (alert or confirm)
+        function showModal(title, message, type = 'alert', onConfirm = null) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalOverlay.style.display = 'flex';
+
+            if (type === 'alert') {
+                modalConfirmButton.style.display = 'block';
+                modalCancelButton.style.display = 'none';
+                modalConfirmButton.textContent = 'ตกลง'; // OK button text
+                modalConfirmButton.onclick = hideModal; // Just hide on OK
+            } else if (type === 'confirm') {
+                modalConfirmButton.style.display = 'block';
+                modalCancelButton.style.display = 'block';
+                modalConfirmButton.textContent = 'ตกลง'; // Confirm button text
+                 modalConfirmButton.classList.add('confirm-button'); // Add red styling
+                 modalCancelButton.classList.add('cancel-button'); // Add default styling
+
+                currentConfirmCallback = onConfirm; // Store the callback
+                modalConfirmButton.onclick = handleModalConfirm;
+                modalCancelButton.onclick = hideModal;
+            }
+        }
+
+        // Function to hide the modal
+        function hideModal() {
+            modalOverlay.style.display = 'none';
+            currentConfirmCallback = null; // Clear the callback
+             // Reset button classes
+             modalConfirmButton.classList.remove('confirm-button');
+             modalCancelButton.classList.remove('cancel-button');
+        }
+
+        // Function to handle modal confirmation
+        function handleModalConfirm() {
+            if (currentConfirmCallback) {
+                currentConfirmCallback(); // Execute the stored callback
+            }
+            hideModal(); // Always hide the modal after confirmation
+        }
+
+        // Function to display error messages
+        function displayError(message) {
+             const errorMessageElement = document.getElementById('error-message');
+             errorMessageElement.textContent = `เกิดข้อผิดพลาด: ${message}`;
+             errorMessageElement.style.display = 'block';
+             // Hide error after a few seconds
+             setTimeout(() => {
+                 errorMessageElement.style.display = 'none';
+             }, 5000); // Hide after 5 seconds
+        }
 
 
         // --- Authentication Functions ---
@@ -1080,6 +1248,7 @@ const firebaseConfig = {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             loginError.textContent = ''; // Clear previous errors
+            showLoading(); // Show loading indicator
 
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
@@ -1087,6 +1256,7 @@ const firebaseConfig = {
                     const user = userCredential.user;
                     console.log("User logged in:", user.email);
                     // The onAuthStateChanged listener will handle showing the main content
+                    hideLoading(); // Hide loading indicator
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -1095,19 +1265,23 @@ const firebaseConfig = {
                     // Display error message to the user
                     loginError.textContent = `เข้าสู่ระบบไม่สำเร็จ: ${errorMessage}`;
                     loginError.style.display = 'block';
+                    hideLoading(); // Hide loading indicator
                 });
         }
 
         // Function to handle user logout
         function logout() {
+            showLoading(); // Show loading indicator
             auth.signOut().then(() => {
                 // Sign-out successful.
                 console.log("User logged out");
                 // The onAuthStateChanged listener will handle showing the login page
+                hideLoading(); // Hide loading indicator
             }).catch((error) => {
                 // An error happened.
                  console.error("Logout error:", error);
-                 // Optionally display an error message for logout
+                 displayError(`เกิดข้อผิดพลาดในการออกจากระบบ: ${error.message}`);
+                 hideLoading(); // Hide loading indicator
             });
         }
 
@@ -1137,6 +1311,12 @@ const firebaseConfig = {
 
                 // Add event listener to chart type selector
                  dashboardChartTypeSelect.addEventListener('change', generateAttendanceChart);
+
+                 // Add event listeners for student list controls
+                 studentListGradeFilterSelect.addEventListener('change', renderStudentList);
+                 studentListSortBySelect.addEventListener('change', renderStudentList);
+                 studentListSortOrderSelect.addEventListener('change', renderStudentList);
+                 studentListSearchInput.addEventListener('input', renderStudentList);
 
 
                 // Show the daily report by default after login
@@ -1373,17 +1553,17 @@ const firebaseConfig = {
         function saveAttendance() {
             // Check if user is logged in before saving
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนบันทึกข้อมูล"); // Please log in before saving
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนบันทึกข้อมูล', 'alert');
                 return;
             }
 
             const attendanceDate = document.getElementById('attendance-date').value;
              if (!attendanceDate) {
-                alert("กรุณาเลือกวันที่บันทึกข้อมูล"); // Please select a date
+                showModal('ข้อผิดพลาด', 'กรุณาเลือกวันที่บันทึกข้อมูล', 'alert');
                 return;
             }
              if (students.length === 0) {
-                 alert("ไม่พบข้อมูลนักเรียน กรุณาเพิ่มข้อมูลนักเรียนก่อนบันทึกเวลาเรียน"); // No student data found, please add student data before saving attendance
+                 showModal('ข้อผิดพลาด', 'ไม่พบข้อมูลนักเรียน กรุณาเพิ่มข้อมูลนักเรียนก่อนบันทึกเวลาเรียน', 'alert');
                  return;
              }
             const semester = document.getElementById('semester').value;
@@ -1417,6 +1597,7 @@ const firebaseConfig = {
             // Use the date as the key for storing attendance data
             const dateKey = attendanceDate.replace(/-/g, ''); // Remove hyphens for a valid key
 
+            showLoading(); // Show loading indicator
             // Save data to Firebase Realtime Database
             database.ref('attendance/' + dateKey).set(attendanceData)
                 .then(() => {
@@ -1432,15 +1613,14 @@ const firebaseConfig = {
                     setTimeout(() => {
                         confirmationMessage.style.display = 'none';
                     }, 3000); // Hide after 3 seconds
+                    hideLoading(); // Hide loading indicator
                 })
                 .catch((error) => {
                     console.error("Error saving attendance data:", error);
-                     // Show error message
-                    const errorMessage = document.getElementById('error-message');
-                    errorMessage.textContent = `เกิดข้อผิดพลาดในการบันทึกข้อมูล: ${error.message}`;
-                    errorMessage.style.display = 'block';
+                     displayError(`เกิดข้อผิดพลาดในการบันทึกข้อมูล: ${error.message}`);
                      const confirmationMessage = document.getElementById('save-confirmation');
                     confirmationMessage.style.display = 'none';
+                    hideLoading(); // Hide loading indicator
                 });
         }
 
@@ -1460,6 +1640,7 @@ const firebaseConfig = {
             populateAttendanceTable(); // This will populate with students filtered by the attendance-grade-filter
             teacherNotesTextarea.value = ''; // Clear notes
 
+            showLoading(); // Show loading indicator
             database.ref('attendance/' + dateKey).once('value')
                 .then((snapshot) => {
                     const attendanceData = snapshot.val();
@@ -1493,12 +1674,12 @@ const firebaseConfig = {
                         // Table is already reset by populateAttendanceTable()
                         calculatePresentPercentage(); // Calculate percentage for default state
                     }
+                    hideLoading(); // Hide loading indicator
                 })
                 .catch((error) => {
                     console.error("Error loading attendance data:", error);
-                     const errorMessage = document.getElementById('error-message');
-                    errorMessage.textContent = `เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}`;
-                    errorMessage.style.display = 'block';
+                     displayError(`เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}`);
+                    hideLoading(); // Hide loading indicator
                 });
         }
 
@@ -1571,37 +1752,63 @@ const firebaseConfig = {
                     </span>
                     <div>
                         <button class="edit-button" onclick="editStudent('${student.id}')">แก้ไข</button>
-                        <button class="delete-button" onclick="deleteStudent('${student.id}')">ลบ</button>
-                    </div>
+                        <button class="delete-button" onclick="confirmDeleteStudent('${student.id}')">ลบ</button> </div>
                 `;
                 studentListUl.appendChild(listItem);
             });
         }
 
+        // Function to set the form for adding a new student
+        function setAddForm() {
+            editingStudentIdInput.value = '';
+            studentIdInput.value = '';
+            studentNumberInput.value = '';
+            studentNameInput.value = '';
+            studentGradeSelect.value = '';
+            studentPhotoInput.value = '';
+            addUpdateStudentButton.textContent = 'เพิ่มนักเรียน';
+            cancelEditButton.style.display = 'none';
+            studentIdInput.disabled = false; // Allow editing ID when adding
+        }
+
+         // Function to set the form for editing an existing student
+         function setEditForm(student) {
+             editingStudentIdInput.value = student.id;
+             studentIdInput.value = student.id;
+             studentNumberInput.value = student.number;
+             studentNameInput.value = student.name;
+             studentGradeSelect.value = student.grade || '';
+             studentPhotoInput.value = ''; // File input cannot be pre-filled
+
+             addUpdateStudentButton.textContent = 'อัปเดตนักเรียน';
+             cancelEditButton.style.display = 'inline-block';
+             studentIdInput.disabled = true; // Prevent editing ID when updating
+         }
+
+         // Function to cancel editing and reset the form
+         function cancelEdit() {
+             setAddForm();
+         }
+
+
         // Function to add or update a student in Firebase
         async function addOrUpdateStudent() { // Made function async to use await
              // Check if user is logged in before saving
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนจัดการข้อมูลนักเรียน"); // Please log in before managing student data
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนจัดการข้อมูลนักเรียน', 'alert');
                 return;
             }
-
-            const studentIdInput = document.getElementById('student-id');
-            const studentNumberInput = document.getElementById('student-number');
-            const studentNameInput = document.getElementById('student-name');
-            const studentGradeSelect = document.getElementById('student-grade');
-            const studentPhotoInput = document.getElementById('student-photo');
-
 
             const studentId = studentIdInput.value.trim();
             const studentNumber = parseInt(studentNumberInput.value.trim(), 10);
             const studentName = studentNameInput.value.trim();
             const studentGrade = studentGradeSelect.value;
             const photoFile = studentPhotoInput.files[0]; // Get the selected file
+            const isEditing = editingStudentIdInput.value !== '';
 
 
             if (!studentId || !studentName || isNaN(studentNumber) || !studentGrade) {
-                alert("กรุณากรอกข้อมูลนักเรียนให้ครบถ้วน (เลขประจำตัว, เลขที่, ชื่อ-นามสกุล, ระดับชั้น)");
+                showModal('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลนักเรียนให้ครบถ้วน (เลขประจำตัว, เลขที่, ชื่อ-นามสกุล, ระดับชั้น)', 'alert');
                 return;
             }
 
@@ -1609,20 +1816,21 @@ const firebaseConfig = {
 
             // If a photo file is selected, upload it
             if (photoFile) {
+                showLoading(); // Show loading for upload
                 try {
                     const storageRef = storage.ref(`student_photos/${studentId}/${photoFile.name}`);
                     const snapshot = await storageRef.put(photoFile); // Upload the file
                     photoURL = await snapshot.ref.getDownloadURL(); // Get the download URL
                     console.log("Photo uploaded successfully:", photoURL);
+                     hideLoading(); // Hide loading after upload
                 } catch (error) {
                     console.error("Error uploading photo:", error);
-                     const errorMessage = document.getElementById('error-message');
-                    errorMessage.textContent = `เกิดข้อผิดพลาดในการอัปโหลดรูปโปรไฟล์: ${error.message}`;
-                    errorMessage.style.display = 'block';
+                     displayError(`เกิดข้อผิดพลาดในการอัปโหลดรูปโปรไฟล์: ${error.message}`);
+                     hideLoading(); // Hide loading after error
                     return; // Stop if photo upload fails
                 }
-            } else {
-                 // If no new photo is selected, check if the student already has a photo URL
+            } else if (isEditing) {
+                 // If no new photo is selected and we are editing, keep the existing photo URL
                  const existingStudent = students.find(s => s.id === studentId);
                  if (existingStudent && existingStudent.photo) {
                      photoURL = existingStudent.photo; // Keep the existing photo URL
@@ -1638,23 +1846,20 @@ const firebaseConfig = {
                 photo: photoURL // Store the photo URL
             };
 
+            showLoading(); // Show loading for database save
             // Use student ID as the key in Firebase
-            studentsRef.child(studentId).set(studentData)
+            database.ref('students/' + studentId).set(studentData) // Use database.ref directly
                 .then(() => {
                     console.log("Student data saved successfully:", studentData);
-                    // Clear the form
-                    studentIdInput.value = '';
-                    studentNumberInput.value = '';
-                    studentNameInput.value = '';
-                    studentGradeSelect.value = ''; // Clear grade selection
-                    studentPhotoInput.value = ''; // Clear the file input
+                    showModal('สำเร็จ', isEditing ? 'อัปเดตข้อมูลนักเรียนเรียบร้อย!' : 'เพิ่มข้อมูลนักเรียนเรียบร้อย!', 'alert'); // Show success message
+                    setAddForm(); // Reset the form to add mode
                     // No need to call loadStudents() here, the listener will handle the update
+                    hideLoading(); // Hide loading after save
                 })
                 .catch((error) => {
                     console.error("Error saving student data:", error);
-                     const errorMessage = document.getElementById('error-message');
-                    errorMessage.textContent = `เกิดข้อผิดพลาดในการบันทึกข้อมูลนักเรียน: ${error.message}`;
-                    errorMessage.style.display = 'block';
+                     displayError(`เกิดข้อผิดพลาดในการบันทึกข้อมูลนักเรียน: ${error.message}`);
+                    hideLoading(); // Hide loading after error
                 });
         }
 
@@ -1669,6 +1874,7 @@ const firebaseConfig = {
             // Remove any existing listener to avoid duplicates
             stopStudentListener();
 
+            showLoading(); // Show loading while fetching students
             studentsListener = studentsRef.on('value', (snapshot) => {
                 const studentsData = snapshot.val();
                 students = []; // Clear the current students array
@@ -1710,12 +1916,13 @@ const firebaseConfig = {
                       generateAttendanceChart();
                  }
 
+                 hideLoading(); // Hide loading after students are loaded and UI updated
+
 
             }, (error) => {
                 console.error("Error in student listener:", error);
-                 const errorMessage = document.getElementById('error-message');
-                errorMessage.textContent = `เกิดข้อผิดพลาดในการอัปเดตข้อมูลนักเรียนแบบเรียลไทม์: ${error.message}`;
-                errorMessage.style.display = 'block';
+                 displayError(`เกิดข้อผิดพลาดในการอัปเดตข้อมูลนักเรียนแบบเรียลไทม์: ${error.message}`);
+                 hideLoading(); // Hide loading after error
             });
              console.log("Student listener started.");
         }
@@ -1734,53 +1941,67 @@ const firebaseConfig = {
         function editStudent(studentId) {
              // Check if user is logged in before editing
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูลนักเรียน"); // Please log in before editing student data
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูลนักเรียน', 'alert');
                 return;
             }
             const student = students.find(s => s.id === studentId);
             if (student) {
-                document.getElementById('student-id').value = student.id;
-                document.getElementById('student-number').value = student.number;
-                document.getElementById('student-name').value = student.name;
-                document.getElementById('student-grade').value = student.grade || '';
-
-                // Note: File inputs are read-only for security.
-                // We cannot programmatically set the selected file.
-                // The user will need to re-select the photo if they want to change it.
-                // We could display the current photo URL or a preview here if needed.
-                console.log("Editing student. Existing photo URL:", student.photo);
+                setEditForm(student); // Set the form to edit mode
+                // Scroll to the form for easier editing
+                studentIdInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
-        // Function to delete a student from Firebase
-        async function deleteStudent(studentId) { // Made function async to use await
+        // Function to confirm deletion of a student
+        function confirmDeleteStudent(studentId) {
              // Check if user is logged in before deleting
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนลบข้อมูลนักเรียน"); // Please log in before deleting student data
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนลบข้อมูลนักเรียน', 'alert');
                 return;
             }
-            if (confirm(`คุณต้องการลบนักเรียน เลขประจำตัว ${studentId} ใช่หรือไม่?`)) {
+             const studentToDelete = students.find(s => s.id === studentId);
+             if (!studentToDelete) {
+                 console.error("Student not found for deletion:", studentId);
+                 return;
+             }
 
-                try {
-                     // Optional: Delete the photo from Storage first
-                     const studentToDelete = students.find(s => s.id === studentId);
-                     if (studentToDelete && studentToDelete.photo) {
+            showModal(
+                'ยืนยันการลบ',
+                `คุณต้องการลบนักเรียน: ${studentToDelete.name} (เลขประจำตัว ${studentToDelete.id}) ใช่หรือไม่?`,
+                'confirm',
+                () => deleteStudent(studentId) // Pass the delete function as the callback
+            );
+        }
+
+
+        // Function to delete a student from Firebase
+        async function deleteStudent(studentId) { // Made function async to use await
+            showLoading(); // Show loading indicator
+            try {
+                 // Optional: Delete the photo from Storage first
+                 const studentToDelete = students.find(s => s.id === studentId);
+                 if (studentToDelete && studentToDelete.photo) {
+                     try {
                          const photoUrl = studentToDelete.photo;
                          // Get the storage reference from the download URL
                          const photoRef = storage.refFromURL(photoUrl);
                          await photoRef.delete();
                          console.log("Student photo deleted from Storage:", studentId);
+                     } catch (photoError) {
+                         console.warn("Error deleting student photo from Storage:", photoError);
+                         // Continue with deleting the database record even if photo deletion fails
                      }
+                 }
 
-                    await studentsRef.child(studentId).remove(); // Delete data from Realtime Database
-                    console.log("Student data deleted successfully:", studentId);
-                    // No need to call loadStudents() here, the listener will handle the update
-                } catch (error) {
-                    console.error("Error deleting student data or photo:", error);
-                     const errorMessage = document.getElementById('error-message');
-                    errorMessage.textContent = `เกิดข้อผิดพลาดในการลบข้อมูลนักเรียน: ${error.message}`;
-                    errorMessage.style.display = 'block';
-                }
+                await database.ref('students/' + studentId).remove(); // Delete data from Realtime Database
+                console.log("Student data deleted successfully:", studentId);
+                showModal('สำเร็จ', 'ลบข้อมูลนักเรียนเรียบร้อย!', 'alert'); // Show success message
+                // No need to call loadStudents() here, the listener will handle the update
+                hideLoading(); // Hide loading after deletion
+            } catch (error) {
+                console.error("Error deleting student data:", error);
+                 displayError(`เกิดข้อผิดพลาดในการลบข้อมูลนักเรียน: ${error.message}`);
+                 hideLoading(); // Hide loading after error
             }
         }
 
@@ -1790,23 +2011,23 @@ const firebaseConfig = {
         function importStudents() {
              // Check if user is logged in before importing
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนนำเข้าข้อมูลนักเรียน"); // Please log in before importing
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนนำเข้าข้อมูลนักเรียน', 'alert');
                 return;
             }
 
             const file = importCsvFileInput.files[0];
             if (!file) {
-                alert("กรุณาเลือกไฟล์ CSV ที่ต้องการนำเข้า"); // Please select a CSV file to import
+                showModal('ข้อผิดพลาด', 'กรุณาเลือกไฟล์ CSV ที่ต้องการนำเข้า', 'alert');
                 return;
             }
 
             if (file.type !== 'text/csv') {
                  // Basic check, more robust validation might be needed
-                 alert("กรุณาเลือกไฟล์ CSV เท่านั้น"); // Please select a CSV file only
+                 showModal('รูปแบบไฟล์ไม่ถูกต้อง', 'กรุณาเลือกไฟล์ CSV เท่านั้น', 'alert');
                  return;
             }
 
-
+            showLoading(); // Show loading indicator
             const reader = new FileReader();
 
             reader.onload = function(e) {
@@ -1816,9 +2037,8 @@ const firebaseConfig = {
 
             reader.onerror = function(e) {
                 console.error("Error reading file:", e);
-                 const errorMessage = document.getElementById('error-message');
-                errorMessage.textContent = `เกิดข้อผิดพลาดในการอ่านไฟล์: ${reader.error}`;
-                errorMessage.style.display = 'block';
+                 displayError(`เกิดข้อผิดพลาดในการอ่านไฟล์: ${reader.error}`);
+                 hideLoading(); // Hide loading after error
             };
 
             reader.readAsText(file); // Read the file as text
@@ -1828,7 +2048,8 @@ const firebaseConfig = {
         async function parseCsvAndImport(csvText) {
             const lines = csvText.split('\n').filter(line => line.trim() !== ''); // Split into lines and remove empty lines
             if (lines.length <= 1) {
-                alert("ไฟล์ CSV ไม่มีข้อมูลนักเรียน"); // CSV file has no student data
+                showModal('ข้อมูลไม่ถูกต้อง', 'ไฟล์ CSV ไม่มีข้อมูลนักเรียน', 'alert');
+                hideLoading(); // Hide loading
                 return;
             }
 
@@ -1839,7 +2060,8 @@ const firebaseConfig = {
             // Basic header validation (case-insensitive and order-independent check could be more robust)
              const headerMatch = expectedHeader.every(expected => header.some(h => h === expected));
              if (!headerMatch) {
-                 alert(`รูปแบบหัวข้อในไฟล์ CSV ไม่ถูกต้อง\nหัวข้อที่คาดหวัง: ${expectedHeader.join(', ')}\nหัวข้อในไฟล์: ${header.join(', ')}`); // Invalid CSV header format
+                 showModal('รูปแบบไฟล์ไม่ถูกต้อง', `รูปแบบหัวข้อในไฟล์ CSV ไม่ถูกต้อง\nหัวข้อที่คาดหวัง: ${expectedHeader.join(', ')}\nหัวข้อในไฟล์: ${header.join(', ')}`, 'alert');
+                 hideLoading(); // Hide loading
                  return;
              }
 
@@ -1874,7 +2096,8 @@ const firebaseConfig = {
             }
 
             if (studentsToImport.length === 0) {
-                alert("ไม่พบข้อมูลนักเรียนที่ถูกต้องในไฟล์ CSV"); // No valid student data found in CSV file
+                showModal('ข้อมูลไม่ถูกต้อง', "ไม่พบข้อมูลนักเรียนที่ถูกต้องในไฟล์ CSV", 'alert');
+                hideLoading(); // Hide loading
                 return;
             }
 
@@ -1882,32 +2105,21 @@ const firebaseConfig = {
 
             const importPromises = studentsToImport.map(student => {
                 // Use student ID as the key in Firebase
-                return studentsRef.child(student.id).set(student);
+                return database.ref('students/' + student.id).set(student); // Use database.ref directly
             });
 
             try {
                 await Promise.all(importPromises);
                 console.log("All students imported successfully!");
-                 const confirmationMessage = document.getElementById('save-confirmation');
-                confirmationMessage.textContent = `นำเข้าข้อมูลนักเรียนสำเร็จ ${studentsToImport.length} รายการ`; // Imported X students successfully
-                confirmationMessage.style.display = 'block';
-                 const errorMessage = document.getElementById('error-message');
-                errorMessage.style.display = 'none';
-
+                 showModal('สำเร็จ', `นำเข้าข้อมูลนักเรียนสำเร็จ ${studentsToImport.length} รายการ`, 'alert');
                  // Clear the file input after successful import
                  importCsvFileInput.value = '';
-
-
-                 setTimeout(() => {
-                     confirmationMessage.style.display = 'none';
-                 }, 5000); // Hide after 5 seconds
-
+                 hideLoading(); // Hide loading
 
             } catch (error) {
                 console.error("Error importing students:", error);
-                 const errorMessage = document.getElementById('error-message');
-                errorMessage.textContent = `เกิดข้อผิดพลาดในการนำเข้าข้อมูลนักเรียน: ${error.message}`;
-                errorMessage.style.display = 'block';
+                 displayError(`เกิดข้อผิดพลาดในการนำเข้าข้อมูลนักเรียน: ${error.message}`);
+                 hideLoading(); // Hide loading
             }
         }
 
@@ -1918,7 +2130,7 @@ const firebaseConfig = {
         function exportToPdf() {
              // Check if user is logged in before exporting
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนส่งออกข้อมูล"); // Please log in before exporting
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนส่งออกข้อมูล', 'alert');
                 return;
             }
 
@@ -1931,10 +2143,10 @@ const firebaseConfig = {
                  exportStudentHistoryPdf();
             } else if (dashboardContainer.style.display !== 'none') {
                  // Exporting chart images is more complex, maybe export the underlying data?
-                 alert("การส่งออกแผนภูมิเป็น PDF ยังไม่รองรับในขณะนี้"); // Exporting chart to PDF is not supported at this time
+                 showModal('ไม่รองรับ', "การส่งออกแผนภูมิเป็น PDF ยังไม่รองรับในขณะนี้", 'alert');
             }
             else {
-                alert("กรุณาเลือกรายงานที่ต้องการส่งออก"); // Please select a report to export
+                showModal('เลือกรายงาน', "กรุณาเลือกรายงานที่ต้องการส่งออก", 'alert');
             }
         }
 
@@ -1942,7 +2154,7 @@ const firebaseConfig = {
          function exportDailyReportPdf() {
              const attendanceDate = document.getElementById('attendance-date').value;
              if (!attendanceDate) {
-                 alert("กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน");
+                 showModal('เลือกวันที่', "กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน", 'alert');
                  return;
              }
 
@@ -2030,19 +2242,24 @@ const firebaseConfig = {
               const header = [];
               const rows = [];
 
-              // Get header
-              table.querySelectorAll('thead th').forEach(th => {
-                  header.push(th.textContent.trim());
+              // Get header (skip photo column)
+              table.querySelectorAll('thead th').forEach((th, index) => {
+                  if (index !== 0) { // Skip the first column (Photo)
+                      header.push(th.textContent.trim());
+                  }
               });
 
-              // Get row data
+              // Get row data (skip photo column)
               table.querySelectorAll('tbody tr').forEach(tr => {
                   const rowData = [];
-                  tr.querySelectorAll('td').forEach(td => {
-                      rowData.push(td.textContent.trim());
+                  tr.querySelectorAll('td').forEach((td, index) => {
+                      if (index !== 0) { // Skip the first column (Photo)
+                         rowData.push(td.textContent.trim());
+                      }
                   });
                   rows.push(rowData);
               });
+
 
               // Add title
               doc.setFontSize(18);
@@ -2076,7 +2293,7 @@ const firebaseConfig = {
              const studentId = studentHistoryDetail.getAttribute('data-student-id');
              const student = students.find(s => s.id === studentId);
              if (!student) {
-                 alert("ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ");
+                 showModal('ข้อผิดพลาด', "ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ", 'alert');
                  return;
              }
 
@@ -2098,7 +2315,7 @@ const firebaseConfig = {
              // Get table data from the student history table
              const table = document.querySelector('#student-history-detail .student-history-table');
               if (!table) {
-                  alert("ไม่พบข้อมูลประวัติการเข้าเรียน");
+                  showModal('ข้อผิดพลาด', "ไม่พบข้อมูลประวัติการเข้าเรียน", 'alert');
                   return;
               }
              const header = [];
@@ -2143,7 +2360,7 @@ const firebaseConfig = {
         function exportToCsv() {
              // Check if user is logged in before exporting
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนส่งออกข้อมูล"); // Please log in before exporting
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนส่งออกข้อมูล', 'alert');
                 return;
             }
 
@@ -2156,10 +2373,10 @@ const firebaseConfig = {
                  exportStudentHistoryCsv();
             } else if (dashboardContainer.style.display !== 'none') {
                  // Exporting chart images is more complex, maybe export the underlying data?
-                 alert("การส่งออกแผนภูมิเป็น CSV ยังไม่รองรับในขณะนี้"); // Exporting chart to CSV is not supported at this time
+                 showModal('ไม่รองรับ', "การส่งออกแผนภูมิเป็น CSV ยังไม่รองรับในขณะนี้", 'alert');
             }
             else {
-                alert("กรุณาเลือกรายงานที่ต้องการส่งออก"); // Please select a report to export
+                 showModal('เลือกรายงาน', "กรุณาเลือกรายงานที่ต้องการส่งออก", 'alert');
             }
         }
 
@@ -2167,7 +2384,7 @@ const firebaseConfig = {
          function exportDailyReportCsv() {
              const attendanceDate = document.getElementById('attendance-date').value;
               if (!attendanceDate) {
-                 alert("กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน");
+                 showModal('เลือกวันที่', "กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน", 'alert');
                  return;
              }
 
@@ -2186,12 +2403,12 @@ const firebaseConfig = {
                  tr.querySelectorAll('td').forEach((td, index) => {
                       if (index === 3) { // Status column
                           const selectElement = td.querySelector('.status-select');
-                          csvContent += `"${selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim()}",`;
+                          rowData.push(selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim());
                      } else {
-                          csvContent += `"${td.textContent.trim()}",`;
+                          rowData.push(td.textContent.trim());
                      }
                  });
-                 csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+                 csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
              });
 
               // Add Notes section if available
@@ -2224,17 +2441,21 @@ const firebaseConfig = {
               csvContent += `"ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}${analysisGrade ? ` (ชั้น ${analysisGrade})` : ' (ทุกระดับชั้น)'}"\n\n`;
 
 
-              // Get header
-              table.querySelectorAll('thead th').forEach(th => {
-                  csvContent += `"${th.textContent.trim()}",`;
+              // Get header (skip photo column)
+              table.querySelectorAll('thead th').forEach((th, index) => {
+                   if (index !== 0) { // Skip the first column (Photo)
+                      csvContent += `"${th.textContent.trim()}",`;
+                   }
               });
               csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
 
-              // Get row data
+              // Get row data (skip photo column)
               table.querySelectorAll('tbody tr').forEach(tr => {
                   const rowData = [];
-                  tr.querySelectorAll('td').forEach(td => {
-                      rowData.push(td.textContent.trim());
+                  tr.querySelectorAll('td').forEach((td, index) => {
+                       if (index !== 0) { // Skip the first column (Photo)
+                          rowData.push(td.textContent.trim());
+                       }
                   });
                   csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
               });
@@ -2254,13 +2475,13 @@ const firebaseConfig = {
               const studentId = studentHistoryDetail.getAttribute('data-student-id');
              const student = students.find(s => s.id === studentId);
              if (!student) {
-                 alert("ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ");
+                 showModal('ข้อผิดพลาด', "ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ", 'alert');
                  return;
              }
 
              const table = document.querySelector('#student-history-detail .student-history-table');
              if (!table) {
-                 alert("ไม่พบข้อมูลประวัติการเข้าเรียน");
+                 showModal('ข้อผิดพลาด', "ไม่พบข้อมูลประวัติการเข้าเรียน", 'alert');
                  return;
              }
 
@@ -2307,12 +2528,12 @@ const firebaseConfig = {
         function generateComparativeReport() {
              // Check if user is logged in before generating report
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนสร้างรายงาน"); // Please log in before generating report
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนสร้างรายงาน', 'alert');
                 return;
             }
 
              if (students.length === 0) {
-                 alert("ไม่พบข้อมูลนักเรียน ไม่สามารถสร้างรายงานสรุปได้"); // No student data found, cannot generate report
+                 showModal('ข้อมูลไม่ครบถ้วน', 'ไม่พบข้อมูลนักเรียน ไม่สามารถสร้างรายงานสรุปได้', 'alert');
                  return;
              }
 
@@ -2321,10 +2542,11 @@ const firebaseConfig = {
             const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
             const analysisGrade = analysisGradeFilterSelect.value; // Get the selected grade for filtering
             const comparativeAnalysisBody = document.getElementById('comparative-analysis-body');
-            comparativeAnalysisBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message (colspan 9 for percentage column)
+            comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message (colspan 10 for photo and percentage columns)
 
 
             // Fetch all attendance records
+            showLoading(); // Show loading for fetching attendance data
             attendanceRef.once('value')
                 .then((snapshot) => {
                     const attendanceData = snapshot.val();
@@ -2377,7 +2599,8 @@ const firebaseConfig = {
                     comparativeAnalysisBody.innerHTML = ''; // Clear loading message
 
                     if (filteredStudents.length === 0) {
-                         comparativeAnalysisBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">ไม่พบข้อมูลนักเรียนสำหรับระดับชั้นที่เลือก</td></tr>'; // colspan 9
+                         comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูลนักเรียนสำหรับระดับชั้นที่เลือก</td></tr>'; // colspan 10
+                         hideLoading(); // Hide loading
                          return;
                     }
 
@@ -2388,7 +2611,7 @@ const firebaseConfig = {
 
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${student.id}</td>
+                            <td>${student.photo ? `<img src="${student.photo}" alt="รูปโปรไฟล์" class="student-photo-preview">` : ''}</td> <td>${student.id}</td>
                             <td>${student.number}</td>
                             <td>${student.name}</td>
                             <td>${summary.present}</td>
@@ -2406,17 +2629,17 @@ const firebaseConfig = {
 
                      // Check if there are students displayed but no attendance data for the period
                      if (filteredStudents.length > 0 && Object.keys(studentAttendanceSummary).every(key => studentAttendanceSummary[key].total === 0)) {
-                          comparativeAnalysisBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">ไม่พบข้อมูลการเข้าเรียนสำหรับภาคเรียนและปีการศึกษาที่เลือก</td></tr>'; // colspan 9
+                          comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูลการเข้าเรียนสำหรับภาคเรียนและปีการศึกษาที่เลือก</td></tr>'; // colspan 10
                      }
 
+                    hideLoading(); // Hide loading after report generated
 
                 })
                 .catch((error) => {
                     console.error("Error generating comparative report:", error);
-                     const errorMessage = document.getElementById('error-message');
-                    errorMessage.textContent = `เกิดข้อผิดพลาดในการสร้างรายงานสรุป: ${error.message}`;
-                    errorMessage.style.display = 'block';
-                     comparativeAnalysisBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>'; // colspan 9
+                     displayError(`เกิดข้อผิดพลาดในการสร้างรายงานสรุป: ${error.message}`);
+                     comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>'; // colspan 10
+                     hideLoading(); // Hide loading after error
                 });
         }
 
@@ -2424,7 +2647,7 @@ const firebaseConfig = {
         function showStudentHistory(studentId) {
              // Check if user is logged in before showing history
             if (!auth.currentUser) {
-                alert("กรุณาเข้าสู่ระบบก่อนดูประวัติการเข้าเรียน"); // Please log in before viewing history
+                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนดูประวัติการเข้าเรียน', 'alert');
                 return;
             }
 
@@ -2445,7 +2668,7 @@ const firebaseConfig = {
             // Clear previous history data
             studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message
 
-
+            showLoading(); // Show loading for fetching history
             // Fetch all attendance records to find the student's history
             attendanceRef.once('value')
                 .then((snapshot) => {
@@ -2497,14 +2720,14 @@ const firebaseConfig = {
                             studentHistoryBody.appendChild(row);
                         });
                     }
+                    hideLoading(); // Hide loading after history loaded
 
                 })
                 .catch((error) => {
                      console.error("Error loading student history:", error);
-                     const errorMessage = document.getElementById('error-message');
-                    errorMessage.textContent = `เกิดข้อผิดพลาดในการโหลดประวัติการเข้าเรียน: ${error.message}`;
-                    errorMessage.style.display = 'block';
+                     displayError(`เกิดข้อผิดพลาดในการโหลดประวัติการเข้าเรียน: ${error.message}`);
                      studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+                     hideLoading(); // Hide loading after error
                 });
         }
 
@@ -2532,7 +2755,7 @@ const firebaseConfig = {
 
 
             if (!startDateInput || !endDateInput) {
-                alert("กรุณาเลือกช่วงวันที่สำหรับแดชบอร์ด"); // Please select a date range for the dashboard
+                showModal('เลือกช่วงวันที่', "กรุณาเลือกช่วงวันที่สำหรับแดชบอร์ด", 'alert');
                 return;
             }
 
@@ -2540,11 +2763,11 @@ const firebaseConfig = {
             const endDate = new Date(endDateInput);
 
              if (startDate > endDate) {
-                 alert("วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด"); // Start date cannot be after end date
+                 showModal('วันที่ไม่ถูกต้อง', "วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด", 'alert');
                  return;
              }
 
-
+            showLoading(); // Show loading for fetching attendance data
             // Fetch all attendance records
             attendanceRef.once('value')
                 .then((snapshot) => {
@@ -2777,13 +3000,13 @@ const firebaseConfig = {
                         });
                     }
 
+                    hideLoading(); // Hide loading after chart generated
 
                 })
                 .catch((error) => {
                     console.error("Error generating attendance chart:", error);
-                     const errorMessage = document.getElementById('error-message');
-                    errorMessage.textContent = `เกิดข้อผิดพลาดในการสร้างแผนภูมิ: ${error.message}`;
-                    errorMessage.style.display = 'block';
+                     displayError(`เกิดข้อผิดพลาดในการสร้างแผนภูมิ: ${error.message}`);
+                     hideLoading(); // Hide loading after error
                 });
         }
 
