@@ -248,14 +248,14 @@
             color: white;
             border: none;
             border-radius: 5px;
+            font-size: 1rem;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.1s ease;
-             font-size: 1rem;
-        }
-        .student-form button:hover {
+         }
+         .student-form button:hover {
             background-color: #388e3c;
              transform: translateY(-2px);
-        }
+         }
          .student-form button:active {
              transform: translateY(0);
          }
@@ -822,7 +822,7 @@
                      <button class="view-button" onclick="showDashboard()">ดูแดชบอร์ด</button> <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
                  </div>
             </div>
-            <h2 id="daily-report-grade-heading">ชั้นประถมศึกษาปีที่ 5</h2>
+            <h2 id="daily-report-grade-heading">บันทึกเวลาเรียนรายวัน</h2>
 
             <div class="controls">
                 <div>
@@ -1017,27 +1017,35 @@
             <h2>จัดการข้อมูลนักเรียน</h2>
 
             <div class="student-form">
-                 <input type="hidden" id="editing-student-id"> <input type="text" id="student-id" placeholder="เลขประจำตัว" title="ใส่เลขประจำตัวนักเรียน"> <input type="number" id="student-number" placeholder="เลขที่" title="ใส่เลขที่นักเรียน"> <input type="text" id="student-name" placeholder="ชื่อ-นามสกุล" title="ใส่ชื่อ-นามสกุลนักเรียน"> <select id="student-grade" title="เลือกระดับชั้นนักเรียน"> <option value="">เลือกระดับชั้น</option>
+                 <input type="hidden" id="editing-student-id"> <input type="text" id="student-id" placeholder="เลขประจำตัว" title="ใส่เลขประจำตัวนักเรียน">
+                <input type="number" id="student-number" placeholder="เลขที่" title="ใส่เลขที่นักเรียน">
+                <input type="text" id="student-name" placeholder="ชื่อ-นามสกุล" title="ใส่ชื่อ-นามสกุลนักเรียน">
+                 <select id="student-grade" title="เลือกระดับชั้นนักเรียน">
+                     <option value="">เลือกระดับชั้น</option>
                      <option value="P.4">ป.4</option>
                      <option value="P.5">ป.5</option>
                      <option value="P.6">ป.6</option>
                  </select>
                 <div>
                     <label for="student-photo">รูปโปรไฟล์:</label>
-                    <input type="file" id="student-photo" accept="image/*" title="อัปโหลดรูปโปรไฟล์นักเรียน"> </div>
-                <button id="add-update-student-button" onclick="addOrUpdateStudent()">เพิ่มนักเรียน</button> <button id="cancel-edit-button" onclick="cancelEdit()" style="display: none;">ยกเลิกแก้ไข</button> </div>
+                    <input type="file" id="student-photo" accept="image/*" title="อัปโหลดรูปโปรไฟล์นักเรียน">
+                </div>
+                 <button id="add-update-student-button" onclick="addOrUpdateStudent()">เพิ่มนักเรียน</button> <button id="cancel-edit-button" onclick="cancelEdit()" style="display: none;">ยกเลิกแก้ไข</button>
+            </div>
 
             <div class="import-section">
                 <h3>นำเข้าข้อมูลนักเรียน (จากไฟล์ CSV)</h3>
                 <div class="import-form">
-                    <input type="file" id="import-csv-file" accept=".csv" title="เลือกไฟล์ CSV เพื่อนำเข้าข้อมูลนักเรียน"> <button onclick="importStudents()">นำเข้าข้อมูล</button>
+                    <input type="file" id="import-csv-file" accept=".csv" title="เลือกไฟล์ CSV เพื่อนำเข้าข้อมูลนักเรียน">
+                    <button onclick="importStudents()">นำเข้าข้อมูล</button>
                 </div>
             </div>
 
             <div class="student-list-controls">
                  <div>
                      <label for="student-list-grade-filter">เลือกระดับชั้น:</label>
-                     <select id="student-list-grade-filter" onchange="renderStudentList()" title="กรองรายชื่อนักเรียนตามระดับชั้น"> <option value="">ทุกระดับชั้น</option>
+                     <select id="student-list-grade-filter" onchange="renderStudentList()" title="กรองรายชื่อนักเรียนตามระดับชั้น">
+                         <option value="">ทุกระดับชั้น</option>
                          <option value="P.4">ป.4</option>
                          <option value="P.5">ป.5</option>
                          <option value="P.6">ป.6</option>
@@ -1045,20 +1053,23 @@
                  </div>
                  <div>
                      <label for="student-list-sort-by">เรียงตาม:</label>
-                     <select id="student-list-sort-by" onchange="renderStudentList()" title="เรียงรายชื่อนักเรียนตามเกณฑ์ที่เลือก"> <option value="number">เลขที่</option>
+                     <select id="student-list-sort-by" onchange="renderStudentList()" title="เรียงรายชื่อนักเรียนตามเกณฑ์ที่เลือก">
+                         <option value="number">เลขที่</option>
                          <option value="name">ชื่อ-นามสกุล</option>
                          <option value="id">เลขประจำตัว</option>
                      </select>
                  </div>
                  <div>
                      <label for="student-list-sort-order">ลำดับ:</label>
-                     <select id="student-list-sort-order" onchange="renderStudentList()" title="เลือกลำดับการเรียง (น้อยไปมาก/มากไปน้อย)"> <option value="asc">น้อยไปมาก (A-Z)</option>
+                     <select id="student-list-sort-order" onchange="renderStudentList()" title="เลือกลำดับการเรียง (น้อยไปมาก/มากไปน้อย)">
+                         <option value="asc">น้อยไปมาก (A-Z)</option>
                          <option value="desc">มากไปน้อย (Z-A)</option>
                      </select>
                  </div>
                   <div>
                      <label for="student-list-search">ค้นหา:</label>
-                     <input type="text" id="student-list-search" placeholder="ค้นหาด้วยชื่อหรือเลขประจำตัว" oninput="renderStudentList()" title="ค้นหารายชื่อนักเรียนด้วยชื่อหรือเลขประจำตัว"> </div>
+                     <input type="text" id="student-list-search" placeholder="ค้นหาด้วยชื่อหรือเลขประจำตัว" oninput="renderStudentList()" title="ค้นหารายชื่อนักเรียนด้วยชื่อหรือเลขประจำตัว">
+                 </div>
             </div>
 
 
@@ -1312,7 +1323,8 @@ const firebaseConfig = {
                 // Add event listener to chart type selector
                  dashboardChartTypeSelect.addEventListener('change', generateAttendanceChart);
 
-                 // Add event listeners for student list controls
+
+                // Add event listeners for student list controls
                  studentListGradeFilterSelect.addEventListener('change', renderStudentList);
                  studentListSortBySelect.addEventListener('change', renderStudentList);
                  studentListSortOrderSelect.addEventListener('change', renderStudentList);
@@ -1558,14 +1570,22 @@ const firebaseConfig = {
             }
 
             const attendanceDate = document.getElementById('attendance-date').value;
+            const selectedGrade = attendanceGradeFilterSelect.value; // Get the selected grade for saving
+
              if (!attendanceDate) {
                 showModal('ข้อผิดพลาด', 'กรุณาเลือกวันที่บันทึกข้อมูล', 'alert');
                 return;
             }
+             if (!selectedGrade) {
+                 showModal('ข้อผิดพลาด', 'กรุณาเลือกระดับชั้นก่อนบันทึกเวลาเรียน', 'alert'); // Please select a grade before saving attendance
+                 return;
+             }
              if (students.length === 0) {
                  showModal('ข้อผิดพลาด', 'ไม่พบข้อมูลนักเรียน กรุณาเพิ่มข้อมูลนักเรียนก่อนบันทึกเวลาเรียน', 'alert');
                  return;
              }
+
+
             const semester = document.getElementById('semester').value;
             const academicYear = document.getElementById('academic-year').value;
             const teacherNotes = document.getElementById('teacher-notes').value;
@@ -1584,47 +1604,47 @@ const firebaseConfig = {
                 }
             });
 
-            const attendanceData = {
-                date: attendanceDate,
-                semester: semester,
-                academicYear: academicYear,
-                timestamp: timestamp,
-                notes: teacherNotes,
-                records: attendanceRecords,
-                recordedBy: auth.currentUser.email // Store who recorded the attendance
+             // Data structure to save for this date and grade
+            const gradeAttendanceData = {
+                records: attendanceRecords
             };
 
-            // Use the date as the key for storing attendance data
+             // Data structure for the overall date entry (only save notes, semester, year, timestamp once per day)
+             const dateMetadata = {
+                 date: attendanceDate,
+                 semester: semester,
+                 academicYear: academicYear,
+                 timestamp: timestamp,
+                 notes: teacherNotes, // Notes are per day, not per grade
+                 recordedBy: auth.currentUser.email
+             };
+
+
+            // Use the date as the key, and nest grade data under 'grades'
             const dateKey = attendanceDate.replace(/-/g, ''); // Remove hyphens for a valid key
 
             showLoading(); // Show loading indicator
-            // Save data to Firebase Realtime Database
-            database.ref('attendance/' + dateKey).set(attendanceData)
+
+             // Save the grade-specific records
+            database.ref(`attendance/${dateKey}/grades/${selectedGrade}`).set(gradeAttendanceData)
                 .then(() => {
-                    console.log("Attendance data saved successfully!");
-                    // Show confirmation message
-                    const confirmationMessage = document.getElementById('save-confirmation');
-                    confirmationMessage.style.display = 'block';
-                     const errorMessage = document.getElementById('error-message');
-                    errorMessage.style.display = 'none';
-
-
-                    // Hide confirmation message after a few seconds
-                    setTimeout(() => {
-                        confirmationMessage.style.display = 'none';
-                    }, 3000); // Hide after 3 seconds
-                    hideLoading(); // Hide loading indicator
+                    console.log(`Attendance data saved for ${selectedGrade} on ${attendanceDate} successfully!`);
+                    // Now, save the date metadata (notes, etc.) - use update to avoid overwriting other grades
+                    return database.ref(`attendance/${dateKey}`).update(dateMetadata);
+                })
+                .then(() => {
+                    console.log(`Date metadata saved for ${attendanceDate} successfully!`);
+                    showModal('สำเร็จ', `บันทึกข้อมูลเวลาเรียนชั้น ${selectedGrade.replace('P.', '')} วันที่ ${attendanceDate} เรียบร้อย!`, 'alert'); // Show success message
+                    hideLoading(); // Hide loading after save
                 })
                 .catch((error) => {
                     console.error("Error saving attendance data:", error);
                      displayError(`เกิดข้อผิดพลาดในการบันทึกข้อมูล: ${error.message}`);
-                     const confirmationMessage = document.getElementById('save-confirmation');
-                    confirmationMessage.style.display = 'none';
-                    hideLoading(); // Hide loading indicator
+                    hideLoading(); // Hide loading after error
                 });
         }
 
-        // Function to load attendance data from Firebase for a specific date
+        // Function to load attendance data from Firebase for a specific date and grade
         function loadAttendance(date) {
              // Check if user is logged in before loading
             if (!auth.currentUser) {
@@ -1633,23 +1653,38 @@ const firebaseConfig = {
             }
 
             const dateKey = date.replace(/-/g, '');
+            const selectedGrade = attendanceGradeFilterSelect.value; // Get the selected grade for loading
             const teacherNotesTextarea = document.getElementById('teacher-notes');
             const tbody = document.getElementById('student-attendance-body');
+
+             if (!selectedGrade) {
+                 // If no grade is selected, just populate the table with all students
+                 populateAttendanceTable();
+                 teacherNotesTextarea.value = ''; // Clear notes
+                 calculatePresentPercentage();
+                 return;
+             }
+
 
             // Clear previous data display and reset table (filtered by current grade selection)
             populateAttendanceTable(); // This will populate with students filtered by the attendance-grade-filter
             teacherNotesTextarea.value = ''; // Clear notes
 
             showLoading(); // Show loading indicator
-            database.ref('attendance/' + dateKey).once('value')
-                .then((snapshot) => {
-                    const attendanceData = snapshot.val();
-                    if (attendanceData) {
-                        console.log("Loaded attendance data:", attendanceData);
 
-                        // Populate the table with loaded data
-                        if (attendanceData.records) {
-                            attendanceData.records.forEach(record => {
+             // Fetch attendance data for the specific date and grade
+            database.ref(`attendance/${dateKey}`).once('value') // Fetch the whole date object
+                .then((snapshot) => {
+                    const dateData = snapshot.val(); // Data for the specific date
+
+                    if (dateData) {
+                         // Load grade-specific records
+                        const gradeAttendanceData = dateData.grades && dateData.grades[selectedGrade];
+                        if (gradeAttendanceData && gradeAttendanceData.records) {
+                            console.log(`Loaded attendance data for ${selectedGrade} on ${date}:`, gradeAttendanceData.records);
+
+                            // Populate the table with loaded data
+                            gradeAttendanceData.records.forEach(record => {
                                 // Only update rows for students currently displayed (based on grade filter)
                                 const row = tbody.querySelector(`tr[data-student-id='${record.studentId}']`);
                                 if (row) {
@@ -1660,26 +1695,33 @@ const firebaseConfig = {
                                     }
                                 }
                             });
+                        } else {
+                            console.log(`No attendance data found for ${selectedGrade} on ${date}. Displaying default.`);
+                            // Table is already reset by populateAttendanceTable()
                         }
 
-                        // Populate the notes section
-                        if (attendanceData.notes) {
-                            teacherNotesTextarea.value = attendanceData.notes;
-                        }
+                         // Load daily notes
+                         if (dateData.notes) {
+                            teacherNotesTextarea.value = dateData.notes;
+                         } else {
+                             teacherNotesTextarea.value = ''; // Clear if no notes for the day
+                         }
+
 
                         calculatePresentPercentage(); // Calculate percentage based on loaded data
 
                     } else {
-                        console.log("No attendance data found for this date. Displaying default.");
+                        console.log(`No attendance data found for ${date}. Displaying default.`);
                         // Table is already reset by populateAttendanceTable()
+                        teacherNotesTextarea.value = ''; // Clear notes
                         calculatePresentPercentage(); // Calculate percentage for default state
                     }
-                    hideLoading(); // Hide loading indicator
+                    hideLoading(); // Hide loading after data loaded
                 })
                 .catch((error) => {
                     console.error("Error loading attendance data:", error);
                      displayError(`เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}`);
-                    hideLoading(); // Hide loading indicator
+                    hideLoading(); // Hide loading after error
                 });
         }
 
@@ -1706,7 +1748,6 @@ const firebaseConfig = {
                     student.id.toLowerCase().includes(searchTerm)
                 );
             }
-
 
             // Apply Sorting
             const sortBy = studentListSortBySelect.value;
@@ -1742,7 +1783,7 @@ const firebaseConfig = {
             studentsToRender.forEach(student => {
                 const listItem = document.createElement('li');
                 listItem.classList.add('student-item');
-                listItem.setAttribute('data-student-id', student.id); // Use student ID as data attribute
+                listItem.setAttribute('data-student-id', student.id); // Add data attribute for ID
 
                 listItem.innerHTML = `
                     ${student.photo ? `<img src="${student.photo}" alt="รูปโปรไฟล์" class="student-photo-preview">` : ''}
@@ -1753,1272 +1794,1283 @@ const firebaseConfig = {
                     <div>
                         <button class="edit-button" onclick="editStudent('${student.id}')">แก้ไข</button>
                         <button class="delete-button" onclick="confirmDeleteStudent('${student.id}')">ลบ</button> </div>
-                `;
-                studentListUl.appendChild(listItem);
-            });
+            `;
+            studentListUl.appendChild(listItem);
+        });
+    }
+
+    // Function to set the form for adding a new student
+    function setAddForm() {
+        editingStudentIdInput.value = '';
+        studentIdInput.value = '';
+        studentNumberInput.value = '';
+        studentNameInput.value = '';
+        studentGradeSelect.value = '';
+        studentPhotoInput.value = ''; // Clear file input
+        addUpdateStudentButton.textContent = 'เพิ่มนักเรียน'; // Change button text to Add
+        cancelEditButton.style.display = 'none'; // Hide cancel button
+        studentIdInput.disabled = false; // Allow editing ID when adding
+    }
+
+     // Function to set the form for editing an existing student
+     function setEditForm(student) {
+         editingStudentIdInput.value = student.id; // Store the ID of the student being edited
+         studentIdInput.value = student.id;
+         studentNumberInput.value = student.number;
+         studentNameInput.value = student.name;
+         studentGradeSelect.value = student.grade || '';
+         studentPhotoInput.value = ''; // File input cannot be pre-filled
+
+         addUpdateStudentButton.textContent = 'อัปเดตนักเรียน'; // Change button text to Update
+         cancelEditButton.style.display = 'inline-block'; // Show cancel button
+         studentIdInput.disabled = true; // Prevent editing ID when updating
+     }
+
+     // Function to cancel editing and reset the form to Add mode
+     function cancelEdit() {
+         setAddForm();
+     }
+
+
+    // Function to add or update a student in Firebase (Create and Update operations)
+    async function addOrUpdateStudent() { // Made function async to use await
+         // Check if user is logged in before saving
+        if (!auth.currentUser) {
+            showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนจัดการข้อมูลนักเรียน', 'alert');
+            return;
         }
 
-        // Function to set the form for adding a new student
-        function setAddForm() {
-            editingStudentIdInput.value = '';
-            studentIdInput.value = '';
-            studentNumberInput.value = '';
-            studentNameInput.value = '';
-            studentGradeSelect.value = '';
-            studentPhotoInput.value = '';
-            addUpdateStudentButton.textContent = 'เพิ่มนักเรียน';
-            cancelEditButton.style.display = 'none';
-            studentIdInput.disabled = false; // Allow editing ID when adding
+        const studentId = studentIdInput.value.trim();
+        const studentNumber = parseInt(studentNumberInput.value.trim(), 10);
+        const studentName = studentNameInput.value.trim();
+        const studentGrade = studentGradeSelect.value;
+        const photoFile = studentPhotoInput.files[0]; // Get the selected file
+        const isEditing = editingStudentIdInput.value !== ''; // Check if we are in editing mode
+
+
+        if (!studentId || !studentName || isNaN(studentNumber) || !studentGrade) {
+            showModal('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลนักเรียนให้ครบถ้วน (เลขประจำตัว, เลขที่, ชื่อ-นามสกุล, ระดับชั้น)', 'alert');
+            return;
         }
 
-         // Function to set the form for editing an existing student
-         function setEditForm(student) {
-             editingStudentIdInput.value = student.id;
-             studentIdInput.value = student.id;
-             studentNumberInput.value = student.number;
-             studentNameInput.value = student.name;
-             studentGradeSelect.value = student.grade || '';
-             studentPhotoInput.value = ''; // File input cannot be pre-filled
+        let photoURL = '';
 
-             addUpdateStudentButton.textContent = 'อัปเดตนักเรียน';
-             cancelEditButton.style.display = 'inline-block';
-             studentIdInput.disabled = true; // Prevent editing ID when updating
-         }
-
-         // Function to cancel editing and reset the form
-         function cancelEdit() {
-             setAddForm();
-         }
-
-
-        // Function to add or update a student in Firebase
-        async function addOrUpdateStudent() { // Made function async to use await
-             // Check if user is logged in before saving
-            if (!auth.currentUser) {
-                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนจัดการข้อมูลนักเรียน', 'alert');
-                return;
-            }
-
-            const studentId = studentIdInput.value.trim();
-            const studentNumber = parseInt(studentNumberInput.value.trim(), 10);
-            const studentName = studentNameInput.value.trim();
-            const studentGrade = studentGradeSelect.value;
-            const photoFile = studentPhotoInput.files[0]; // Get the selected file
-            const isEditing = editingStudentIdInput.value !== '';
-
-
-            if (!studentId || !studentName || isNaN(studentNumber) || !studentGrade) {
-                showModal('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลนักเรียนให้ครบถ้วน (เลขประจำตัว, เลขที่, ชื่อ-นามสกุล, ระดับชั้น)', 'alert');
-                return;
-            }
-
-            let photoURL = '';
-
-            // If a photo file is selected, upload it
-            if (photoFile) {
-                showLoading(); // Show loading for upload
-                try {
-                    const storageRef = storage.ref(`student_photos/${studentId}/${photoFile.name}`);
-                    const snapshot = await storageRef.put(photoFile); // Upload the file
-                    photoURL = await snapshot.ref.getDownloadURL(); // Get the download URL
-                    console.log("Photo uploaded successfully:", photoURL);
-                     hideLoading(); // Hide loading after upload
-                } catch (error) {
-                    console.error("Error uploading photo:", error);
-                     displayError(`เกิดข้อผิดพลาดในการอัปโหลดรูปโปรไฟล์: ${error.message}`);
-                     hideLoading(); // Hide loading after error
-                    return; // Stop if photo upload fails
-                }
-            } else if (isEditing) {
-                 // If no new photo is selected and we are editing, keep the existing photo URL
-                 const existingStudent = students.find(s => s.id === studentId);
-                 if (existingStudent && existingStudent.photo) {
-                     photoURL = existingStudent.photo; // Keep the existing photo URL
-                 }
-            }
-
-
-            const studentData = {
-                id: studentId,
-                number: studentNumber,
-                name: studentName,
-                grade: studentGrade, // Added grade
-                photo: photoURL // Store the photo URL
-            };
-
-            showLoading(); // Show loading for database save
-            // Use student ID as the key in Firebase
-            database.ref('students/' + studentId).set(studentData) // Use database.ref directly
-                .then(() => {
-                    console.log("Student data saved successfully:", studentData);
-                    showModal('สำเร็จ', isEditing ? 'อัปเดตข้อมูลนักเรียนเรียบร้อย!' : 'เพิ่มข้อมูลนักเรียนเรียบร้อย!', 'alert'); // Show success message
-                    setAddForm(); // Reset the form to add mode
-                    // No need to call loadStudents() here, the listener will handle the update
-                    hideLoading(); // Hide loading after save
-                })
-                .catch((error) => {
-                    console.error("Error saving student data:", error);
-                     displayError(`เกิดข้อผิดพลาดในการบันทึกข้อมูลนักเรียน: ${error.message}`);
-                    hideLoading(); // Hide loading after error
-                });
-        }
-
-        // Function to start the real-time listener for students
-        function startStudentListener() {
-             // Check if user is logged in before starting listener
-            if (!auth.currentUser) {
-                 console.log("User not logged in, cannot start student listener.");
-                return;
-            }
-
-            // Remove any existing listener to avoid duplicates
-            stopStudentListener();
-
-            showLoading(); // Show loading while fetching students
-            studentsListener = studentsRef.on('value', (snapshot) => {
-                const studentsData = snapshot.val();
-                students = []; // Clear the current students array
-                if (studentsData) {
-                    // Convert the object of students to an array
-                    for (const studentId in studentsData) {
-                        students.push(studentsData[studentId]);
-                    }
-                     // Sort students by number initially (or based on default sort controls)
-                    students.sort((a, b) => a.number - b.number);
-                    console.log("Students data updated:", students);
-                } else {
-                     console.log("No students found in database.");
-                }
-                // Render the student list with current filters and sorting
-                renderStudentList();
-                // Populate attendance table based on the current grade filter
-                populateAttendanceTable();
-
-
-                // After students are updated, reload attendance for the current date IF daily report is visible
-                 if (dailyReportContainer.style.display !== 'none') {
-                     const currentDate = document.getElementById('attendance-date').value;
-                     if (currentDate) {
-                         loadAttendance(currentDate);
-                     } else {
-                         // If no date is set, calculate percentage for the default empty state
-                         calculatePresentPercentage();
-                     }
-                 }
-
-                 // If the comparative analysis is visible and not showing history, regenerate the summary
-                 if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
-                      generateComparativeReport();
-                 }
-
-                 // If the dashboard is visible, regenerate the chart
-                 if (dashboardContainer.style.display !== 'none') {
-                      generateAttendanceChart();
-                 }
-
-                 hideLoading(); // Hide loading after students are loaded and UI updated
-
-
-            }, (error) => {
-                console.error("Error in student listener:", error);
-                 displayError(`เกิดข้อผิดพลาดในการอัปเดตข้อมูลนักเรียนแบบเรียลไทม์: ${error.message}`);
-                 hideLoading(); // Hide loading after error
-            });
-             console.log("Student listener started.");
-        }
-
-        // Function to stop the real-time listener for students
-        function stopStudentListener() {
-            if (studentsListener) {
-                studentsRef.off('value', studentsListener);
-                studentsListener = null;
-                console.log("Student listener stopped.");
-            }
-        }
-
-
-        // Function to populate the form for editing a student
-        function editStudent(studentId) {
-             // Check if user is logged in before editing
-            if (!auth.currentUser) {
-                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูลนักเรียน', 'alert');
-                return;
-            }
-            const student = students.find(s => s.id === studentId);
-            if (student) {
-                setEditForm(student); // Set the form to edit mode
-                // Scroll to the form for easier editing
-                studentIdInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        // Function to confirm deletion of a student
-        function confirmDeleteStudent(studentId) {
-             // Check if user is logged in before deleting
-            if (!auth.currentUser) {
-                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนลบข้อมูลนักเรียน', 'alert');
-                return;
-            }
-             const studentToDelete = students.find(s => s.id === studentId);
-             if (!studentToDelete) {
-                 console.error("Student not found for deletion:", studentId);
-                 return;
-             }
-
-            showModal(
-                'ยืนยันการลบ',
-                `คุณต้องการลบนักเรียน: ${studentToDelete.name} (เลขประจำตัว ${studentToDelete.id}) ใช่หรือไม่?`,
-                'confirm',
-                () => deleteStudent(studentId) // Pass the delete function as the callback
-            );
-        }
-
-
-        // Function to delete a student from Firebase
-        async function deleteStudent(studentId) { // Made function async to use await
-            showLoading(); // Show loading indicator
+        // If a photo file is selected, upload it
+        if (photoFile) {
+            showLoading(); // Show loading for upload
             try {
-                 // Optional: Delete the photo from Storage first
-                 const studentToDelete = students.find(s => s.id === studentId);
-                 if (studentToDelete && studentToDelete.photo) {
-                     try {
-                         const photoUrl = studentToDelete.photo;
-                         // Get the storage reference from the download URL
-                         const photoRef = storage.refFromURL(photoUrl);
-                         await photoRef.delete();
-                         console.log("Student photo deleted from Storage:", studentId);
-                     } catch (photoError) {
-                         console.warn("Error deleting student photo from Storage:", photoError);
-                         // Continue with deleting the database record even if photo deletion fails
-                     }
-                 }
+                // Create a storage reference with a unique path for the photo
+                const storageRef = storage.ref(`student_photos/${studentId}/${photoFile.name}`);
+                const snapshot = await storageRef.put(photoFile); // Upload the file
+                photoURL = await snapshot.ref.getDownloadURL(); // Get the download URL
+                console.log("Photo uploaded successfully:", photoURL);
+                 hideLoading(); // Hide loading after upload
+            } catch (error) {
+                console.error("Error uploading photo:", error);
+                 displayError(`เกิดข้อผิดพลาดในการอัปโหลดรูปโปรไฟล์: ${error.message}`);
+                 hideLoading(); // Hide loading after error
+                return; // Stop if photo upload fails
+            }
+        } else if (isEditing) {
+             // If no new photo is selected and we are editing, keep the existing photo URL
+             const existingStudent = students.find(s => s.id === studentId);
+             if (existingStudent && existingStudent.photo) {
+                 photoURL = existingStudent.photo; // Keep the existing photo URL
+             }
+        }
 
-                await database.ref('students/' + studentId).remove(); // Delete data from Realtime Database
-                console.log("Student data deleted successfully:", studentId);
-                showModal('สำเร็จ', 'ลบข้อมูลนักเรียนเรียบร้อย!', 'alert'); // Show success message
+
+        const studentData = {
+            id: studentId,
+            number: studentNumber,
+            name: studentName,
+            grade: studentGrade, // Added grade
+            photo: photoURL // Store the photo URL
+        };
+
+        showLoading(); // Show loading for database save
+        // Use student ID as the key in Firebase Realtime Database
+        database.ref('students/' + studentId).set(studentData) // Use database.ref directly
+            .then(() => {
+                console.log("Student data saved successfully:", studentData);
+                showModal('สำเร็จ', isEditing ? 'อัปเดตข้อมูลนักเรียนเรียบร้อย!' : 'เพิ่มข้อมูลนักเรียนเรียบร้อย!', 'alert'); // Show success message
+                setAddForm(); // Reset the form to add mode
                 // No need to call loadStudents() here, the listener will handle the update
-                hideLoading(); // Hide loading after deletion
-            } catch (error) {
-                console.error("Error deleting student data:", error);
-                 displayError(`เกิดข้อผิดพลาดในการลบข้อมูลนักเรียน: ${error.message}`);
-                 hideLoading(); // Hide loading after error
-            }
+                hideLoading(); // Hide loading after save
+            })
+            .catch((error) => {
+                console.error("Error saving student data:", error);
+                 displayError(`เกิดข้อผิดพลาดในการบันทึกข้อมูลนักเรียน: ${error.message}`);
+                hideLoading(); // Hide loading after error
+            });
+    }
+
+    // Function to start the real-time listener for students (Read operation - initial load and updates)
+    function startStudentListener() {
+         // Check if user is logged in before starting listener
+        if (!auth.currentUser) {
+             console.log("User not logged in, cannot start student listener.");
+            return;
         }
 
-        // --- Import Functions ---
+        // Remove any existing listener to avoid duplicates
+        stopStudentListener();
 
-        // Function to import students from a CSV file
-        function importStudents() {
-             // Check if user is logged in before importing
-            if (!auth.currentUser) {
-                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนนำเข้าข้อมูลนักเรียน', 'alert');
-                return;
+        showLoading(); // Show loading while fetching students
+        // Use .on() for real-time updates
+        studentsRef.on('value', (snapshot) => {
+            const studentsData = snapshot.val();
+            students = []; // Clear the current students array
+            if (studentsData) {
+                // Convert the object of students to an array
+                for (const studentId in studentsData) {
+                    students.push(studentsData[studentId]);
+                }
+                 // Sort students by number initially (or based on default sort controls)
+                students.sort((a, b) => a.number - b.number);
+                console.log("Students data updated:", students);
+            } else {
+                 console.log("No students found in database.");
             }
+            // Render the student list with current filters and sorting whenever data changes
+            renderStudentList();
+            // Populate attendance table based on the current grade filter
+            populateAttendanceTable();
 
-            const file = importCsvFileInput.files[0];
-            if (!file) {
-                showModal('ข้อผิดพลาด', 'กรุณาเลือกไฟล์ CSV ที่ต้องการนำเข้า', 'alert');
-                return;
-            }
 
-            if (file.type !== 'text/csv') {
-                 // Basic check, more robust validation might be needed
-                 showModal('รูปแบบไฟล์ไม่ถูกต้อง', 'กรุณาเลือกไฟล์ CSV เท่านั้น', 'alert');
-                 return;
-            }
-
-            showLoading(); // Show loading indicator
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const text = e.target.result;
-                parseCsvAndImport(text);
-            };
-
-            reader.onerror = function(e) {
-                console.error("Error reading file:", e);
-                 displayError(`เกิดข้อผิดพลาดในการอ่านไฟล์: ${reader.error}`);
-                 hideLoading(); // Hide loading after error
-            };
-
-            reader.readAsText(file); // Read the file as text
-        }
-
-        // Function to parse CSV text and import data to Firebase
-        async function parseCsvAndImport(csvText) {
-            const lines = csvText.split('\n').filter(line => line.trim() !== ''); // Split into lines and remove empty lines
-            if (lines.length <= 1) {
-                showModal('ข้อมูลไม่ถูกต้อง', 'ไฟล์ CSV ไม่มีข้อมูลนักเรียน', 'alert');
-                hideLoading(); // Hide loading
-                return;
-            }
-
-            // Assuming the first line is the header
-            const header = lines[0].split(',').map(h => h.trim()); // Split header by comma
-            const expectedHeader = ["Student ID", "Student Number", "Full Name", "Grade Level", "Photo URL"]; // Expected headers
-
-            // Basic header validation (case-insensitive and order-independent check could be more robust)
-             const headerMatch = expectedHeader.every(expected => header.some(h => h === expected));
-             if (!headerMatch) {
-                 showModal('รูปแบบไฟล์ไม่ถูกต้อง', `รูปแบบหัวข้อในไฟล์ CSV ไม่ถูกต้อง\nหัวข้อที่คาดหวัง: ${expectedHeader.join(', ')}\nหัวข้อในไฟล์: ${header.join(', ')}`, 'alert');
-                 hideLoading(); // Hide loading
-                 return;
+            // After students are updated, reload attendance for the current date IF daily report is visible
+             if (dailyReportContainer.style.display !== 'none') {
+                 const currentDate = document.getElementById('attendance-date').value;
+                 if (currentDate) {
+                     loadAttendance(currentDate);
+                 } else {
+                     // If no date is set, calculate percentage for the default empty state
+                     calculatePresentPercentage();
+                 }
              }
 
+             // If the comparative analysis is visible and not showing history, regenerate the summary
+             if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
+                  generateComparativeReport();
+             }
 
-            const studentsToImport = [];
-            for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',').map(v => v.trim()); // Split values by comma
+             // If the dashboard is visible, regenerate the chart
+             if (dashboardContainer.style.display !== 'none') {
+                  generateAttendanceChart();
+             }
 
-                // Basic validation for number of columns
-                if (values.length !== header.length) {
-                     console.warn(`Skipping row ${i + 1} due to incorrect column count:`, lines[i]);
-                     continue; // Skip rows with incorrect column count
-                }
+             hideLoading(); // Hide loading after students are loaded and UI updated
 
-                const studentData = {};
-                header.forEach((h, index) => {
-                    // Map header to data keys
-                    if (h === "Student ID") studentData.id = values[index];
-                    else if (h === "Student Number") studentData.number = parseInt(values[index], 10);
-                    else if (h === "Full Name") studentData.name = values[index];
-                    else if (h === "Grade Level") studentData.grade = values[index];
-                    else if (h === "Photo URL") studentData.photo = values[index];
-                });
 
-                 // Validate required fields
-                if (!studentData.id || !studentData.name || isNaN(studentData.number) || !studentData.grade) {
-                     console.warn(`Skipping row ${i + 1} due to missing required data:`, studentData);
-                     continue; // Skip rows with missing required data
-                }
+        }, (error) => {
+            console.error("Error in student listener:", error);
+             displayError(`เกิดข้อผิดพลาดในการอัปเดตข้อมูลนักเรียนแบบเรียลไทม์: ${error.message}`);
+             hideLoading(); // Hide loading after error
+        });
+         console.log("Student listener started.");
+    }
 
-                studentsToImport.push(studentData);
+    // Function to stop the real-time listener for students
+    function stopStudentListener() {
+        if (studentsListener) {
+            studentsRef.off('value', studentsListener);
+            studentsListener = null;
+            console.log("Student listener stopped.");
+        }
+    }
+
+
+    // Function to populate the form for editing a student (Prepare for Update)
+    function editStudent(studentId) {
+         // Check if user is logged in before editing
+        if (!auth.currentUser) {
+            showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูลนักเรียน', 'alert');
+            return;
+        }
+        const student = students.find(s => s.id === studentId);
+        if (student) {
+            setEditForm(student); // Set the form to edit mode
+            // Scroll to the form for easier editing
+            studentIdInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    // Function to confirm deletion of a student (Prepare for Delete)
+    function confirmDeleteStudent(studentId) {
+         // Check if user is logged in before deleting
+        if (!auth.currentUser) {
+            showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนลบข้อมูลนักเรียน', 'alert');
+            return;
+        }
+         const studentToDelete = students.find(s => s.id === studentId);
+         if (!studentToDelete) {
+             console.error("Student not found for deletion:", studentId);
+             return;
+         }
+
+        showModal(
+            'ยืนยันการลบ',
+            `คุณต้องการลบนักเรียน: ${studentToDelete.name} (เลขประจำตัว ${studentToDelete.id}) ใช่หรือไม่?`,
+            'confirm',
+            () => deleteStudent(studentId) // Pass the delete function as the callback
+        );
+    }
+
+
+    // Function to delete a student from Firebase (Delete operation)
+    async function deleteStudent(studentId) { // Made function async to use await
+        showLoading(); // Show loading indicator
+        try {
+             // Optional: Delete the photo from Storage first
+             const studentToDelete = students.find(s => s.id === studentId);
+             if (studentToDelete && studentToDelete.photo) {
+                 try {
+                     const photoUrl = studentToDelete.photo;
+                     // Get the storage reference from the download URL
+                     const photoRef = storage.refFromURL(photoUrl);
+                     await photoRef.delete();
+                     console.log("Student photo deleted from Storage:", studentId);
+                 } catch (photoError) {
+                     console.warn("Error deleting student photo from Storage:", photoError);
+                     // Continue with deleting the database record even if photo deletion fails
+                 }
+             }
+
+            await database.ref('students/' + studentId).remove(); // Delete data from Realtime Database
+            console.log("Student data deleted successfully:", studentId);
+            showModal('สำเร็จ', 'ลบข้อมูลนักเรียนเรียบร้อย!', 'alert'); // Show success message
+            // No need to call loadStudents() here, the listener will handle the update
+            hideLoading(); // Hide loading after deletion
+        } catch (error) {
+            console.error("Error deleting student data:", error);
+             displayError(`เกิดข้อผิดพลาดในการลบข้อมูลนักเรียน: ${error.message}`);
+             hideLoading(); // Hide loading after error
+        }
+    }
+
+    // --- Import Functions ---
+
+    // Function to import students from a CSV file (Create/Update operations via import)
+    function importStudents() {
+         // Check if user is logged in before importing
+        if (!auth.currentUser) {
+            showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนนำเข้าข้อมูลนักเรียน', 'alert');
+            return;
+        }
+
+        const file = importCsvFileInput.files[0];
+        if (!file) {
+            showModal('ข้อผิดพลาด', 'กรุณาเลือกไฟล์ CSV ที่ต้องการนำเข้า', 'alert');
+            return;
+        }
+
+        if (file.type !== 'text/csv') {
+             // Basic check, more robust validation might be needed
+             showModal('รูปแบบไฟล์ไม่ถูกต้อง', 'กรุณาเลือกไฟล์ CSV เท่านั้น', 'alert');
+             return;
+        }
+
+        showLoading(); // Show loading indicator
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const text = e.target.result;
+            parseCsvAndImport(text);
+        };
+
+        reader.onerror = function(e) {
+            console.error("Error reading file:", e);
+             displayError(`เกิดข้อผิดพลาดในการอ่านไฟล์: ${reader.error}`);
+             hideLoading(); // Hide loading after error
+        };
+
+        reader.readAsText(file); // Read the file as text
+    }
+
+    // Function to parse CSV text and import data to Firebase
+    async function parseCsvAndImport(csvText) {
+        const lines = csvText.split('\n').filter(line => line.trim() !== ''); // Split into lines and remove empty lines
+        if (lines.length <= 1) {
+            showModal('ข้อมูลไม่ถูกต้อง', 'ไฟล์ CSV ไม่มีข้อมูลนักเรียน', 'alert');
+            hideLoading(); // Hide loading
+            return;
+        }
+
+        // Assuming the first line is the header
+        const header = lines[0].split(',').map(h => h.trim()); // Split header by comma
+        const expectedHeader = ["Student ID", "Student Number", "Full Name", "Grade Level", "Photo URL"]; // Expected headers
+
+        // Basic header validation (case-insensitive and order-independent check could be more robust)
+         const headerMatch = expectedHeader.every(expected => header.some(h => h === expected));
+         if (!headerMatch) {
+             showModal('รูปแบบไฟล์ไม่ถูกต้อง', `รูปแบบหัวข้อในไฟล์ CSV ไม่ถูกต้อง\nหัวข้อที่คาดหวัง: ${expectedHeader.join(', ')}\nหัวข้อในไฟล์: ${header.join(', ')}`, 'alert');
+             hideLoading(); // Hide loading
+             return;
+         }
+
+
+        const studentsToImport = [];
+        for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].split(',').map(v => v.trim()); // Split values by comma
+
+            // Basic validation for number of columns
+            if (values.length !== header.length) {
+                 console.warn(`Skipping row ${i + 1} due to incorrect column count:`, lines[i]);
+                 continue; // Skip rows with incorrect column count
             }
 
-            if (studentsToImport.length === 0) {
-                showModal('ข้อมูลไม่ถูกต้อง', "ไม่พบข้อมูลนักเรียนที่ถูกต้องในไฟล์ CSV", 'alert');
-                hideLoading(); // Hide loading
-                return;
-            }
-
-            console.log("Students to import:", studentsToImport);
-
-            const importPromises = studentsToImport.map(student => {
-                // Use student ID as the key in Firebase
-                return database.ref('students/' + student.id).set(student); // Use database.ref directly
+            const studentData = {};
+            header.forEach((h, index) => {
+                // Map header to data keys
+                if (h === "Student ID") studentData.id = values[index];
+                else if (h === "Student Number") studentData.number = parseInt(values[index], 10);
+                else if (h === "Full Name") studentData.name = values[index];
+                else if (h === "Grade Level") studentData.grade = values[index];
+                else if (h === "Photo URL") studentData.photo = values[index];
             });
 
-            try {
-                await Promise.all(importPromises);
-                console.log("All students imported successfully!");
-                 showModal('สำเร็จ', `นำเข้าข้อมูลนักเรียนสำเร็จ ${studentsToImport.length} รายการ`, 'alert');
-                 // Clear the file input after successful import
-                 importCsvFileInput.value = '';
-                 hideLoading(); // Hide loading
-
-            } catch (error) {
-                console.error("Error importing students:", error);
-                 displayError(`เกิดข้อผิดพลาดในการนำเข้าข้อมูลนักเรียน: ${error.message}`);
-                 hideLoading(); // Hide loading
+             // Validate required fields
+            if (!studentData.id || !studentData.name || isNaN(studentData.number) || !studentData.grade) {
+                 console.warn(`Skipping row ${i + 1} due to missing required data:`, studentData);
+                 continue; // Skip rows with missing required data
             }
+
+            studentsToImport.push(studentData);
         }
 
-
-        // --- Export Functions ---
-
-        // Function to export attendance data to PDF
-        function exportToPdf() {
-             // Check if user is logged in before exporting
-            if (!auth.currentUser) {
-                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนส่งออกข้อมูล', 'alert');
-                return;
-            }
-
-            // Determine which report is currently visible to export
-            if (dailyReportContainer.style.display !== 'none') {
-                exportDailyReportPdf();
-            } else if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
-                exportComparativeReportPdf();
-            } else if (studentHistoryDetail.style.display !== 'none') {
-                 exportStudentHistoryPdf();
-            } else if (dashboardContainer.style.display !== 'none') {
-                 // Exporting chart images is more complex, maybe export the underlying data?
-                 showModal('ไม่รองรับ', "การส่งออกแผนภูมิเป็น PDF ยังไม่รองรับในขณะนี้", 'alert');
-            }
-            else {
-                showModal('เลือกรายงาน', "กรุณาเลือกรายงานที่ต้องการส่งออก", 'alert');
-            }
+        if (studentsToImport.length === 0) {
+            showModal('ข้อมูลไม่ถูกต้อง', "ไม่พบข้อมูลนักเรียนที่ถูกต้องในไฟล์ CSV", 'alert');
+            hideLoading(); // Hide loading
+            return;
         }
 
-         // Function to export the Daily Report to PDF
-         function exportDailyReportPdf() {
-             const attendanceDate = document.getElementById('attendance-date').value;
-             if (!attendanceDate) {
-                 showModal('เลือกวันที่', "กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน", 'alert');
-                 return;
-             }
+        console.log("Students to import:", studentsToImport);
 
-             const { jsPDF } = window.jspdf;
-             const doc = new jsPDF();
+        const importPromises = studentsToImport.map(student => {
+            // Use student ID as the key in Firebase
+            return database.ref('students/' + student.id).set(student); // Use database.ref directly
+        });
 
-             // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
+        try {
+            await Promise.all(importPromises);
+            console.log("All students imported successfully!");
+             showModal('สำเร็จ', `นำเข้าข้อมูลนักเรียนสำเร็จ ${studentsToImport.length} รายการ`, 'alert');
+             // Clear the file input after successful import
+             importCsvFileInput.value = '';
+             hideLoading(); // Hide loading
 
-             // Get table data
-             const table = document.getElementById('attendance-table');
-             const header = [];
-             const rows = [];
-
-             // Get header
-             table.querySelectorAll('thead th').forEach(th => {
-                 header.push(th.textContent.trim());
-             });
-
-             // Get row data
-             table.querySelectorAll('tbody tr').forEach(tr => {
-                 const rowData = [];
-                 tr.querySelectorAll('td').forEach((td, index) => {
-                     if (index === 3) { // Status column
-                          const selectElement = td.querySelector('.status-select');
-                          rowData.push(selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim());
-                     } else {
-                          rowData.push(td.textContent.trim());
-                     }
-                 });
-                 rows.push(rowData);
-             });
-
-             // Add title and date
-             doc.setFontSize(18);
-             doc.text(`รายงานบันทึกเวลาเรียน ชั้นประถมศึกษาปีที่ 5`, 14, 22);
-             doc.setFontSize(12);
-             doc.text(`วันที่: ${attendanceDate}`, 14, 30);
-
-             // Add table
-             doc.autoTable({
-                 startY: 40,
-                 head: [header],
-                 body: rows,
-                 theme: 'striped',
-                 headStyles: { fillColor: [76, 175, 80] }, // Green header
-                 styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
-                 didDrawPage: function (data) {
-                     // Footer
-                     let pageNumber = doc.internal.getNumberOfPages();
-                     doc.setFontSize(10);
-                     doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
-                 }
-             });
-
-              // Add Notes section if available
-              const teacherNotes = document.getElementById('teacher-notes').value.trim();
-              if (teacherNotes) {
-                  let finalY = doc.lastAutoTable.finalY; // Get the end Y position of the table
-                  doc.setFontSize(12);
-                  doc.text('บันทึกเพิ่มเติม:', 14, finalY + 20);
-                  doc.setFontSize(10);
-                  // Split notes into lines to fit within page width
-                  const splitNotes = doc.splitTextToSize(teacherNotes, doc.internal.pageSize.width - 28); // 28 = left + right margin
-                  doc.text(splitNotes, 14, finalY + 28);
-              }
+        } catch (error) {
+            console.error("Error importing students:", error);
+             displayError(`เกิดข้อผิดพลาดในการนำเข้าข้อมูลนักเรียน: ${error.message}`);
+             hideLoading(); // Hide loading
+        }
+    }
 
 
-             // Save the PDF
-             doc.save(`รายงานบันทึกเวลาเรียน_รายวัน_${attendanceDate}.pdf`);
+    // --- Export Functions ---
+
+    // Function to export attendance data to PDF
+    function exportToPdf() {
+         // Check if user is logged in before exporting
+        if (!auth.currentUser) {
+            showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนส่งออกข้อมูล', 'alert');
+            return;
+        }
+
+        // Determine which report is currently visible to export
+        if (dailyReportContainer.style.display !== 'none') {
+            exportDailyReportPdf();
+        } else if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
+            exportComparativeReportPdf();
+        } else if (studentHistoryDetail.style.display !== 'none') {
+             exportStudentHistoryPdf();
+        } else if (dashboardContainer.style.display !== 'none') {
+             // Exporting chart images is more complex, maybe export the underlying data?
+             showModal('ไม่รองรับ', "การส่งออกแผนภูมิเป็น PDF ยังไม่รองรับในขณะนี้", 'alert');
+        }
+        else {
+            showModal('เลือกรายงาน', "กรุณาเลือกรายงานที่ต้องการส่งออก", 'alert');
+        }
+    }
+
+     // Function to export the Daily Report to PDF
+     function exportDailyReportPdf() {
+         const attendanceDate = document.getElementById('attendance-date').value;
+         if (!attendanceDate) {
+             showModal('เลือกวันที่', "กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน", 'alert');
+             return;
          }
 
-         // Function to export the Comparative Report to PDF
-         function exportComparativeReportPdf() {
-              const analysisSemester = document.getElementById('analysis-semester').value;
-              const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
-              const analysisGrade = analysisGradeFilterSelect.value; // Get selected grade for report title
+         const { jsPDF } = window.jspdf;
+         const doc = new jsPDF();
 
-              const { jsPDF } = window.jspdf;
-              const doc = new jsPDF();
+         // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
 
-              // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
+         // Get table data
+         const table = document.getElementById('attendance-table');
+         const header = [];
+         const rows = [];
 
-              // Get table data from the analysis table
-              const table = document.querySelector('#comparative-analysis-container .analysis-table');
-              const header = [];
-              const rows = [];
+         // Get header
+         table.querySelectorAll('thead th').forEach(th => {
+             header.push(th.textContent.trim());
+         });
 
-              // Get header (skip photo column)
-              table.querySelectorAll('thead th').forEach((th, index) => {
-                  if (index !== 0) { // Skip the first column (Photo)
-                      header.push(th.textContent.trim());
-                  }
-              });
+         // Get row data
+         table.querySelectorAll('tbody tr').forEach(tr => {
+             const rowData = [];
+             tr.querySelectorAll('td').forEach((td, index) => {
+                 if (index === 3) { // Status column
+                      const selectElement = td.querySelector('.status-select');
+                      rowData.push(selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim());
+                 } else {
+                      rowData.push(td.textContent.trim());
+                 }
+             });
+             rows.push(rowData);
+         });
 
-              // Get row data (skip photo column)
-              table.querySelectorAll('tbody tr').forEach(tr => {
-                  const rowData = [];
-                  tr.querySelectorAll('td').forEach((td, index) => {
-                      if (index !== 0) { // Skip the first column (Photo)
-                         rowData.push(td.textContent.trim());
-                      }
-                  });
-                  rows.push(rowData);
-              });
+         // Add title and date
+         doc.setFontSize(18);
+         doc.text(`รายงานบันทึกเวลาเรียน ชั้นประถมศึกษาปีที่ 5`, 14, 22);
+         doc.setFontSize(12);
+         doc.text(`วันที่: ${attendanceDate}`, 14, 30);
 
+         // Add table
+         doc.autoTable({
+             startY: 40,
+             head: [header],
+             body: rows,
+             theme: 'striped',
+             headStyles: { fillColor: [76, 175, 80] }, // Green header
+             styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
+             didDrawPage: function (data) {
+                 // Footer
+                 let pageNumber = doc.internal.getNumberOfPages();
+                 doc.setFontSize(10);
+                 doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
+             }
+         });
 
-              // Add title
-              doc.setFontSize(18);
-              doc.text(`รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5`, 14, 22);
+          // Add Notes section if available
+          const teacherNotes = document.getElementById('teacher-notes').value.trim();
+          if (teacherNotes) {
+              let finalY = doc.lastAutoTable.finalY; // Get the end Y position of the table
               doc.setFontSize(12);
-              doc.text(`ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}${analysisGrade ? ` (ชั้น ${analysisGrade})` : ' (ทุกระดับชั้น)'}`, 14, 30);
+              doc.text('บันทึกเพิ่มเติม:', 14, finalY + 20);
+              doc.setFontSize(10);
+              // Split notes into lines to fit within page width
+              const splitNotes = doc.splitTextToSize(teacherNotes, doc.internal.pageSize.width - 28); // 28 = left + right margin
+              doc.text(splitNotes, 14, finalY + 28);
+          }
 
 
-              // Add table
-              doc.autoTable({
-                  startY: 40,
-                  head: [header],
-                  body: rows,
-                  theme: 'striped',
-                  headStyles: { fillColor: [76, 175, 80] }, // Green header
-                  styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
-                  didDrawPage: function (data) {
-                      // Footer
-                      let pageNumber = doc.internal.getNumberOfPages();
-                      doc.setFontSize(10);
-                      doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
+         // Save the PDF
+         doc.save(`รายงานบันทึกเวลาเรียน_รายวัน_${attendanceDate}.pdf`);
+     }
+
+     // Function to export the Comparative Report to PDF
+     function exportComparativeReportPdf() {
+          const analysisSemester = document.getElementById('analysis-semester').value;
+          const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+          const analysisGrade = analysisGradeFilterSelect.value; // Get selected grade for report title
+
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+
+          // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
+
+          // Get table data from the analysis table
+          const table = document.querySelector('#comparative-analysis-container .analysis-table');
+          const header = [];
+          const rows = [];
+
+          // Get header (skip photo column)
+          table.querySelectorAll('thead th').forEach((th, index) => {
+              if (index !== 0) { // Skip the first column (Photo)
+                  header.push(th.textContent.trim());
+              }
+          });
+
+          // Get row data (skip photo column)
+          table.querySelectorAll('tbody tr').forEach(tr => {
+              const rowData = [];
+              tr.querySelectorAll('td').forEach((td, index) => {
+                  if (index !== 0) { // Skip the first column (Photo)
+                     rowData.push(td.textContent.trim());
                   }
               });
-
-              // Save the PDF
-              doc.save(`รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}${analysisGrade ? `_ชั้น${analysisGrade}` : ''}.pdf`);
-         }
-
-         // Function to export the Student History Detail to PDF
-         function exportStudentHistoryPdf() {
-             const studentId = studentHistoryDetail.getAttribute('data-student-id');
-             const student = students.find(s => s.id === studentId);
-             if (!student) {
-                 showModal('ข้อผิดพลาด', "ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ", 'alert');
-                 return;
-             }
-
-             const { jsPDF } = window.jspdf;
-             const doc = new jsPDF();
-
-             // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
-
-             // Add title
-             doc.setFontSize(18);
-             doc.text(`ประวัติการเข้าเรียนของนักเรียน`, 14, 22);
-             doc.setFontSize(14);
-             doc.text(`ชื่อ: ${student.name} (ID: ${student.id})`, 14, 30);
-             if (student.grade) {
-                 doc.text(`ระดับชั้น: ${student.grade}`, 14, 38);
-             }
+              rows.push(rowData);
+          });
 
 
-             // Get table data from the student history table
-             const table = document.querySelector('#student-history-detail .student-history-table');
-              if (!table) {
-                  showModal('ข้อผิดพลาด', "ไม่พบข้อมูลประวัติการเข้าเรียน", 'alert');
-                  return;
+          // Add title
+          doc.setFontSize(18);
+          doc.text(`รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5`, 14, 22);
+          doc.setFontSize(12);
+          doc.text(`ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}${analysisGrade ? ` (ชั้น ${analysisGrade})` : ' (ทุกระดับชั้น)'}`, 14, 30);
+
+
+          // Add table
+          doc.autoTable({
+              startY: 40,
+              head: [header],
+              body: rows,
+              theme: 'striped',
+              headStyles: { fillColor: [76, 175, 80] }, // Green header
+              styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
+              didDrawPage: function (data) {
+                  // Footer
+                  let pageNumber = doc.internal.getNumberOfPages();
+                  doc.setFontSize(10);
+                  doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
               }
-             const header = [];
-             const rows = [];
+          });
 
-             // Get header
-             table.querySelectorAll('thead th').forEach(th => {
-                 header.push(th.textContent.trim());
-             });
+          // Save the PDF
+          doc.save(`รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}${analysisGrade ? `_ชั้น${analysisGrade}` : ''}.pdf`);
+     }
 
-             // Get row data
-             table.querySelectorAll('tbody tr').forEach(tr => {
-                 const rowData = [];
-                 tr.querySelectorAll('td').forEach(td => {
-                     rowData.push(td.textContent.trim());
-                 });
-                 rows.push(rowData);
-             });
+     // Function to export the Student History Detail to PDF
+     function exportStudentHistoryPdf() {
+         const studentId = studentHistoryDetail.getAttribute('data-student-id');
+         const student = students.find(s => s.id === studentId);
+         if (!student) {
+             showModal('ข้อผิดพลาด', "ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ", 'alert');
+             return;
+         }
 
-             // Add table
-             doc.autoTable({
-                 startY: student.grade ? 46 : 40, // Adjust startY based on whether grade is shown
-                 head: [header],
-                 body: rows,
-                 theme: 'striped',
-                 headStyles: { fillColor: [76, 175, 80] }, // Green header
-                 styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
-                 didDrawPage: function (data) {
-                     // Footer
-                     let pageNumber = doc.internal.getNumberOfPages();
-                     doc.setFontSize(10);
-                     doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
-                 }
-             });
+         const { jsPDF } = window.jspdf;
+         const doc = new jsPDF();
 
-             // Save the PDF
-             doc.save(`ประวัติการเข้าเรียน_${student.id}.pdf`);
+         // doc.setFont('Sarabun', 'normal'); // Set Thai font - requires font embedding for full support
+
+         // Add title
+         doc.setFontSize(18);
+         doc.text(`ประวัติการเข้าเรียนของนักเรียน`, 14, 22);
+         doc.setFontSize(14);
+         doc.text(`ชื่อ: ${student.name} (ID: ${student.id})`, 14, 30);
+         if (student.grade) {
+             doc.text(`ระดับชั้น: ${student.grade}`, 14, 38);
          }
 
 
-        // Function to export attendance data to CSV (for Excel)
-        function exportToCsv() {
-             // Check if user is logged in before exporting
-            if (!auth.currentUser) {
-                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนส่งออกข้อมูล', 'alert');
-                return;
-            }
+         // Get table data from the student history table
+         const table = document.querySelector('#student-history-detail .student-history-table');
+          if (!table) {
+              showModal('ข้อผิดพลาด', "ไม่พบข้อมูลประวัติการเข้าเรียน", 'alert');
+              return;
+          }
+         const header = [];
+         const rows = [];
 
-             // Determine which report is currently visible to export
-            if (dailyReportContainer.style.display !== 'none') {
-                exportDailyReportCsv();
-            } else if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
-                exportComparativeReportCsv();
-            } else if (studentHistoryDetail.style.display !== 'none') {
-                 exportStudentHistoryCsv();
-            } else if (dashboardContainer.style.display !== 'none') {
-                 // Exporting chart images is more complex, maybe export the underlying data?
-                 showModal('ไม่รองรับ', "การส่งออกแผนภูมิเป็น CSV ยังไม่รองรับในขณะนี้", 'alert');
-            }
-            else {
-                 showModal('เลือกรายงาน', "กรุณาเลือกรายงานที่ต้องการส่งออก", 'alert');
-            }
+         // Get header
+         table.querySelectorAll('thead th').forEach(th => {
+             header.push(th.textContent.trim());
+         });
+
+         // Get row data
+         table.querySelectorAll('tbody tr').forEach(tr => {
+             const rowData = [];
+             tr.querySelectorAll('td').forEach(td => {
+                 rowData.push(td.textContent.trim());
+             });
+             rows.push(rowData);
+         });
+
+         // Add table
+         doc.autoTable({
+             startY: student.grade ? 46 : 40, // Adjust startY based on whether grade is shown
+             head: [header],
+             body: rows,
+             theme: 'striped',
+             headStyles: { fillColor: [76, 175, 80] }, // Green header
+             styles: { font: 'Sarabun', fontStyle: 'normal' }, // Apply font to table (might need embedding)
+             didDrawPage: function (data) {
+                 // Footer
+                 let pageNumber = doc.internal.getNumberOfPages();
+                 doc.setFontSize(10);
+                 doc.text('Page ' + pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 10);
+             }
+         });
+
+         // Save the PDF
+         doc.save(`ประวัติการเข้าเรียน_${student.id}.pdf`);
+     }
+
+
+    // Function to export attendance data to CSV (for Excel)
+    function exportToCsv() {
+         // Check if user is logged in before exporting
+        if (!auth.currentUser) {
+            showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนส่งออกข้อมูล', 'alert');
+            return;
         }
 
-         // Function to export the Daily Report to CSV
-         function exportDailyReportCsv() {
-             const attendanceDate = document.getElementById('attendance-date').value;
-              if (!attendanceDate) {
-                 showModal('เลือกวันที่', "กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน", 'alert');
-                 return;
-             }
+         // Determine which report is currently visible to export
+        if (dailyReportContainer.style.display !== 'none') {
+            exportDailyReportCsv();
+        } else if (comparativeAnalysisContainer.style.display !== 'none' && studentHistoryDetail.style.display === 'none') {
+            exportComparativeReportCsv();
+        } else if (studentHistoryDetail.style.display !== 'none') {
+             exportStudentHistoryCsv();
+        } else if (dashboardContainer.style.display !== 'none') {
+             // Exporting chart images is more complex, maybe export the underlying data?
+             showModal('ไม่รองรับ', "การส่งออกแผนภูมิเป็น CSV ยังไม่รองรับในขณะนี้", 'alert');
+        }
+        else {
+             showModal('เลือกรายงาน', "กรุณาเลือกรายงานที่ต้องการส่งออก", 'alert');
+        }
+    }
 
-             const table = document.getElementById('attendance-table');
-             let csvContent = "data:text/csv;charset=utf-8,%EF%BB%BF"; // Add BOM for UTF-8 in Excel
-
-             // Get header
-             table.querySelectorAll('thead th').forEach(th => {
-                 csvContent += `"${th.textContent.trim()}",`;
-             });
-             csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
-
-             // Get row data
-             table.querySelectorAll('tbody tr').forEach(tr => {
-                 const rowData = [];
-                 tr.querySelectorAll('td').forEach((td, index) => {
-                      if (index === 3) { // Status column
-                          const selectElement = td.querySelector('.status-select');
-                          rowData.push(selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim());
-                     } else {
-                          rowData.push(td.textContent.trim());
-                     }
-                 });
-                 csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
-             });
-
-              // Add Notes section if available
-              const teacherNotes = document.getElementById('teacher-notes').value.trim();
-              if (teacherNotes) {
-                  csvContent += `\n"บันทึกเพิ่มเติม:",\n"${teacherNotes.replace(/"/g, '""')}"\n`; // Handle quotes in notes
-              }
-
-
-             const encodedUri = encodeURI(csvContent);
-             const link = document.createElement("a");
-             link.setAttribute("href", encodedUri);
-             link.setAttribute("download", `รายงานบันทึกเวลาเรียน_รายวัน_${attendanceDate}.csv`);
-             document.body.appendChild(link); // Required for Firefox
-             link.click(); // Trigger the download
-             document.body.removeChild(link); // Clean up
+     // Function to export the Daily Report to CSV
+     function exportDailyReportCsv() {
+         const attendanceDate = document.getElementById('attendance-date').value;
+          if (!attendanceDate) {
+             showModal('เลือกวันที่', "กรุณาเลือกวันที่ต้องการส่งออกข้อมูลรายงานรายวัน", 'alert');
+             return;
          }
 
-         // Function to export the Comparative Report to CSV
-         function exportComparativeReportCsv() {
-              const analysisSemester = document.getElementById('analysis-semester').value;
-              const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
-              const analysisGrade = analysisGradeFilterSelect.value; // Get selected grade for report title
+         const table = document.getElementById('attendance-table');
+         let csvContent = "data:text/csv;charset=utf-8,%EF%BB%BF"; // Add BOM for UTF-8 in Excel
 
-              const table = document.querySelector('#comparative-analysis-container .analysis-table');
-              let csvContent = "data:text/csv;charset=utf-8,%EF%BB% শিক্ষকদের"; // Add BOM for UTF-8 in Excel
+         // Get header
+         table.querySelectorAll('thead th').forEach(th => {
+             csvContent += `"${th.textContent.trim()}",`;
+         });
+         csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
 
-              // Add title and period info
-              csvContent += `"รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5"\n`;
-              csvContent += `"ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}${analysisGrade ? ` (ชั้น ${analysisGrade})` : ' (ทุกระดับชั้น)'}"\n\n`;
+         // Get row data
+         table.querySelectorAll('tbody tr').forEach(tr => {
+             const rowData = [];
+             tr.querySelectorAll('td').forEach((td, index) => {
+                  if (index === 3) { // Status column
+                      const selectElement = td.querySelector('.status-select');
+                      rowData.push(selectElement ? selectElement.options[selectElement.selectedIndex].text : td.textContent.trim());
+                 } else {
+                      rowData.push(td.textContent.trim());
+                 }
+             });
+             csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
+         });
+
+          // Add Notes section if available
+          const teacherNotes = document.getElementById('teacher-notes').value.trim();
+          if (teacherNotes) {
+              csvContent += `\n"บันทึกเพิ่มเติม:",\n"${teacherNotes.replace(/"/g, '""')}"\n`; // Handle quotes in notes
+          }
 
 
-              // Get header (skip photo column)
-              table.querySelectorAll('thead th').forEach((th, index) => {
+         const encodedUri = encodeURI(csvContent);
+         const link = document.createElement("a");
+         link.setAttribute("href", encodedUri);
+         link.setAttribute("download", `รายงานบันทึกเวลาเรียน_รายวัน_${attendanceDate}.csv`);
+         document.body.appendChild(link); // Required for Firefox
+         link.click(); // Trigger the download
+         document.body.removeChild(link); // Clean up
+     }
+
+     // Function to export the Comparative Report to CSV
+     function exportComparativeReportCsv() {
+          const analysisSemester = document.getElementById('analysis-semester').value;
+          const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+          const analysisGrade = analysisGradeFilterSelect.value; // Get selected grade for report title
+
+          const table = document.querySelector('#comparative-analysis-container .analysis-table');
+          let csvContent = "data:text/csv;charset=utf-8,%EF%BB% শিক্ষকদের"; // Add BOM for UTF-8 in Excel
+
+          // Add title and period info
+          csvContent += `"รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5"\n`;
+          csvContent += `"ภาคเรียนที่ ${analysisSemester} ปีการศึกษา ${parseInt(analysisAcademicYear) + 543}${analysisGrade ? ` (ชั้น ${analysisGrade})` : ' (ทุกระดับชั้น)'}"\n\n`;
+
+
+          // Get header (skip photo column)
+          table.querySelectorAll('thead th').forEach((th, index) => {
+               if (index !== 0) { // Skip the first column (Photo)
+                  csvContent += `"${th.textContent.trim()}",`;
+               }
+          });
+          csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+
+          // Get row data (skip photo column)
+          table.querySelectorAll('tbody tr').forEach(tr => {
+              const rowData = [];
+              tr.querySelectorAll('td').forEach((td, index) => {
                    if (index !== 0) { // Skip the first column (Photo)
-                      csvContent += `"${th.textContent.trim()}",`;
+                      rowData.push(td.textContent.trim());
                    }
               });
-              csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
-
-              // Get row data (skip photo column)
-              table.querySelectorAll('tbody tr').forEach(tr => {
-                  const rowData = [];
-                  tr.querySelectorAll('td').forEach((td, index) => {
-                       if (index !== 0) { // Skip the first column (Photo)
-                          rowData.push(td.textContent.trim());
-                       }
-                  });
-                  csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
-              });
+              csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
+          });
 
 
-             const encodedUri = encodeURI(csvContent);
-             const link = document.createElement("a");
-             link.setAttribute("href", encodedUri);
-             link.setAttribute("download", `รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}${analysisGrade ? `_ชั้น${analysisGrade}` : ''}.csv`);
-             document.body.appendChild(link); // Required for Firefox
-             link.click(); // Trigger the download
-             document.body.removeChild(link); // Clean up
+         const encodedUri = encodeURI(csvContent);
+         const link = document.createElement("a");
+         link.setAttribute("href", encodedUri);
+         link.setAttribute("download", `รายงานสรุปเวลาเรียน_ภาคเรียน${analysisSemester}_ปี${parseInt(analysisAcademicYear) + 543}${analysisGrade ? `_ชั้น${analysisGrade}` : ''}.csv`);
+         document.body.appendChild(link); // Required for Firefox
+         link.click(); // Trigger the download
+         document.body.removeChild(link); // Clean up
+     }
+
+     // Function to export the Student History Detail to CSV
+     function exportStudentHistoryCsv() {
+          const studentId = studentHistoryDetail.getAttribute('data-student-id');
+         const student = students.find(s => s.id === studentId);
+         if (!student) {
+             showModal('ข้อผิดพลาด', "ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ", 'alert');
+             return;
          }
 
-         // Function to export the Student History Detail to CSV
-         function exportStudentHistoryCsv() {
-              const studentId = studentHistoryDetail.getAttribute('data-student-id');
-             const student = students.find(s => s.id === studentId);
-             if (!student) {
-                 showModal('ข้อผิดพลาด', "ไม่พบข้อมูลนักเรียนสำหรับส่งออกประวัติ", 'alert');
-                 return;
-             }
+         const table = document.querySelector('#student-history-detail .student-history-table');
+         if (!table) {
+             showModal('ข้อผิดพลาด', "ไม่พบข้อมูลประวัติการเข้าเรียน", 'alert');
+             return;
+         }
 
-             const table = document.querySelector('#student-history-detail .student-history-table');
-             if (!table) {
-                 showModal('ข้อผิดพลาด', "ไม่พบข้อมูลประวัติการเข้าเรียน", 'alert');
-                 return;
-             }
+         let csvContent = "data:text/csv;charset=utf-8,%EF%BB% শিক্ষকদের"; // Add BOM for UTF-8 in Excel
 
-             let csvContent = "data:text/csv;charset=utf-8,%EF%BB% শিক্ষকদের"; // Add BOM for UTF-8 in Excel
-
-             // Add title and student info
-             csvContent += `"ประวัติการเข้าเรียนของนักเรียน"\n`;
-             csvContent += `"ชื่อ: ${student.name} (ID: ${student.id})"\n`;
-             if (student.grade) {
-                 csvContent += `"ระดับชั้น: ${student.grade}"\n`;
-             }
-             csvContent += `\n`; // Add a blank line for separation
+         // Add title and student info
+         csvContent += `"ประวัติการเข้าเรียนของนักเรียน"\n`;
+         csvContent += `"ชื่อ: ${student.name} (ID: ${student.id})"\n`;
+         if (student.grade) {
+             csvContent += `"ระดับชั้น: ${student.grade}"\n`;
+         }
+         csvContent += `\n`; // Add a blank line for separation
 
 
-              // Get header
-              table.querySelectorAll('thead th').forEach(th => {
-                  csvContent += `"${th.textContent.trim()}",`;
+          // Get header
+          table.querySelectorAll('thead th').forEach(th => {
+              csvContent += `"${th.textContent.trim()}",`;
+          });
+          csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+
+          // Get row data
+          table.querySelectorAll('tbody tr').forEach(tr => {
+              const rowData = [];
+              tr.querySelectorAll('td').forEach(td => {
+                  rowData.push(td.textContent.trim());
               });
-              csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
-
-              // Get row data
-              table.querySelectorAll('tbody tr').forEach(tr => {
-                  const rowData = [];
-                  tr.querySelectorAll('td').forEach(td => {
-                      rowData.push(td.textContent.trim());
-                  });
-                  csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
-              });
+              csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
+          });
 
 
-             const encodedUri = encodeURI(csvContent);
-             const link = document.createElement("a");
-             link.setAttribute("href", encodedUri);
-             link.setAttribute("download", `ประวัติการเข้าเรียน_${student.id}.csv`);
-             document.body.appendChild(link); // Required for Firefox
-             link.click(); // Trigger the download
-             document.body.removeChild(link); // Clean up
+         const encodedUri = encodeURI(csvContent);
+         const link = document.createElement("a");
+         link.setAttribute("href", encodedUri);
+         link.setAttribute("download", `ประวัติการเข้าเรียน_${student.id}.csv`);
+         document.body.appendChild(link); // Required for Firefox
+         link.click(); // Trigger the download
+         document.body.removeChild(link); // Clean up
+     }
+
+
+    // --- Comparative Analysis Functions ---
+
+    // Function to generate the comparative attendance report
+    function generateComparativeReport() {
+         // Check if user is logged in before generating report
+        if (!auth.currentUser) {
+            showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนสร้างรายงาน', 'alert');
+            return;
+        }
+
+         if (students.length === 0) {
+             showModal('ข้อมูลไม่ครบถ้วน', 'ไม่พบข้อมูลนักเรียน ไม่สามารถสร้างรายงานสรุปได้', 'alert');
+             return;
          }
 
 
-        // --- Comparative Analysis Functions ---
-
-        // Function to generate the comparative attendance report
-        function generateComparativeReport() {
-             // Check if user is logged in before generating report
-            if (!auth.currentUser) {
-                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนสร้างรายงาน', 'alert');
-                return;
-            }
-
-             if (students.length === 0) {
-                 showModal('ข้อมูลไม่ครบถ้วน', 'ไม่พบข้อมูลนักเรียน ไม่สามารถสร้างรายงานสรุปได้', 'alert');
-                 return;
-             }
+        const analysisSemester = document.getElementById('analysis-semester').value;
+        const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
+        const analysisGrade = analysisGradeFilterSelect.value; // Get the selected grade for filtering
+        const comparativeAnalysisBody = document.getElementById('comparative-analysis-body');
+        comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message (colspan 10 for photo and percentage columns)
 
 
-            const analysisSemester = document.getElementById('analysis-semester').value;
-            const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
-            const analysisGrade = analysisGradeFilterSelect.value; // Get the selected grade for filtering
-            const comparativeAnalysisBody = document.getElementById('comparative-analysis-body');
-            comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message (colspan 10 for photo and percentage columns)
+        // Fetch all attendance records
+        showLoading(); // Show loading for fetching attendance data
+        attendanceRef.once('value')
+            .then((snapshot) => {
+                const attendanceData = snapshot.val();
+                const studentAttendanceSummary = {};
 
-
-            // Fetch all attendance records
-            showLoading(); // Show loading for fetching attendance data
-            attendanceRef.once('value')
-                .then((snapshot) => {
-                    const attendanceData = snapshot.val();
-                    const studentAttendanceSummary = {};
-
-                    // Initialize summary for each student, filtering by selected grade
-                    students.forEach(student => {
-                         if (!analysisGrade || student.grade === analysisGrade) {
-                            studentAttendanceSummary[student.id] = {
-                                present: 0,
-                                sick: 0,
-                                leave: 0,
-                                absent: 0,
-                                total: 0
-                            };
-                         }
-                    });
-
-                     const filteredStudents = students.filter(student => !analysisGrade || student.grade === analysisGrade);
-
-
-                    if (attendanceData) {
-                        // Process attendance data for the selected semester and academic year
-                        for (const dateKey in attendanceData) {
-                            const record = attendanceData[dateKey];
-                            // Simple filtering by year and semester (assuming dateKey isYYYYMMDD)
-                            const recordYear = parseInt(dateKey.substring(0, 4));
-                            // You might need a more robust way to determine semester based on date
-                            // For now, we'll rely on the saved semester value in the record
-                            const recordSemester = record.semester;
-                            const recordAcademicYear = record.academicYear;
-
-
-                            if (recordAcademicYear == analysisAcademicYear && recordSemester == analysisSemester && record.records) {
-                                record.records.forEach(studentRecord => {
-                                    // Only include records for students in the selected grade (if filter is applied)
-                                    const student = students.find(s => s.id === studentRecord.studentId);
-                                     if (student && (!analysisGrade || student.grade === analysisGrade)) {
-                                        if (studentAttendanceSummary[studentRecord.studentId]) {
-                                            studentAttendanceSummary[studentRecord.studentId][studentRecord.status]++;
-                                            studentAttendanceSummary[studentRecord.studentId].total++;
-                                        }
-                                     }
-                                });
-                            }
-                        }
-                    }
-
-                    // Populate the comparative analysis table
-                    comparativeAnalysisBody.innerHTML = ''; // Clear loading message
-
-                    if (filteredStudents.length === 0) {
-                         comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูลนักเรียนสำหรับระดับชั้นที่เลือก</td></tr>'; // colspan 10
-                         hideLoading(); // Hide loading
-                         return;
-                    }
-
-
-                    filteredStudents.forEach(student => {
-                        const summary = studentAttendanceSummary[student.id] || { present: 0, sick: 0, leave: 0, absent: 0, total: 0 };
-                         const attendancePercentage = summary.total > 0 ? ((summary.present / summary.total) * 100).toFixed(1) : 0; // Calculate percentage
-
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${student.photo ? `<img src="${student.photo}" alt="รูปโปรไฟล์" class="student-photo-preview">` : ''}</td> <td>${student.id}</td>
-                            <td>${student.number}</td>
-                            <td>${student.name}</td>
-                            <td>${summary.present}</td>
-                            <td>${summary.sick}</td>
-                            <td>${summary.leave}</td>
-                            <td>${summary.absent}</td>
-                            <td>${summary.total}</td>
-                            <td>${attendancePercentage}%</td> `;
-                         // Add click listener to the row to show history
-                         row.style.cursor = 'pointer'; // Indicate clickable
-                         row.onclick = () => showStudentHistory(student.id);
-
-                        comparativeAnalysisBody.appendChild(row);
-                    });
-
-                     // Check if there are students displayed but no attendance data for the period
-                     if (filteredStudents.length > 0 && Object.keys(studentAttendanceSummary).every(key => studentAttendanceSummary[key].total === 0)) {
-                          comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูลการเข้าเรียนสำหรับภาคเรียนและปีการศึกษาที่เลือก</td></tr>'; // colspan 10
+                // Initialize summary for each student, filtering by selected grade
+                students.forEach(student => {
+                     if (!analysisGrade || student.grade === analysisGrade) {
+                        studentAttendanceSummary[student.id] = {
+                            present: 0,
+                            sick: 0,
+                            leave: 0,
+                            absent: 0,
+                            total: 0
+                        };
                      }
-
-                    hideLoading(); // Hide loading after report generated
-
-                })
-                .catch((error) => {
-                    console.error("Error generating comparative report:", error);
-                     displayError(`เกิดข้อผิดพลาดในการสร้างรายงานสรุป: ${error.message}`);
-                     comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>'; // colspan 10
-                     hideLoading(); // Hide loading after error
                 });
-        }
 
-        // Function to show detailed attendance history for a specific student
-        function showStudentHistory(studentId) {
-             // Check if user is logged in before showing history
-            if (!auth.currentUser) {
-                showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนดูประวัติการเข้าเรียน', 'alert');
-                return;
-            }
-
-            const student = students.find(s => s.id === studentId);
-            if (!student) {
-                console.error("Student not found for history view:", studentId);
-                return;
-            }
-
-            // Hide the summary view and show the history detail view
-            comparativeSummaryView.style.display = 'none';
-            studentHistoryDetail.style.display = 'block';
-             studentHistoryDetail.setAttribute('data-student-id', studentId); // Store student ID
-
-            // Set the title
-            studentHistoryTitle.textContent = `ประวัติการเข้าเรียนของนักเรียน: ${student.name} (ID: ${student.id})`;
-
-            // Clear previous history data
-            studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message
-
-            showLoading(); // Show loading for fetching history
-            // Fetch all attendance records to find the student's history
-            attendanceRef.once('value')
-                .then((snapshot) => {
-                    const attendanceData = snapshot.val();
-                    const studentHistoryRecords = [];
-
-                    if (attendanceData) {
-                        for (const dateKey in attendanceData) {
-                            const record = attendanceData[dateKey];
-                            if (record.records) {
-                                const studentRecord = record.records.find(rec => rec.studentId === studentId);
-                                if (studentRecord) {
-                                    studentHistoryRecords.push({
-                                        date: record.date,
-                                        status: studentRecord.status,
-                                        semester: record.semester,
-                                        academicYear: record.academicYear
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    // Sort history records by date (most recent first)
-                    studentHistoryRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                    // Populate the student history table
-                    studentHistoryBody.innerHTML = ''; // Clear loading message
-
-                    if (studentHistoryRecords.length === 0) {
-                        studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่พบประวัติการเข้าเรียนสำหรับนักเรียนนี้</td></tr>';
-                    } else {
-                        studentHistoryRecords.forEach(history => {
-                            const row = document.createElement('tr');
-                             let statusText = history.status;
-                             // Convert status value to Thai text for display
-                             if (history.status === 'present') statusText = 'มาเรียน';
-                             else if (history.status === 'sick') statusText = 'ป่วย';
-                             else if (history.status === 'leave') statusText = 'ลา';
-                             else if (history.status === 'absent') statusText = 'ขาด';
+                 const filteredStudents = students.filter(student => !analysisGrade || student.grade === analysisGrade);
 
 
-                            row.innerHTML = `
-                                <td>${history.date}</td>
-                                <td>${statusText}</td>
-                                <td>${history.semester}</td>
-                                <td>${parseInt(history.academicYear) + 543}</td>
-                            `;
-                            studentHistoryBody.appendChild(row);
-                        });
-                    }
-                    hideLoading(); // Hide loading after history loaded
-
-                })
-                .catch((error) => {
-                     console.error("Error loading student history:", error);
-                     displayError(`เกิดข้อผิดพลาดในการโหลดประวัติการเข้าเรียน: ${error.message}`);
-                     studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
-                     hideLoading(); // Hide loading after error
-                });
-        }
-
-        // --- Dashboard Functions ---
-
-        // Function to generate the attendance trend chart
-        function generateAttendanceChart() {
-             // Check if user is logged in before generating chart
-            if (!auth.currentUser) {
-                console.log("User not logged in, cannot generate chart.");
-                return;
-            }
-
-             if (students.length === 0) {
-                 console.log("No student data found, cannot generate chart.");
-                 // Optionally display a message in the dashboard area
-                 return;
-             }
+                if (attendanceData) {
+                    // Process attendance data for the selected semester and academic year
+                    for (const dateKey in attendanceData) {
+                        const record = attendanceData[dateKey];
+                        // Simple filtering by year and semester (assuming dateKey isYYYYMMDD)
+                        const recordYear = parseInt(dateKey.substring(0, 4));
+                        // You might need a more robust way to determine semester based on date
+                        // For now, we'll rely on the saved semester value in the record
+                        const recordSemester = record.semester;
+                        const recordAcademicYear = record.academicYear;
 
 
-            const startDateInput = document.getElementById('dashboard-start-date').value;
-            const endDateInput = document.getElementById('dashboard-end-date').value;
-            const dashboardGrade = dashboardGradeFilterSelect.value; // Get the selected grade for filtering
-            const chartType = dashboardChartTypeSelect.value; // Get the selected chart type
-
-
-            if (!startDateInput || !endDateInput) {
-                showModal('เลือกช่วงวันที่', "กรุณาเลือกช่วงวันที่สำหรับแดชบอร์ด", 'alert');
-                return;
-            }
-
-            const startDate = new Date(startDateInput);
-            const endDate = new Date(endDateInput);
-
-             if (startDate > endDate) {
-                 showModal('วันที่ไม่ถูกต้อง', "วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด", 'alert');
-                 return;
-             }
-
-            showLoading(); // Show loading for fetching attendance data
-            // Fetch all attendance records
-            attendanceRef.once('value')
-                .then((snapshot) => {
-                    const attendanceData = snapshot.val();
-                    const dailyAttendanceSummary = {}; // To store counts per day and status
-
-                    // Initialize counts for each date in the range
-                    let currentDate = new Date(startDate);
-                    while (currentDate <= endDate) {
-                        const dateKey = currentDate.toISOString().split('T')[0].replace(/-/g, '');
-                        dailyAttendanceSummary[dateKey] = { present: 0, sick: 0, leave: 0, absent: 0, totalStudents: 0 };
-                        currentDate.setDate(currentDate.getDate() + 1);
-                    }
-
-                    if (attendanceData) {
-                        // Process attendance data within the selected date range and grade filter
-                        for (const dateKey in attendanceData) {
-                            const recordDate = new Date(dateKey.substring(0, 4) + '-' + dateKey.substring(4, 6) + '-' + dateKey.substring(6, 8));
-
-                            if (recordDate >= startDate && recordDate <= endDate && dailyAttendanceSummary[dateKey]) {
-                                const record = attendanceData[dateKey];
-                                if (record.records) {
-                                     let studentsOnThisDay = 0;
-                                    record.records.forEach(studentRecord => {
-                                         const student = students.find(s => s.id === studentRecord.studentId);
-                                         // Only count students in the selected grade (if filter is applied)
-                                         if (student && (!dashboardGrade || student.grade === dashboardGrade)) {
-                                             studentsOnThisDay++;
-                                            if (dailyAttendanceSummary[dateKey][studentRecord.status] !== undefined) {
-                                                dailyAttendanceSummary[dateKey][studentRecord.status]++;
+                        if (recordAcademicYear == analysisAcademicYear && recordSemester == analysisSemester && record.grades) { // Iterate through grades
+                            for (const gradeKey in record.grades) {
+                                const gradeData = record.grades[gradeKey];
+                                if (gradeData.records) {
+                                    gradeData.records.forEach(studentRecord => {
+                                        // Only include records for students in the selected grade (if filter is applied)
+                                        const student = students.find(s => s.id === studentRecord.studentId);
+                                         if (student && (!analysisGrade || student.grade === analysisGrade)) {
+                                            if (studentAttendanceSummary[studentRecord.studentId]) {
+                                                studentAttendanceSummary[studentRecord.studentId][studentRecord.status]++;
+                                                studentAttendanceSummary[studentRecord.studentId].total++;
                                             }
                                          }
                                     });
-                                     dailyAttendanceSummary[dateKey].totalStudents = studentsOnThisDay;
                                 }
                             }
                         }
                     }
+                }
 
-                    // Prepare data for Chart.js
-                    const labels = [];
-                    const presentData = [];
-                    const sickData = [];
-                    const leaveData = [];
-                    const absentData = [];
-                    const totalStudentsData = []; // Data for total students
-                    const percentageData = []; // Data for percentage
+                // Populate the comparative analysis table
+                comparativeAnalysisBody.innerHTML = ''; // Clear loading message
 
-
-                    // Sort date keys
-                    const sortedDateKeys = Object.keys(dailyAttendanceSummary).sort();
-
-                    sortedDateKeys.forEach(dateKey => {
-                        const date = new Date(dateKey.substring(0, 4) + '-' + dateKey.substring(4, 6) + '-' + dateKey.substring(6, 8));
-                        labels.push(date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })); // Format date for label (e.g., 17 พ.ค.)
-
-                        const counts = dailyAttendanceSummary[dateKey];
-                        presentData.push(counts.present);
-                        sickData.push(counts.sick);
-                        leaveData.push(counts.leave);
-                        absentData.push(counts.absent);
-                        totalStudentsData.push(counts.totalStudents); // Add total students data
-                         const percentage = counts.totalStudents > 0 ? ((counts.present / counts.totalStudents) * 100) : 0;
-                         percentageData.push(percentage.toFixed(1)); // Add percentage data
-
-                    });
+                if (filteredStudents.length === 0) {
+                     comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูลนักเรียนสำหรับระดับชั้นที่เลือก</td></tr>'; // colspan 10
+                     hideLoading(); // Hide loading
+                     return;
+                }
 
 
-                    const ctx = document.getElementById('attendanceChart').getContext('2d');
+                filteredStudents.forEach(student => {
+                    const summary = studentAttendanceSummary[student.id] || { present: 0, sick: 0, leave: 0, absent: 0, total: 0 };
+                     const attendancePercentage = summary.total > 0 ? ((summary.present / summary.total) * 100).toFixed(1) : 0; // Calculate percentage
 
-                    // Destroy previous chart instance if it exists
-                    if (attendanceChart) {
-                        attendanceChart.destroy();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.photo ? `<img src="${student.photo}" alt="รูปโปรไฟล์" class="student-photo-preview">` : ''}</td> <td>${student.id}</td>
+                        <td>${student.number}</td>
+                        <td>${student.name}</td>
+                        <td>${summary.present}</td>
+                        <td>${summary.sick}</td>
+                        <td>${summary.leave}</td>
+                        <td>${summary.absent}</td>
+                        <td>${summary.total}</td>
+                        <td>${attendancePercentage}%</td> `;
+                     // Add click listener to the row to show history
+                     row.style.cursor = 'pointer'; // Indicate clickable
+                     row.onclick = () => showStudentHistory(student.id);
+
+                    comparativeAnalysisBody.appendChild(row);
+                });
+
+                 // Check if there are students displayed but no attendance data for the period
+                 if (filteredStudents.length > 0 && Object.keys(studentAttendanceSummary).every(key => studentAttendanceSummary[key].total === 0)) {
+                      comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูลการเข้าเรียนสำหรับภาคเรียนและปีการศึกษาที่เลือก</td></tr>'; // colspan 10
+                 }
+
+                hideLoading(); // Hide loading after report generated
+
+            })
+            .catch((error) => {
+                console.error("Error generating comparative report:", error);
+                 displayError(`เกิดข้อผิดพลาดในการสร้างรายงานสรุป: ${error.message}`);
+                 comparativeAnalysisBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>'; // colspan 10
+                 hideLoading(); // Hide loading after error
+            });
+    }
+
+    // Function to show detailed attendance history for a specific student
+    function showStudentHistory(studentId) {
+         // Check if user is logged in before showing history
+        if (!auth.currentUser) {
+            showModal('ข้อผิดพลาด', 'กรุณาเข้าสู่ระบบก่อนดูประวัติการเข้าเรียน', 'alert');
+            return;
+        }
+
+        const student = students.find(s => s.id === studentId);
+        if (!student) {
+            console.error("Student not found for history view:", studentId);
+            return;
+        }
+
+        // Hide the summary view and show the history detail view
+        comparativeSummaryView.style.display = 'none';
+        studentHistoryDetail.style.display = 'block';
+         studentHistoryDetail.setAttribute('data-student-id', studentId); // Store student ID
+
+        // Set the title
+        studentHistoryTitle.textContent = `ประวัติการเข้าเรียนของนักเรียน: ${student.name} (ID: ${student.id})`;
+
+        // Clear previous history data
+        studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>'; // Loading message
+
+        showLoading(); // Show loading for fetching history
+        // Fetch all attendance records to find the student's history
+        attendanceRef.once('value')
+            .then((snapshot) => {
+                const attendanceData = snapshot.val();
+                const studentHistoryRecords = [];
+
+                if (attendanceData) {
+                    for (const dateKey in attendanceData) {
+                        const record = attendanceData[dateKey];
+                        if (record.grades) { // Iterate through grades
+                            for (const gradeKey in record.grades) {
+                                const gradeData = record.grades[gradeKey];
+                                if (gradeData.records) {
+                                    const studentRecord = gradeData.records.find(rec => rec.studentId === studentId);
+                                    if (studentRecord) {
+                                        studentHistoryRecords.push({
+                                            date: record.date,
+                                            status: studentRecord.status,
+                                            semester: record.semester,
+                                            academicYear: record.academicYear
+                                        });
+                                    }
+                                }
+                            }
+                        }
                     }
+                }
 
-                    // Create the chart based on selected type
-                    if (chartType === 'daily-trend') {
-                        // Daily Trend Line Chart (Current implementation)
-                         attendanceChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: labels,
-                                datasets: [
-                                    {
-                                        label: 'จำนวนนักเรียนที่มาเรียน',
-                                        data: presentData,
-                                        borderColor: '#4caf50',
-                                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                                        fill: true,
-                                        tension: 0.1
-                                    },
-                                     {
-                                         label: 'จำนวนนักเรียนทั้งหมด (ระดับชั้นที่เลือก)',
-                                         data: totalStudentsData,
-                                         borderColor: '#0288d1',
-                                         backgroundColor: 'rgba(2, 136, 209, 0.2)',
-                                         fill: true,
-                                         tension: 0.1
-                                     },
-                                    {
-                                         label: 'เปอร์เซ็นต์การมาเรียน (%)',
-                                         data: percentageData,
-                                         borderColor: '#ff9800',
-                                         backgroundColor: 'rgba(255, 152, 0, 0.2)',
-                                         fill: false,
-                                         tension: 0.1,
-                                         yAxisID: 'percentage-y-axis'
-                                     }
-                                ]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    x: {
-                                        title: {
-                                            display: true,
-                                            text: 'วันที่'
-                                        }
-                                    },
-                                    y: {
-                                        beginAtZero: true,
-                                        title: {
-                                            display: true,
-                                            text: 'จำนวนนักเรียน'
-                                        }
-                                    },
-                                    'percentage-y-axis': {
-                                         position: 'right',
-                                         beginAtZero: true,
-                                         max: 100,
-                                         title: {
-                                             display: true,
-                                             text: 'เปอร์เซ็นต์ (%)'
-                                         },
-                                         grid: {
-                                             drawOnChartArea: false,
-                                         },
-                                     }
+                // Sort history records by date (most recent first)
+                studentHistoryRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                // Populate the student history table
+                studentHistoryBody.innerHTML = ''; // Clear loading message
+
+                if (studentHistoryRecords.length === 0) {
+                    studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่พบประวัติการเข้าเรียนสำหรับนักเรียนนี้</td></tr>';
+                } else {
+                    studentHistoryRecords.forEach(history => {
+                        const row = document.createElement('tr');
+                         let statusText = history.status;
+                         // Convert status value to Thai text for display
+                         if (history.status === 'present') statusText = 'มาเรียน';
+                         else if (history.status === 'sick') statusText = 'ป่วย';
+                         else if (history.status === 'leave') statusText = 'ลา';
+                         else if (history.status === 'absent') statusText = 'ขาด';
+
+
+                        row.innerHTML = `
+                            <td>${history.date}</td>
+                            <td>${statusText}</td>
+                            <td>${history.semester}</td>
+                            <td>${parseInt(history.academicYear) + 543}</td>
+                        `;
+                        studentHistoryBody.appendChild(row);
+                    });
+                }
+                hideLoading(); // Hide loading after history loaded
+
+            })
+            .catch((error) => {
+                 console.error("Error loading student history:", error);
+                 displayError(`เกิดข้อผิดพลาดในการโหลดประวัติการเข้าเรียน: ${error.message}`);
+                 studentHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+                 hideLoading(); // Hide loading after error
+            });
+    }
+
+    // --- Dashboard Functions ---
+
+    // Function to generate the attendance trend chart
+    function generateAttendanceChart() {
+         // Check if user is logged in before generating chart
+        if (!auth.currentUser) {
+            console.log("User not logged in, cannot generate chart.");
+            return;
+        }
+
+         if (students.length === 0) {
+             console.log("No student data found, cannot generate chart.");
+             // Optionally display a message in the dashboard area
+             return;
+         }
+
+
+        const startDateInput = document.getElementById('dashboard-start-date').value;
+        const endDateInput = document.getElementById('dashboard-end-date').value;
+        const dashboardGrade = dashboardGradeFilterSelect.value; // Get the selected grade for filtering
+        const chartType = dashboardChartTypeSelect.value; // Get the selected chart type
+
+
+        if (!startDateInput || !endDateInput) {
+            showModal('เลือกช่วงวันที่', "กรุณาเลือกช่วงวันที่สำหรับแดชบอร์ด", 'alert');
+            return;
+        }
+
+        const startDate = new Date(startDateInput);
+        const endDate = new Date(endDateInput);
+
+         if (startDate > endDate) {
+             showModal('วันที่ไม่ถูกต้อง', "วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด", 'alert');
+             return;
+         }
+
+        showLoading(); // Show loading for fetching attendance data
+        // Fetch all attendance records
+        attendanceRef.once('value')
+            .then((snapshot) => {
+                const attendanceData = snapshot.val();
+                const dailyAttendanceSummary = {}; // To store counts per day and status
+
+                // Initialize counts for each date in the range
+                let currentDate = new Date(startDate);
+                while (currentDate <= endDate) {
+                    const dateKey = currentDate.toISOString().split('T')[0].replace(/-/g, '');
+                    dailyAttendanceSummary[dateKey] = { present: 0, sick: 0, leave: 0, absent: 0, totalStudents: 0 };
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                if (attendanceData) {
+                    // Process attendance data within the selected date range and grade filter
+                    for (const dateKey in attendanceData) {
+                        const recordDate = new Date(dateKey.substring(0, 4) + '-' + dateKey.substring(4, 6) + '-' + dateKey.substring(6, 8));
+
+                        if (recordDate >= startDate && recordDate <= endDate && dailyAttendanceSummary[dateKey]) {
+                            const record = attendanceData[dateKey];
+                            if (record.grades) { // Iterate through grades
+                                for (const gradeKey in record.grades) {
+                                    const gradeData = record.grades[gradeKey];
+                                    if (gradeData.records) {
+                                        gradeData.records.forEach(studentRecord => {
+                                             const student = students.find(s => s.id === studentRecord.studentId);
+                                             // Only count students in the selected grade (if filter is applied)
+                                             if (student && (!dashboardGrade || student.grade === dashboardGrade)) {
+                                                 dailyAttendanceSummary[dateKey].totalStudents++;
+                                                if (dailyAttendanceSummary[dateKey][studentRecord.status] !== undefined) {
+                                                    dailyAttendanceSummary[dateKey][studentRecord.status]++;
+                                                }
+                                             }
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Prepare data for Chart.js
+                const labels = [];
+                const presentData = [];
+                const sickData = [];
+                const leaveData = [];
+                const absentData = [];
+                const totalStudentsData = []; // Data for total students
+                const percentageData = []; // Data for percentage
+
+
+                // Sort date keys
+                const sortedDateKeys = Object.keys(dailyAttendanceSummary).sort();
+
+                sortedDateKeys.forEach(dateKey => {
+                    const date = new Date(dateKey.substring(0, 4) + '-' + dateKey.substring(4, 6) + '-' + dateKey.substring(6, 8));
+                    labels.push(date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })); // Format date for label (e.g., 17 พ.ค.)
+
+                    const counts = dailyAttendanceSummary[dateKey];
+                    presentData.push(counts.present);
+                    sickData.push(counts.sick);
+                    leaveData.push(counts.leave);
+                    absentData.push(counts.absent);
+                    totalStudentsData.push(counts.totalStudents); // Add total students data
+                     const percentage = counts.totalStudents > 0 ? ((counts.present / counts.totalStudents) * 100) : 0;
+                     percentageData.push(percentage.toFixed(1)); // Add percentage data
+
+                });
+
+
+                const ctx = document.getElementById('attendanceChart').getContext('2d');
+
+                // Destroy previous chart instance if it exists
+                if (attendanceChart) {
+                    attendanceChart.destroy();
+                }
+
+                // Create the chart based on selected type
+                if (chartType === 'daily-trend') {
+                    // Daily Trend Line Chart (Current implementation)
+                     attendanceChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'จำนวนนักเรียนที่มาเรียน',
+                                    data: presentData,
+                                    borderColor: '#4caf50',
+                                    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                                    fill: true,
+                                    tension: 0.1
                                 },
-                                plugins: {
-                                    legend: {
-                                        position: 'top',
-                                    },
+                                 {
+                                     label: 'จำนวนนักเรียนทั้งหมด (ระดับชั้นที่เลือก)',
+                                     data: totalStudentsData,
+                                     borderColor: '#0288d1',
+                                     backgroundColor: 'rgba(2, 136, 209, 0.2)',
+                                     fill: true,
+                                     tension: 0.1
+                                 },
+                                {
+                                     label: 'เปอร์เซ็นต์การมาเรียน (%)',
+                                     data: percentageData,
+                                     borderColor: '#ff9800',
+                                     backgroundColor: 'rgba(255, 152, 0, 0.2)',
+                                     fill: false,
+                                     tension: 0.1,
+                                     yAxisID: 'percentage-y-axis'
+                                 }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
                                     title: {
                                         display: true,
-                                        text: `แนวโน้มการเข้าเรียน ${dashboardGrade ? `(ชั้น ${dashboardGrade})` : '(ทุกระดับชั้น)'} (${startDateInput} ถึง ${endDateInput})`
-                                    },
-                                     tooltip: { // Add tooltips to show percentage on hover
-                                         callbacks: {
-                                             label: function(context) {
-                                                 let label = context.dataset.label || '';
-                                                 if (label) {
-                                                     label += ': ';
-                                                 }
-                                                 if (context.parsed.y !== null) {
-                                                      if (context.dataset.label === 'เปอร์เซ็นต์การมาเรียน (%)') {
-                                                          label += context.parsed.y + '%';
-                                                      } else {
-                                                          label += context.parsed.y;
-                                                      }
-                                                 }
-                                                 return label;
+                                        text: 'วันที่'
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'จำนวนนักเรียน'
+                                    }
+                                },
+                                'percentage-y-axis': {
+                                     position: 'right',
+                                     beginAtZero: true,
+                                     max: 100,
+                                     title: {
+                                         display: true,
+                                         text: 'เปอร์เซ็นต์ (%)'
+                                     },
+                                     grid: {
+                                         drawOnChartArea: false,
+                                     },
+                                 }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: `แนวโน้มการเข้าเรียน ${dashboardGrade ? `(ชั้น ${dashboardGrade})` : '(ทุกระดับชั้น)'} (${startDateInput} ถึง ${endDateInput})`
+                                },
+                                 tooltip: { // Add tooltips to show percentage on hover
+                                     callbacks: {
+                                         label: function(context) {
+                                             let label = context.dataset.label || '';
+                                             if (label) {
+                                                 label += ': ';
+                                             }
+                                             if (context.parsed.y !== null) {
+                                                  if (context.dataset.label === 'เปอร์เซ็นต์การมาเรียน (%)') {
+                                                      label += context.parsed.y + '%';
+                                                  } else {
+                                                      label += context.parsed.y;
+                                                  }
                                              }
                                          }
                                      }
-                                }
+                                 }
                             }
-                        });
+                        }
+                    });
 
-                    } else if (chartType === 'daily-status-summary') {
-                        // Daily Status Summary Bar Chart
-                        attendanceChart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [
-                                    {
-                                        label: 'มาเรียน',
-                                        data: presentData,
-                                        backgroundColor: '#4caf50', // Green
-                                    },
-                                    {
-                                        label: 'ป่วย',
-                                        data: sickData,
-                                        backgroundColor: '#f44336', // Red
-                                    },
-                                    {
-                                        label: 'ลา',
-                                        data: leaveData,
-                                        backgroundColor: '#ffeb3b', // Yellow
-                                    },
-                                    {
-                                        label: 'ขาด',
-                                        data: absentData,
-                                        backgroundColor: '#ff9800', // Orange
-                                    }
-                                ]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    x: {
-                                        stacked: true, // Stack bars
-                                        title: {
-                                            display: true,
-                                            text: 'วันที่'
-                                        }
-                                    },
-                                    y: {
-                                        stacked: true, // Stack bars
-                                        beginAtZero: true,
-                                        title: {
-                                            display: true,
-                                            text: 'จำนวนนักเรียน'
-                                        }
-                                    }
+                } else if (chartType === 'daily-status-summary') {
+                    // Daily Status Summary Bar Chart
+                    attendanceChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'มาเรียน',
+                                    data: presentData,
+                                    backgroundColor: '#4caf50', // Green
                                 },
-                                plugins: {
-                                    legend: {
-                                        position: 'top',
-                                    },
+                                {
+                                    label: 'ป่วย',
+                                    data: sickData,
+                                    backgroundColor: '#f44336', // Red
+                                },
+                                {
+                                    label: 'ลา',
+                                    data: leaveData,
+                                    backgroundColor: '#ffeb3b', // Yellow
+                                },
+                                {
+                                    label: 'ขาด',
+                                    data: absentData,
+                                    backgroundColor: '#ff9800', // Orange
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    stacked: true, // Stack bars
                                     title: {
                                         display: true,
-                                        text: `สรุปสถานะการเข้าเรียนรายวัน ${dashboardGrade ? `(ชั้น ${dashboardGrade})` : '(ทุกระดับชั้น)'} (${startDateInput} ถึง ${endDateInput})`
+                                        text: 'วันที่'
+                                    }
+                                },
+                                y: {
+                                    stacked: true, // Stack bars
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'จำนวนนักเรียน'
                                     }
                                 }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: `สรุปสถานะการเข้าเรียนรายวัน ${dashboardGrade ? `(ชั้น ${dashboardGrade})` : '(ทุกระดับชั้น)'} (${startDateInput} ถึง ${endDateInput})`
+                                }
                             }
-                        });
-                    }
+                        }
+                    });
+                }
 
-                    hideLoading(); // Hide loading after chart generated
+                hideLoading(); // Hide loading after chart generated
 
-                })
-                .catch((error) => {
-                    console.error("Error generating attendance chart:", error);
-                     displayError(`เกิดข้อผิดพลาดในการสร้างแผนภูมิ: ${error.message}`);
-                     hideLoading(); // Hide loading after error
-                });
-        }
-
-
-        // Initialize the page (This will now primarily set up the auth listener)
-        window.onload = function() {
-            // The onAuthStateChanged listener handles the initial display and data loading
-            console.log("Window loaded. Waiting for authentication state.");
-        };
+            })
+            .catch((error) => {
+                console.error("Error generating attendance chart:", error);
+                 displayError(`เกิดข้อผิดพลาดในการสร้างแผนภูมิ: ${error.message}`);
+                 hideLoading(); // Hide loading after error
+            });
+    }
 
 
-    </script>
+    // Initialize the page (This will now primarily set up the auth listener)
+    window.onload = function() {
+        // The onAuthStateChanged listener handles the initial display and data loading
+        console.log("Window loaded. Waiting for authentication state.");
+    };
 
-</body>
-</html>
+
+</script>
