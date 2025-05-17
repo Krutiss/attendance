@@ -611,6 +611,34 @@
              transform: translateY(0);
          }
 
+         /* Student List Controls */
+         .student-list-controls {
+             display: flex;
+             flex-wrap: wrap;
+             gap: 15px;
+             align-items: center;
+             margin-bottom: 20px;
+             padding: 15px;
+             background-color: #f1f8e9;
+             border-radius: 8px;
+             border: 1px solid #dcedc8;
+         }
+         .student-list-controls label {
+             font-weight: bold;
+             margin-right: 5px;
+         }
+         .student-list-controls select,
+         .student-list-controls input[type="text"] {
+             padding: 8px;
+             border: 1px solid #ccc;
+             border-radius: 5px;
+             font-family: 'Sarabun', sans-serif;
+             font-size: 1rem;
+         }
+         .student-list-controls input[type="text"] {
+             flex-grow: 1; /* Allow search input to grow */
+         }
+
 
         /* Responsive adjustments */
         @media (max-width: 768px) { /* Adjusted breakpoint for tablets */
@@ -620,14 +648,15 @@
             .container, .student-management-container, .login-container, .dashboard-container { /* Added dashboard */
                 padding: 20px; /* Reduced container padding */
             }
-            .controls, .student-form, .import-form { /* Added import-form */
+            .controls, .student-form, .import-form, .student-list-controls { /* Added import-form, student-list-controls */
                 flex-direction: column;
                 align-items: stretch;
                 padding: 10px; /* Reduced padding */
             }
             .controls select, .controls input[type="date"],
             .student-form input, .student-form button, .student-form select,
-            .import-form input[type="file"], .import-form button { /* Added import form elements */
+            .import-form input[type="file"], .import-form button,
+            .student-list-controls select, .student-list-controls input[type="text"] { /* Added import form elements, student list controls */
                  margin-right: 0;
                  margin-bottom: 10px; /* Consistent margin */
                  width: 100%; /* Full width */
@@ -932,6 +961,37 @@
                 </div>
             </div>
 
+            <div class="student-list-controls">
+                 <div>
+                     <label for="student-list-grade-filter">เลือกระดับชั้น:</label>
+                     <select id="student-list-grade-filter" onchange="renderStudentList()">
+                         <option value="">ทุกระดับชั้น</option>
+                         <option value="P.4">ป.4</option>
+                         <option value="P.5">ป.5</option>
+                         <option value="P.6">ป.6</option>
+                     </select>
+                 </div>
+                 <div>
+                     <label for="student-list-sort-by">เรียงตาม:</label>
+                     <select id="student-list-sort-by" onchange="renderStudentList()">
+                         <option value="number">เลขที่</option>
+                         <option value="name">ชื่อ-นามสกุล</option>
+                         <option value="id">เลขประจำตัว</option>
+                     </select>
+                 </div>
+                 <div>
+                     <label for="student-list-sort-order">ลำดับ:</label>
+                     <select id="student-list-sort-order" onchange="renderStudentList()">
+                         <option value="asc">น้อยไปมาก (A-Z)</option>
+                         <option value="desc">มากไปน้อย (Z-A)</option>
+                     </select>
+                 </div>
+                  <div>
+                     <label for="student-list-search">ค้นหา:</label>
+                     <input type="text" id="student-list-search" placeholder="ค้นหาด้วยชื่อหรือเลขประจำตัว" oninput="renderStudentList()">
+                 </div>
+            </div>
+
 
             <ul class="student-list" id="student-list">
                 </ul>
@@ -980,6 +1040,8 @@ const firebaseConfig = {
         const attendanceGradeFilterSelect = document.getElementById('attendance-grade-filter');
         const analysisGradeFilterSelect = document.getElementById('analysis-grade-filter');
         const dashboardGradeFilterSelect = document.getElementById('dashboard-grade-filter'); // New Dashboard Grade Filter
+        const studentListGradeFilterSelect = document.getElementById('student-list-grade-filter'); // New Student List Grade Filter
+
 
         // Get reference to the daily report grade heading
         const dailyReportGradeHeading = document.getElementById('daily-report-grade-heading');
@@ -992,6 +1054,11 @@ const firebaseConfig = {
 
         // Get reference for import file input
         const importCsvFileInput = document.getElementById('import-csv-file');
+
+        // Get references for student list controls
+        const studentListSortBySelect = document.getElementById('student-list-sort-by');
+        const studentListSortOrderSelect = document.getElementById('student-list-sort-order');
+        const studentListSearchInput = document.getElementById('student-list-search');
 
 
         // Variable to store the unsubscribe function for the student listener
@@ -1087,6 +1154,10 @@ const firebaseConfig = {
                  attendanceGradeFilterSelect.value = ''; // Reset grade filters
                  analysisGradeFilterSelect.value = '';
                  dashboardGradeFilterSelect.value = ''; // Reset dashboard grade filter
+                 studentListGradeFilterSelect.value = ''; // Reset student list grade filter
+                 studentListSortBySelect.value = 'number'; // Reset student list sort
+                 studentListSortOrderSelect.value = 'asc';
+                 studentListSearchInput.value = ''; // Clear search input
                  studentHistoryBody.innerHTML = ''; // Clear student history
                  studentHistoryDetail.style.display = 'none'; // Hide history view
                  comparativeSummaryView.style.display = 'block'; // Show summary view
@@ -1421,19 +1492,61 @@ const firebaseConfig = {
 
         // --- Student CRUD Functions ---
 
-        // Function to render the list of students in the management section
+        // Function to render the list of students in the management section (with filtering and sorting)
         function renderStudentList() {
             const studentListUl = document.getElementById('student-list');
             studentListUl.innerHTML = ''; // Clear existing list
 
-            if (students.length === 0) {
+            let studentsToRender = [...students]; // Create a copy to avoid modifying the original array
+
+            // Apply Grade Filter
+            const selectedGrade = studentListGradeFilterSelect.value;
+            if (selectedGrade) {
+                studentsToRender = studentsToRender.filter(student => student.grade === selectedGrade);
+            }
+
+            // Apply Search Filter (by name or ID)
+            const searchTerm = studentListSearchInput.value.toLowerCase().trim();
+            if (searchTerm) {
+                studentsToRender = studentsToRender.filter(student =>
+                    student.name.toLowerCase().includes(searchTerm) ||
+                    student.id.toLowerCase().includes(searchTerm)
+                );
+            }
+
+
+            // Apply Sorting
+            const sortBy = studentListSortBySelect.value;
+            const sortOrder = studentListSortOrderSelect.value;
+
+            studentsToRender.sort((a, b) => {
+                let comparison = 0;
+                if (sortBy === 'number') {
+                    comparison = a.number - b.number;
+                } else if (sortBy === 'name') {
+                    const nameA = a.name.toLowerCase();
+                    const nameB = b.name.toLowerCase();
+                    if (nameA > nameB) comparison = 1;
+                    else if (nameA < nameB) comparison = -1;
+                } else if (sortBy === 'id') {
+                     const idA = a.id.toLowerCase();
+                     const idB = b.id.toLowerCase();
+                     if (idA > idB) comparison = 1;
+                     else if (idA < idB) comparison = -1;
+                }
+
+                return sortOrder === 'asc' ? comparison : -comparison; // Apply sort order
+            });
+
+
+            if (studentsToRender.length === 0) {
                  const listItem = document.createElement('li');
-                 listItem.textContent = "ไม่พบข้อมูลนักเรียน";
+                 listItem.textContent = "ไม่พบข้อมูลนักเรียนที่ตรงกับเงื่อนไขการค้นหา/ตัวกรอง"; // No students found matching search/filter criteria
                  studentListUl.appendChild(listItem);
                  return;
             }
 
-            students.forEach(student => {
+            studentsToRender.forEach(student => {
                 const listItem = document.createElement('li');
                 listItem.classList.add('student-item');
                 listItem.setAttribute('data-student-id', student.id); // Use student ID as data attribute
@@ -1552,13 +1665,13 @@ const firebaseConfig = {
                     for (const studentId in studentsData) {
                         students.push(studentsData[studentId]);
                     }
-                     // Sort students by number
+                     // Sort students by number initially (or based on default sort controls)
                     students.sort((a, b) => a.number - b.number);
                     console.log("Students data updated:", students);
                 } else {
                      console.log("No students found in database.");
                 }
-                // Render the student list and populate the attendance table whenever data changes
+                // Render the student list with current filters and sorting
                 renderStudentList();
                 // Populate attendance table based on the current grade filter
                 populateAttendanceTable();
