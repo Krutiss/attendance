@@ -563,6 +563,54 @@
              margin-bottom: 20px;
          }
 
+         /* Import Section */
+         .import-section {
+             margin-top: 30px;
+             border-top: 1px solid #eee;
+             padding-top: 20px;
+         }
+         .import-section h3 {
+             color: #1b5e20;
+             margin-bottom: 15px;
+         }
+         .import-form {
+             display: flex;
+             flex-wrap: wrap;
+             gap: 15px;
+             align-items: center;
+             background-color: #f1f8e9;
+             padding: 15px;
+             border-radius: 8px;
+             border: 1px solid #dcedc8;
+         }
+         .import-form input[type="file"] {
+             flex-grow: 1;
+             min-width: 200px;
+             padding: 8px;
+             border: 1px solid #ccc;
+             border-radius: 5px;
+             font-family: 'Sarabun', sans-serif;
+             font-size: 1rem;
+             background-color: #ffffff;
+         }
+         .import-form button {
+             padding: 10px 20px;
+             background-color: #0277bd; /* Blue */
+             color: white;
+             border: none;
+             border-radius: 5px;
+             font-size: 1rem;
+             cursor: pointer;
+             transition: background-color 0.3s ease, transform 0.1s ease;
+         }
+         .import-form button:hover {
+             background-color: #01579b; /* Darker Blue */
+             transform: translateY(-2px);
+         }
+         .import-form button:active {
+             transform: translateY(0);
+         }
+
 
         /* Responsive adjustments */
         @media (max-width: 768px) { /* Adjusted breakpoint for tablets */
@@ -572,13 +620,14 @@
             .container, .student-management-container, .login-container, .dashboard-container { /* Added dashboard */
                 padding: 20px; /* Reduced container padding */
             }
-            .controls, .student-form {
+            .controls, .student-form, .import-form { /* Added import-form */
                 flex-direction: column;
                 align-items: stretch;
                 padding: 10px; /* Reduced padding */
             }
             .controls select, .controls input[type="date"],
-            .student-form input, .student-form button, .student-form select { /* Added select */
+            .student-form input, .student-form button, .student-form select,
+            .import-form input[type="file"], .import-form button { /* Added import form elements */
                  margin-right: 0;
                  margin-bottom: 10px; /* Consistent margin */
                  width: 100%; /* Full width */
@@ -875,6 +924,15 @@
                 <button onclick="addOrUpdateStudent()">เพิ่ม/แก้ไข นักเรียน</button>
             </div>
 
+            <div class="import-section">
+                <h3>นำเข้าข้อมูลนักเรียน (จากไฟล์ CSV)</h3>
+                <div class="import-form">
+                    <input type="file" id="import-csv-file" accept=".csv">
+                    <button onclick="importStudents()">นำเข้าข้อมูล</button>
+                </div>
+            </div>
+
+
             <ul class="student-list" id="student-list">
                 </ul>
         </div>
@@ -926,12 +984,14 @@ const firebaseConfig = {
         // Get reference to the daily report grade heading
         const dailyReportGradeHeading = document.getElementById('daily-report-grade-heading');
 
-
         // Get references for comparative analysis views
         const comparativeSummaryView = document.getElementById('comparative-summary-view');
         const studentHistoryDetail = document.getElementById('student-history-detail');
         const studentHistoryTitle = document.getElementById('student-history-title');
         const studentHistoryBody = document.getElementById('student-history-body');
+
+        // Get reference for import file input
+        const importCsvFileInput = document.getElementById('import-csv-file');
 
 
         // Variable to store the unsubscribe function for the student listener
@@ -1598,6 +1658,134 @@ const firebaseConfig = {
                 }
             }
         }
+
+        // --- Import Functions ---
+
+        // Function to import students from a CSV file
+        function importStudents() {
+             // Check if user is logged in before importing
+            if (!auth.currentUser) {
+                alert("กรุณาเข้าสู่ระบบก่อนนำเข้าข้อมูลนักเรียน"); // Please log in before importing
+                return;
+            }
+
+            const file = importCsvFileInput.files[0];
+            if (!file) {
+                alert("กรุณาเลือกไฟล์ CSV ที่ต้องการนำเข้า"); // Please select a CSV file to import
+                return;
+            }
+
+            if (file.type !== 'text/csv') {
+                 // Basic check, more robust validation might be needed
+                 alert("กรุณาเลือกไฟล์ CSV เท่านั้น"); // Please select a CSV file only
+                 return;
+            }
+
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const text = e.target.result;
+                parseCsvAndImport(text);
+            };
+
+            reader.onerror = function(e) {
+                console.error("Error reading file:", e);
+                 const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = `เกิดข้อผิดพลาดในการอ่านไฟล์: ${reader.error}`;
+                errorMessage.style.display = 'block';
+            };
+
+            reader.readAsText(file); // Read the file as text
+        }
+
+        // Function to parse CSV text and import data to Firebase
+        async function parseCsvAndImport(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim() !== ''); // Split into lines and remove empty lines
+            if (lines.length <= 1) {
+                alert("ไฟล์ CSV ไม่มีข้อมูลนักเรียน"); // CSV file has no student data
+                return;
+            }
+
+            // Assuming the first line is the header
+            const header = lines[0].split(',').map(h => h.trim()); // Split header by comma
+            const expectedHeader = ["Student ID", "Student Number", "Full Name", "Grade Level", "Photo URL"]; // Expected headers
+
+            // Basic header validation (case-insensitive and order-independent check could be more robust)
+             const headerMatch = expectedHeader.every(expected => header.some(h => h === expected));
+             if (!headerMatch) {
+                 alert(`รูปแบบหัวข้อในไฟล์ CSV ไม่ถูกต้อง\nหัวข้อที่คาดหวัง: ${expectedHeader.join(', ')}\nหัวข้อในไฟล์: ${header.join(', ')}`); // Invalid CSV header format
+                 return;
+             }
+
+
+            const studentsToImport = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim()); // Split values by comma
+
+                // Basic validation for number of columns
+                if (values.length !== header.length) {
+                     console.warn(`Skipping row ${i + 1} due to incorrect column count:`, lines[i]);
+                     continue; // Skip rows with incorrect column count
+                }
+
+                const studentData = {};
+                header.forEach((h, index) => {
+                    // Map header to data keys
+                    if (h === "Student ID") studentData.id = values[index];
+                    else if (h === "Student Number") studentData.number = parseInt(values[index], 10);
+                    else if (h === "Full Name") studentData.name = values[index];
+                    else if (h === "Grade Level") studentData.grade = values[index];
+                    else if (h === "Photo URL") studentData.photo = values[index];
+                });
+
+                 // Validate required fields
+                if (!studentData.id || !studentData.name || isNaN(studentData.number) || !studentData.grade) {
+                     console.warn(`Skipping row ${i + 1} due to missing required data:`, studentData);
+                     continue; // Skip rows with missing required data
+                }
+
+                studentsToImport.push(studentData);
+            }
+
+            if (studentsToImport.length === 0) {
+                alert("ไม่พบข้อมูลนักเรียนที่ถูกต้องในไฟล์ CSV"); // No valid student data found in CSV file
+                return;
+            }
+
+            console.log("Students to import:", studentsToImport);
+
+            const importPromises = studentsToImport.map(student => {
+                // Use student ID as the key in Firebase
+                return studentsRef.child(student.id).set(student);
+            });
+
+            try {
+                await Promise.all(importPromises);
+                console.log("All students imported successfully!");
+                 const confirmationMessage = document.getElementById('save-confirmation');
+                confirmationMessage.textContent = `นำเข้าข้อมูลนักเรียนสำเร็จ ${studentsToImport.length} รายการ`; // Imported X students successfully
+                confirmationMessage.style.display = 'block';
+                 const errorMessage = document.getElementById('error-message');
+                errorMessage.style.display = 'none';
+
+                 // Clear the file input after successful import
+                 importCsvFileInput.value = '';
+
+
+                 setTimeout(() => {
+                     confirmationMessage.style.display = 'none';
+                 }, 5000); // Hide after 5 seconds
+
+
+            } catch (error) {
+                console.error("Error importing students:", error);
+                 const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = `เกิดข้อผิดพลาดในการนำเข้าข้อมูลนักเรียน: ${error.message}`;
+                errorMessage.style.display = 'block';
+            }
+        }
+
 
         // --- Export Functions ---
 
