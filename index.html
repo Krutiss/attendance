@@ -12,102 +12,170 @@
             padding: 20px;
             background-color: #e8f5e9; /* Light green background */
             color: #333;
+            line-height: 1.6; /* Improve readability */
         }
         .container {
             max-width: 900px;
-            margin: 0 auto;
+            margin: 20px auto; /* Add margin top and bottom for separation */
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px; /* Add margin below main container */
+            padding: 30px; /* Increased padding */
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
         }
         h1, h2 {
             color: #1b5e20; /* Dark green */
             text-align: center;
+            margin-bottom: 25px; /* Increased margin */
         }
+         h2 {
+             border-bottom: 2px solid #4caf50; /* Add a subtle underline */
+             padding-bottom: 10px;
+             margin-top: 20px;
+         }
         .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px; /* Increased margin */
             flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            background-color: #f1f8e9; /* Very light green background for controls */
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dcedc8; /* Subtle border */
         }
         .controls label {
             margin-right: 10px;
             font-weight: bold;
+            color: #333;
         }
         .controls select, .controls input[type="date"] {
-            padding: 8px;
+            padding: 10px; /* Increased padding */
             border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 10px;
+            border-radius: 5px; /* Slightly more rounded */
+            margin-right: 15px; /* Increased margin */
             margin-bottom: 10px; /* Add margin for wrapping */
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1rem;
         }
-        .attendance-table {
+         .controls button {
+             padding: 10px 20px;
+             background-color: #4caf50;
+             color: white;
+             border: none;
+             border-radius: 5px;
+             font-size: 1rem;
+             cursor: pointer;
+             transition: background-color 0.3s ease, transform 0.1s ease;
+         }
+         .controls button:hover {
+             background-color: #388e3c;
+             transform: translateY(-2px); /* Slight lift effect */
+         }
+         .controls button:active {
+             transform: translateY(0);
+         }
+
+        .attendance-table, .analysis-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle table shadow */
         }
-        .attendance-table th, .attendance-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
+        .attendance-table th, .attendance-table td,
+        .analysis-table th, .analysis-table td {
+            border: 1px solid #e0e0e0; /* Lighter border */
+            padding: 12px; /* Increased padding */
             text-align: left;
         }
-        .attendance-table th {
+        .attendance-table th, .analysis-table th {
             background-color: #4caf50; /* Green */
             color: white;
+            font-weight: bold;
+            text-transform: uppercase; /* Uppercase headers */
+            letter-spacing: 0.5px;
         }
-        .attendance-table td {
-            background-color: #f9f9f9;
-        }
+         .attendance-table tbody tr:nth-child(even),
+         .analysis-table tbody tr:nth-child(even) {
+             background-color: #f9f9f9; /* Slightly different background for even rows */
+         }
+         .attendance-table tbody tr:hover,
+         .analysis-table tbody tr:hover {
+             background-color: #e0f2f7; /* Highlight row on hover */
+         }
+
         .status-select {
-            padding: 5px;
-            border-radius: 4px;
+            padding: 6px; /* Increased padding */
+            border-radius: 5px; /* Slightly more rounded */
             cursor: pointer;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 0.95rem;
+            border: 1px solid #ccc; /* Add border */
         }
+         .status-select option {
+             padding: 5px; /* Padding for dropdown options */
+         }
         /* Status Colors */
-        .status-present { background-color: #a5d6a7; } /* Light Green */
-        .status-sick { background-color: #ef9a9a; } /* Light Red */
-        .status-leave { background-color: #ffe082; } /* Light Yellow */
-        .status-absent { background-color: #ffcc80; } /* Light Orange */
+        .status-present { background-color: #a5d6a7; color: #1b5e20; font-weight: bold; } /* Light Green, Dark Green Text */
+        .status-sick { background-color: #ef9a9a; color: #c62828; font-weight: bold; } /* Light Red, Dark Red Text */
+        .status-leave { background-color: #ffe082; color: #f57c00; font-weight: bold; } /* Light Yellow, Dark Orange Text */
+        .status-absent { background-color: #ffcc80; color: #e65100; font-weight: bold; } /* Light Orange, Dark Orange Text */
 
         .notes-section {
-            margin-top: 20px;
+            margin-top: 30px; /* Increased margin */
+            border-top: 1px solid #eee; /* Separator line */
+            padding-top: 20px;
+        }
+        .notes-section h3 {
+            color: #1b5e20;
+            margin-bottom: 10px;
         }
         .notes-section textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px; /* Increased padding */
             border: 1px solid #ccc;
-            border-radius: 4px;
-            min-height: 100px;
+            border-radius: 5px;
+            min-height: 120px; /* Increased height */
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1rem;
+            resize: vertical; /* Allow vertical resizing */
         }
         .save-button {
             display: block;
             width: 100%;
-            padding: 10px;
+            padding: 12px; /* Increased padding */
             background-color: #4caf50; /* Green */
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 18px;
+            border-radius: 5px;
+            font-size: 1.1rem; /* Slightly larger font */
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin-top: 20px; /* Increased margin */
         }
         .save-button:hover {
             background-color: #388e3c; /* Darker green on hover */
+            transform: translateY(-2px); /* Slight lift effect */
         }
+         .save-button:active {
+             transform: translateY(0);
+         }
         .confirmation-message {
             text-align: center;
             color: #2e7d32; /* Dark green */
             margin-top: 15px;
             font-weight: bold;
             display: none; /* Hidden by default */
+            padding: 10px;
+            background-color: #dcedc8; /* Light green background */
+            border: 1px solid #aed581; /* Green border */
+            border-radius: 5px;
         }
         .statistics {
             margin-top: 20px;
             text-align: center;
             font-weight: bold;
+            font-size: 1.1rem;
+            color: #1b5e20; /* Dark green */
         }
          .error-message {
             text-align: center;
@@ -115,48 +183,66 @@
             margin-top: 15px;
             font-weight: bold;
             display: none; /* Hidden by default */
+            padding: 10px;
+            background-color: #ffcdd2; /* Light red background */
+            border: 1px solid #ef9a9a; /* Red border */
+            border-radius: 5px;
         }
 
         /* Student Management Section */
         .student-management-container {
              max-width: 900px;
-            margin: 20px auto; /* Add margin top and bottom */
+            margin: 20px auto;
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 30px; /* Increased padding */
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
         }
         .student-management-container h2 {
-            color: #1b5e20; /* Dark green */
+            color: #1b5e20;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+             border-bottom: 2px solid #4caf50;
+             padding-bottom: 10px;
+             margin-top: 0; /* Remove top margin here */
         }
         .student-form {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-            align-items: flex-end; /* Align items to the bottom */
+            gap: 15px; /* Increased gap */
+            margin-bottom: 25px; /* Increased margin */
+            align-items: flex-end;
+            background-color: #f1f8e9; /* Very light green background */
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dcedc8; /* Subtle border */
         }
         .student-form input {
-            padding: 8px;
+            padding: 10px; /* Increased padding */
             border: 1px solid #ccc;
-            border-radius: 4px;
-            flex-grow: 1; /* Allow inputs to grow */
-            min-width: 150px; /* Minimum width for inputs */
+            border-radius: 5px;
+            flex-grow: 1;
+            min-width: 180px; /* Adjusted minimum width */
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1rem;
         }
          .student-form button {
-            padding: 8px 15px;
+            padding: 10px 20px;
             background-color: #4caf50;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+             font-size: 1rem;
         }
         .student-form button:hover {
             background-color: #388e3c;
+             transform: translateY(-2px);
         }
+         .student-form button:active {
+             transform: translateY(0);
+         }
         .student-list {
             list-style: none;
             padding: 0;
@@ -165,24 +251,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            padding: 12px; /* Increased padding */
             border-bottom: 1px solid #eee;
+            background-color: #ffffff; /* Ensure white background */
+            transition: background-color 0.3s ease;
+        }
+        .student-item:hover {
+            background-color: #e0f2f7; /* Highlight on hover */
         }
         .student-item:last-child {
             border-bottom: none;
         }
         .student-item span {
             flex-grow: 1;
-            margin-right: 10px;
+            margin-right: 15px; /* Increased margin */
+            font-size: 1rem;
         }
         .student-item button {
-            padding: 5px 10px;
-            margin-left: 5px;
+            padding: 6px 12px; /* Adjusted padding */
+            margin-left: 8px; /* Increased margin */
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-size: 0.9rem;
         }
+         .student-item button:hover {
+             transform: translateY(-1px);
+         }
+          .student-item button:active {
+             transform: translateY(0);
+         }
         .student-item .edit-button {
             background-color: #ff9800; /* Orange */
             color: white;
@@ -200,43 +299,55 @@
 
         /* Login Section */
         .login-container {
-            max-width: 400px;
-            margin: 80px auto; /* Center vertically and horizontally */
+            max-width: 450px; /* Slightly wider */
+            margin: 80px auto;
             background-color: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 40px; /* Increased padding */
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow */
             text-align: center;
         }
         .login-container h2 {
             color: #1b5e20;
-            margin-bottom: 20px;
+            margin-bottom: 30px; /* Increased margin */
+             border-bottom: none; /* No underline for login title */
+             padding-bottom: 0;
         }
         .login-form input {
-            width: calc(100% - 20px); /* Adjust for padding */
-            padding: 10px;
-            margin-bottom: 15px;
+            width: calc(100% - 24px); /* Adjust for padding */
+            padding: 12px; /* Increased padding */
+            margin-bottom: 20px; /* Increased margin */
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1rem;
         }
         .login-form button {
             width: 100%;
-            padding: 10px;
+            padding: 12px; /* Increased padding */
             background-color: #4caf50;
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 5px;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
         .login-form button:hover {
             background-color: #388e3c;
+             transform: translateY(-2px);
         }
+         .login-form button:active {
+             transform: translateY(0);
+         }
         .login-error {
             color: #c62828;
-            margin-top: 15px;
-            display: none; /* Hidden by default */
+            margin-top: 20px; /* Increased margin */
+            display: none;
+            padding: 10px;
+            background-color: #ffcdd2;
+            border: 1px solid #ef9a9a;
+            border-radius: 5px;
         }
 
         /* Header with Logout and View Toggle */
@@ -244,27 +355,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap; /* Allow wrapping */
+            margin-bottom: 25px; /* Increased margin */
+            flex-wrap: wrap;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee; /* Separator */
         }
         .app-header h1 {
             margin: 0;
-            text-align: left; /* Align title to the left in header */
-            flex-grow: 1; /* Allow title to take available space */
-            margin-bottom: 10px; /* Add margin for wrapping */
+            text-align: left;
+            flex-grow: 1;
+            margin-bottom: 10px;
+            font-size: 1.8rem; /* Slightly larger title */
         }
         .header-buttons {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap; /* Allow wrapping */
+            flex-wrap: wrap;
         }
         .header-buttons button {
              padding: 8px 15px;
              border: none;
-             border-radius: 4px;
+             border-radius: 5px; /* Slightly more rounded */
              cursor: pointer;
-             transition: background-color 0.3s ease;
+             transition: background-color 0.3s ease, transform 0.1s ease;
+             font-size: 0.95rem;
         }
+         .header-buttons button:hover {
+             transform: translateY(-1px);
+         }
+          .header-buttons button:active {
+             transform: translateY(0);
+         }
         .view-button {
              background-color: #0288d1; /* Blue */
              color: white;
@@ -283,8 +404,10 @@
 
         /* Export Buttons */
         .export-buttons {
-            margin-top: 20px;
+            margin-top: 30px; /* Increased margin */
             text-align: center;
+            border-top: 1px solid #eee; /* Separator line */
+            padding-top: 20px;
         }
         .export-buttons button {
             padding: 10px 20px;
@@ -292,102 +415,139 @@
             background-color: #0277bd; /* Light Blue */
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 5px; /* Slightly more rounded */
+            font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
         .export-buttons button:hover {
             background-color: #01579b; /* Darker Blue */
+             transform: translateY(-2px);
         }
+         .export-buttons button:active {
+             transform: translateY(0);
+         }
 
         /* Comparative Analysis Section */
         .comparative-analysis-container {
              max-width: 900px;
-            margin: 20px auto; /* Add margin top and bottom */
+            margin: 20px auto;
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-             display: none; /* Hidden by default */
+            padding: 30px; /* Increased padding */
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
+             display: none;
         }
         .comparative-analysis-container h2 {
-             color: #1b5e20; /* Dark green */
+             color: #1b5e20;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+             border-bottom: 2px solid #4caf50;
+             padding-bottom: 10px;
+             margin-top: 0; /* Remove top margin here */
         }
+         .comparative-analysis-container p {
+             text-align: center;
+             margin-bottom: 20px;
+             color: #555;
+         }
         .analysis-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         .analysis-table th, .analysis-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
+            border: 1px solid #e0e0e0;
+            padding: 12px; /* Increased padding */
             text-align: left;
         }
         .analysis-table th {
-            background-color: #4caf50; /* Green */
+            background-color: #4caf50;
             color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .analysis-table td {
-            background-color: #f9f9f9;
-        }
+         .analysis-table tbody tr:nth-child(even) {
+             background-color: #f9f9f9;
+         }
+          .analysis-table tbody tr:hover {
+             background-color: #e0f2f7;
+         }
 
 
         /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .controls {
+        @media (max-width: 768px) { /* Adjusted breakpoint for tablets */
+            body {
+                padding: 10px; /* Reduced padding on smaller screens */
+            }
+            .container, .student-management-container, .login-container {
+                padding: 20px; /* Reduced container padding */
+            }
+            .controls, .student-form {
                 flex-direction: column;
                 align-items: stretch;
+                padding: 10px; /* Reduced padding */
             }
-            .controls select, .controls input[type="date"] {
+            .controls select, .controls input[type="date"],
+            .student-form input, .student-form button {
                  margin-right: 0;
-            }
-             .student-form {
-                flex-direction: column;
-                align-items: stretch;
-            }
-             .student-form input, .student-form button {
-                width: 100%; /* Full width on small screens */
-                margin-right: 0;
+                 margin-bottom: 10px; /* Consistent margin */
+                 width: 100%; /* Full width */
             }
              .student-item {
                 flex-direction: column;
                 align-items: flex-start;
+                padding: 10px; /* Reduced padding */
             }
              .student-item span {
-                margin-bottom: 5px;
+                margin-bottom: 8px; /* Adjusted margin */
                 margin-right: 0;
             }
              .student-item button {
                 margin-left: 0;
                 margin-right: 5px;
+                padding: 5px 10px; /* Adjusted padding */
             }
              .login-container {
-                margin: 40px auto; /* Adjust margin for smaller screens */
+                margin: 40px auto;
                 padding: 20px;
             }
              .app-header {
                 flex-direction: column;
                 align-items: center;
+                padding-bottom: 10px; /* Reduced padding */
             }
             .app-header h1 {
-                text-align: center; /* Center title in header on small screens */
+                text-align: center;
                 margin-bottom: 10px;
-            }
-             .export-buttons button {
-                display: block;
-                width: 100%;
-                margin: 10px 0; /* Stack buttons vertically */
+                font-size: 1.5rem; /* Adjusted font size */
             }
              .header-buttons {
                  flex-direction: column;
                  width: 100%;
-                 gap: 5px;
+                 gap: 8px; /* Adjusted gap */
              }
              .header-buttons button {
                  width: 100%;
+             }
+             .export-buttons button {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+             .attendance-table th, .attendance-table td,
+             .analysis-table th, .analysis-table td {
+                 padding: 8px; /* Reduced table padding */
+                 font-size: 0.9rem; /* Slightly smaller font */
+             }
+             .status-select {
+                 padding: 4px; /* Reduced padding */
+                 font-size: 0.9rem;
+             }
+             .notes-section textarea {
+                 min-height: 100px; /* Adjusted height */
              }
         }
     </style>
@@ -1326,7 +1486,7 @@ const firebaseConfig = {
               const analysisAcademicYear = document.getElementById('analysis-academic-year').value;
 
               const table = document.querySelector('#comparative-analysis-container .analysis-table');
-              let csvContent = "data:text/csv;charset=utf-8,%EF%BB%BF"; // Add BOM for UTF-8 in Excel
+              let csvContent = "data:text/csv;charset=utf-8,%EF%BB% শিক্ষকদের"; // Add BOM for UTF-8 in Excel
 
               // Add title and period info
               csvContent += `"รายงานสรุปเวลาเรียน ชั้นประถมศึกษาปีที่ 5"\n`;
@@ -1341,10 +1501,11 @@ const firebaseConfig = {
 
               // Get row data
               table.querySelectorAll('tbody tr').forEach(tr => {
+                  const rowData = [];
                   tr.querySelectorAll('td').forEach(td => {
-                      csvContent += `"${td.textContent.trim()}",`;
+                      rowData.push(td.textContent.trim());
                   });
-                  csvContent = csvContent.slice(0, -1) + "\n"; // Remove trailing comma and add newline
+                  csvContent += `"${rowData.join('","')}"\n`; // Join row data with quotes and commas
               });
 
 
@@ -1401,7 +1562,7 @@ const firebaseConfig = {
                         // Process attendance data for the selected semester and academic year
                         for (const dateKey in attendanceData) {
                             const record = attendanceData[dateKey];
-                            // Simple filtering by year and semester (assuming dateKey is YYYYMMDD)
+                            // Simple filtering by year and semester (assuming dateKey isYYYYMMDD)
                             const recordYear = parseInt(dateKey.substring(0, 4));
                             // You might need a more robust way to determine semester based on date
                             // For now, we'll rely on the saved semester value in the record
