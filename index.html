@@ -23,6 +23,14 @@
         .btn-primary:hover {
             background-color: #047857;
         }
+        .btn-secondary {
+            background-color: #52a887;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #3d8b6a;
+        }
         .table-header th {
             background-color: #D1FAE5; /* Light green for table headers */
             color: #065F46; /* Dark green text */
@@ -43,8 +51,8 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            z-index: 9999;
-            display: none; /* Hidden by default */
+            z-index: 10009; /* Increased z-index */
+            display: none; 
         }
         @keyframes spin {
             0% { transform: translate(-50%, -50%) rotate(0deg); }
@@ -58,33 +66,53 @@
             border-radius: 8px;
             color: white;
             font-size: 0.9rem;
-            z-index: 10000;
+            z-index: 10010; /* Increased z-index */
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        .toast.show {
-            opacity: 1;
-        }
+        .toast.show { opacity: 1; }
         .toast.success { background-color: #10B981; }
         .toast.error { background-color: #EF4444; }
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        ::-webkit-scrollbar-track {
-            background: #f0f9f4;
-            border-radius: 10px;
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #10B981;
-            border-radius: 10px;
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 700px; /* Max width for submission details */
+            max-height: 80vh;
+            overflow-y: auto;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #059669;
+        .modal-content-lg { /* For student history potentially */
+             max-width: 900px;
         }
-        /* Ensure select dropdown arrows are visible */
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f0f9f4; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #10B981; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
         select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
             background-position: right 0.5rem center;
@@ -95,11 +123,106 @@
             -moz-appearance: none;
             appearance: none;
         }
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .file-input-button {
+            background-color: #E6F5F0; /* Lighter green for button */
+            color: #059669;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            border: 1px solid #A7F3D0;
+            cursor: pointer;
+        }
+        .file-input-button:hover {
+            background-color: #D1FAE5;
+        }
+        .file-input-native {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-name-display {
+            margin-top: 0.25rem;
+            font-size: 0.75rem; /* text-xs */
+            color: #4B5563; /* text-gray-600 */
+        }
+        .file-remove-btn {
+            margin-left: 8px;
+            color: #EF4444; /* red-500 */
+            cursor: pointer;
+            font-weight: bold;
+        }
+         .tab-button {
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            border-radius: 0.375rem 0.375rem 0 0;
+            border: 1px solid #D1D5DB;
+            border-bottom: none;
+            background-color: #F3F4F6;
+            color: #374151;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .tab-button.active {
+            background-color: #10B981;
+            color: white;
+            border-color: #10B981;
+        }
+        .tab-content {
+            display: none;
+            padding: 1rem;
+            border: 1px solid #D1D5DB;
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem;
+            background-color: white;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
     </style>
 </head>
 <body class="min-h-screen">
     <div id="loader" class="loader"></div>
     <div id="toast" class="toast"></div>
+
+    <div id="submissionDetailModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-green-700">รายละเอียดการบันทึก</h3>
+                <button id="closeSubmissionDetailModalBtn" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <p class="text-sm text-gray-600 mb-1"><strong>วันที่บันทึก:</strong> <span id="modalSubmissionDate"></span></p>
+            <p class="text-sm text-gray-600 mb-1"><strong>วันที่เข้าเรียน:</strong> <span id="modalAttendanceDate"></span></p>
+            <p class="text-sm text-gray-600 mb-3"><strong>ระดับชั้น:</strong> <span id="modalGradeLevel"></span></p>
+            <div id="modalTeacherNotes" class="mb-3 p-2 bg-gray-50 rounded-md text-sm"></div>
+            <div class="overflow-x-auto max-h-[50vh]">
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                    <thead class="table-header">
+                        <tr>
+                            <th class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider">เลขที่</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider">ชื่อ-นามสกุล</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider">สถานะ</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider">หมายเหตุ</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider">เอกสาร</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissionDetailTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 
     <header class="header p-4 shadow-md">
         <h1 class="text-2xl font-bold text-center">ระบบบันทึกการเข้าเรียน - โรงเรียนบ้านหนองกก</h1>
@@ -107,149 +230,183 @@
     </header>
 
     <main class="container mx-auto p-4 md:p-6">
-        <section id="controls" class="mb-6 p-4 bg-white rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4 text-green-700">เลือกข้อมูล</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label for="datePicker" class="block text-sm font-medium text-gray-700 mb-1">วันที่:</label>
-                    <input type="date" id="datePicker" name="datePicker" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
-                </div>
-                <div>
-                    <label for="semester" class="block text-sm font-medium text-gray-700 mb-1">ภาคเรียน:</label>
-                    <select id="semester" name="semester" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
-                        <option value="1">ภาคเรียนที่ 1</option>
-                        <option value="2">ภาคเรียนที่ 2</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="academicYear" class="block text-sm font-medium text-gray-700 mb-1">ปีการศึกษา:</label>
-                    <select id="academicYear" name="academicYear" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
+        <div class="mb-6">
+            <button class="tab-button active" data-tab="attendanceEntryTab">บันทึกการเข้าเรียน</button>
+            <button class="tab-button" data-tab="historyTab">ประวัติและรายงาน</button>
+        </div>
+
+        <div id="attendanceEntryTab" class="tab-content active">
+            <section id="controls" class="mb-6 p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4 text-green-700">เลือกข้อมูลสำหรับบันทึก</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label for="datePicker" class="block text-sm font-medium text-gray-700 mb-1">วันที่:</label>
+                        <input type="date" id="datePicker" name="datePicker" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    <div>
+                        <label for="semester" class="block text-sm font-medium text-gray-700 mb-1">ภาคเรียน:</label>
+                        <select id="semester" name="semester" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
+                            <option value="1">ภาคเรียนที่ 1</option>
+                            <option value="2">ภาคเรียนที่ 2</option>
                         </select>
+                    </div>
+                    <div>
+                        <label for="academicYear" class="block text-sm font-medium text-gray-700 mb-1">ปีการศึกษา:</label>
+                        <select id="academicYear" name="academicYear" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
+                        </select>
+                    </div>
+                    <div>
+                        <label for="gradeLevel" class="block text-sm font-medium text-gray-700 mb-1">ระดับชั้น:</label>
+                        <select id="gradeLevel" name="gradeLevel" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
+                            <option value="P.4">ประถมศึกษาปีที่ 4 (P.4)</option>
+                            <option value="P.5">ประถมศึกษาปีที่ 5 (P.5)</option>
+                            <option value="P.6">ประถมศึกษาปีที่ 6 (P.6)</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label for="gradeLevel" class="block text-sm font-medium text-gray-700 mb-1">ระดับชั้น:</label>
-                    <select id="gradeLevel" name="gradeLevel" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
-                        <option value="P.4">ประถมศึกษาปีที่ 4 (P.4)</option>
-                        <option value="P.5">ประถมศึกษาปีที่ 5 (P.5)</option>
-                        <option value="P.6">ประถมศึกษาปีที่ 6 (P.6)</option>
-                    </select>
-                </div>
-            </div>
-            <button id="loadStudentsBtn" class="mt-4 btn-primary font-semibold py-2 px-4 rounded-md shadow-sm hover:shadow-md w-full md:w-auto">
-                โหลดรายชื่อนักเรียน
-            </button>
-        </section>
-
-        <section id="attendanceSection" class="mb-6 p-4 bg-white rounded-lg shadow hidden">
-            <h2 class="text-xl font-semibold mb-4 text-green-700">บันทึกการเข้าเรียน</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
-                    <thead class="table-header">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">รูป</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">เลขที่</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">รหัสนักเรียน</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ชื่อ-นามสกุล</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">สถานะ</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">หมายเหตุ (ป่วย/ลา)</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">เอกสารแนบ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="attendanceTableBody" class="bg-white divide-y divide-gray-200">
-                        </tbody>
-                </table>
-            </div>
-            <button id="saveAttendanceBtn" class="mt-6 btn-primary font-semibold py-2 px-4 rounded-md shadow-sm hover:shadow-md w-full md:w-auto">
-                บันทึกข้อมูลการเข้าเรียน
-            </button>
-        </section>
-
-        <section id="dailySummarySection" class="mb-6 p-4 bg-white rounded-lg shadow hidden">
-            <h2 class="text-xl font-semibold mb-4 text-green-700">สรุปการเข้าเรียนรายวัน</h2>
-            <div id="summaryContent" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                </div>
-        </section>
-        
-        <section id="teacherNotesSection" class="mb-6 p-4 bg-white rounded-lg shadow hidden">
-            <h2 class="text-xl font-semibold mb-4 text-green-700">บันทึกเพิ่มเติมจากครู</h2>
-            <textarea id="teacherNotes" rows="4" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500" placeholder="บันทึกพฤติกรรมนักเรียนหรือข้อสังเกตอื่นๆ..."></textarea>
-        </section>
-
-        <section id="historySection" class="mb-6 p-4 bg-white rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-2 text-green-700">ประวัติการบันทึก</h2>
-            <div class="flex flex-wrap gap-4 mb-4 items-end">
-                <div>
-                    <label for="historyGradeFilter" class="block text-sm font-medium text-gray-700 mb-1">กรองตามระดับชั้น:</label>
-                    <select id="historyGradeFilter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
-                        <option value="">ทั้งหมด</option>
-                        <option value="P.1">P.1</option>
-                        <option value="P.2">P.2</option>
-                        <option value="P.3">P.3</option>
-                        <option value="P.4">P.4</option>
-                        <option value="P.5">P.5</option>
-                        <option value="P.6">P.6</option>
-                        <option value="M.1">M.1</option>
-                        <option value="M.2">M.2</option>
-                        <option value="M.3">M.3</option>
-                    </select>
-                </div>
-                 <button id="loadHistoryBtn" class="btn-primary font-semibold py-2 px-4 rounded-md shadow-sm hover:shadow-md">
-                    แสดงประวัติ
+                <button id="loadStudentsBtn" class="mt-4 btn-primary font-semibold py-2 px-4 rounded-md shadow-sm hover:shadow-md w-full md:w-auto">
+                    โหลดรายชื่อนักเรียน
                 </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
-                    <thead class="table-header">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">วันที่บันทึก</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">วันที่เข้าเรียน</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ระดับชั้น</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ภาคเรียน</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ปีการศึกษา</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">จำนวนนักเรียน</th>
-                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ดูรายละเอียด</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historyTableBody" class="bg-white divide-y divide-gray-200">
-                        </tbody>
-                </table>
-            </div>
-            <div id="paginationControls" class="mt-4 flex justify-center items-center space-x-2">
+            </section>
+
+            <section id="attendanceSection" class="mb-6 p-4 bg-white rounded-lg shadow hidden">
+                <h2 class="text-xl font-semibold mb-4 text-green-700">บันทึกการเข้าเรียน</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">รูป</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">เลขที่</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">รหัสนักเรียน</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ชื่อ-นามสกุล</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">สถานะ</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">หมายเหตุ (ป่วย/ลา)</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">เอกสารแนบ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
                 </div>
-        </section>
-        
-        <section id="exportSection" class="p-4 bg-white rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4 text-green-700">ส่งออกข้อมูล</h2>
-            <p class="text-sm text-gray-600 mb-2">
-                คุณสามารถส่งออกข้อมูลการเข้าเรียนเป็นไฟล์ Excel หรือ PDF ได้
-                (หมายเหตุ: การส่งออกเป็น PDF จะเป็นการพิมพ์มุมมองปัจจุบันของตารางสรุป)
-            </p>
-            <div class="flex flex-wrap gap-4">
+                 <div id="dailySummarySection" class="mt-6 mb-4 p-4 bg-gray-50 rounded-lg shadow hidden">
+                    <h3 class="text-lg font-semibold mb-3 text-green-700">สรุปการเข้าเรียนรายวัน</h3>
+                    <div id="summaryContent" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                </div>
+                <div id="teacherNotesSection" class="mt-6 mb-4 p-4 bg-gray-50 rounded-lg shadow hidden">
+                    <h3 class="text-lg font-semibold mb-2 text-green-700">บันทึกเพิ่มเติมจากครู</h3>
+                    <textarea id="teacherNotes" rows="3" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500" placeholder="บันทึกพฤติกรรมนักเรียนหรือข้อสังเกตอื่นๆ..."></textarea>
+                </div>
+                <button id="saveAttendanceBtn" class="mt-4 btn-primary font-semibold py-2 px-4 rounded-md shadow-sm hover:shadow-md w-full md:w-auto">
+                    บันทึกข้อมูลการเข้าเรียน
+                </button>
+            </section>
+        </div>
+
+        <div id="historyTab" class="tab-content">
+            <section id="submissionHistorySection" class="mb-6 p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2 text-green-700">ประวัติการบันทึก (รายวัน)</h2>
+                <div class="flex flex-wrap gap-4 mb-4 items-end">
+                    <div>
+                        <label for="historyGradeFilter" class="block text-sm font-medium text-gray-700 mb-1">กรองตามระดับชั้น:</label>
+                        <select id="historyGradeFilter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
+                            <option value="">ทั้งหมด</option>
+                            <option value="P.1">P.1</option> <option value="P.2">P.2</option> <option value="P.3">P.3</option>
+                            <option value="P.4">P.4</option> <option value="P.5">P.5</option> <option value="P.6">P.6</option>
+                            <option value="M.1">M.1</option> <option value="M.2">M.2</option> <option value="M.3">M.3</option>
+                        </select>
+                    </div>
+                    <button id="loadHistoryBtn" class="btn-secondary font-semibold py-2 px-4 rounded-md shadow-sm hover:shadow-md">
+                        แสดงประวัติการบันทึก
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">วันที่บันทึก</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">วันที่เข้าเรียน</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ระดับชั้น</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ภาคเรียน</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ปีการศึกษา</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">นักเรียน</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">ดูรายละเอียด</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+                <div id="paginationControls" class="mt-4 flex justify-center items-center space-x-2"></div>
+            </section>
+
+            <section id="studentHistorySection" class="mb-6 p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4 text-green-700">ประวัติการเข้าเรียนรายบุคคล</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div>
+                        <label for="studentHistorySearch" class="block text-sm font-medium text-gray-700 mb-1">ค้นหานักเรียน (ID หรือ ชื่อ):</label>
+                        <input type="text" id="studentHistorySearch" placeholder="พิมพ์ ID หรือ ชื่อ" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        <div id="studentSearchResults" class="absolute bg-white border border-gray-300 rounded-md mt-1 z-10 w-full max-h-40 overflow-y-auto shadow-lg"></div>
+                    </div>
+                     <div>
+                        <label for="studentHistoryNameDisplay" class="block text-sm font-medium text-gray-700 mb-1">นักเรียนที่เลือก:</label>
+                        <input type="text" id="studentHistoryNameDisplay" class="w-full p-2 border border-gray-200 bg-gray-100 rounded-md" readonly>
+                        <input type="hidden" id="selectedStudentIdForHistory">
+                    </div>
+                    <div>
+                        <label for="studentHistorySemester" class="block text-sm font-medium text-gray-700 mb-1">ภาคเรียน:</label>
+                        <select id="studentHistorySemester" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <option value="1">ภาคเรียนที่ 1</option>
+                            <option value="2">ภาคเรียนที่ 2</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="studentHistoryAcademicYear" class="block text-sm font-medium text-gray-700 mb-1">ปีการศึกษา:</label>
+                        <select id="studentHistoryAcademicYear" class="w-full p-2 border border-gray-300 rounded-md shadow-sm"></select>
+                    </div>
+                </div>
+                <button id="loadStudentHistoryBtn" class="btn-secondary font-semibold py-2 px-4 rounded-md shadow-sm hover:shadow-md w-full md:w-auto">
+                    แสดงประวัติรายบุคคล
+                </button>
+                <div id="studentHistoryTableContainer" class="mt-4 overflow-x-auto hidden">
+                    <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">วันที่</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">สถานะ</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">หมายเหตุ</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">เอกสารแนบ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentHistoryTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="exportSection" class="p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4 text-green-700">ส่งออกข้อมูล</h2>
+                <p class="text-sm text-gray-600 mb-2">ส่งออกข้อมูลการเข้าเรียนทั้งหมดใน "AttendanceLog" เป็นไฟล์ Excel</p>
                 <button id="exportExcelBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2-1a1 1 0 00-1 1v.5h14V5a1 1 0 00-1-1H4zM3 15a1 1 0 001 1h12a1 1 0 001-1v- аспектыH3v.5zm0-2.5h14V8H3v4.5z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2-1a1 1 0 00-1 1v.5h14V5a1 1 0 00-1-1H4zM3 15a1 1 0 001 1h12a1 1 0 001-1v-3.5H3v3.5zm0-5h14V8H3v2.5z" clip-rule="evenodd" />
                         <path d="M6.5 10.5a.5.5 0 000-1H5V9h1.5a.5.5 0 000-1H5V7.5a.5.5 0 00-1 0V12a.5.5 0 00.5.5H6a.5.5 0 00.5-.5V11h.5a.5.5 0 000-1H6.5zm4.5-.5a.5.5 0 01.5-.5H12V9h-.5a.5.5 0 01-.5-.5V7.5a.5.5 0 00-1 0V12a.5.5 0 00.5.5h.5a.5.5 0 00.5-.5V10zM15 12a.5.5 0 00.5-.5V7.5a.5.5 0 00-1 0v4a.5.5 0 00.5.5z" />
                     </svg>
-                    ส่งออกเป็น Excel
+                    ส่งออกเป็น Excel (AttendanceLog ทั้งหมด)
                 </button>
-                <button id="exportPdfBtn" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm flex items-center gap-2">
+                 <button id="exportPdfBtn" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm flex items-center gap-2">
                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm0 2h12v12H4V4zm4 2a.5.5 0 000 1h4a.5.5 0 000-1H8zm0 3a.5.5 0 000 1h4a.5.5 0 000-1H8zm0 3a.5.5 0 000 1h2a.5.5 0 000-1H8z" clip-rule="evenodd" />
                     </svg>
-                    ส่งออกเป็น PDF (พิมพ์)
+                    พิมพ์หน้านี้เป็น PDF
                 </button>
-            </div>
-        </section>
-
+            </section>
+        </div>
     </main>
 
     <footer class="text-center p-4 mt-8 text-sm text-gray-600 border-t border-gray-200">
-        &copy; <span id="currentYear"></span> Ban Nong Kok School, Krabi Primary Educational Service Area Office. Attendance System.
+        &copy; <span id="currentYear"></span> Ban Nong Kok School. Attendance System.
     </footer>
 
     <script>
         // --- CONFIGURATION ---
-        const API_ENDPOINT = "https://script.google.com/macros/library/d/1qt2Rjoh6k-fp4QwmcjSBwSbMZOg98JKSUHwSUPftRG3QEbD6Mh5pc8rn/2"; // Replace with your deployed Apps Script URL
+        const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxIIdhLQKwjMwFpW-YislqRfjO_-gh5jQfIuz_DwvnLpOfoHlherbGow0LcDVLo-cXc/exec"; // Replace with your deployed Apps Script URL
         const SHEET_ID = "1rQ8tqFHWSX8n9MwnCo7hUQ0oG3VLpiJygSeVdOmzxr0"; // Your Google Sheet ID
         const FOLDER_ID = "1WGRl8BPk5_pIbA1n8np8gA3wNxIt7zEW"; // Your Google Drive Folder ID
         const HISTORY_ITEMS_PER_PAGE = 10;
@@ -267,24 +424,48 @@
         const summaryContent = document.getElementById('summaryContent');
         const teacherNotesSection = document.getElementById('teacherNotesSection');
         const teacherNotesTextarea = document.getElementById('teacherNotes');
-        const historySection = document.getElementById('historySection');
+        
         const historyGradeFilter = document.getElementById('historyGradeFilter');
         const loadHistoryBtn = document.getElementById('loadHistoryBtn');
         const historyTableBody = document.getElementById('historyTableBody');
         const paginationControls = document.getElementById('paginationControls');
+        
         const exportExcelBtn = document.getElementById('exportExcelBtn');
         const exportPdfBtn = document.getElementById('exportPdfBtn');
         const loader = document.getElementById('loader');
         const toastElement = document.getElementById('toast');
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
+        // Modal Elements
+        const submissionDetailModal = document.getElementById('submissionDetailModal');
+        const closeSubmissionDetailModalBtn = document.getElementById('closeSubmissionDetailModalBtn');
+        const modalSubmissionDate = document.getElementById('modalSubmissionDate');
+        const modalAttendanceDate = document.getElementById('modalAttendanceDate');
+        const modalGradeLevel = document.getElementById('modalGradeLevel');
+        const modalTeacherNotes = document.getElementById('modalTeacherNotes');
+        const submissionDetailTableBody = document.getElementById('submissionDetailTableBody');
+
+        // Student History Elements
+        const studentHistorySearchInput = document.getElementById('studentHistorySearch');
+        const studentSearchResultsDiv = document.getElementById('studentSearchResults');
+        const studentHistoryNameDisplay = document.getElementById('studentHistoryNameDisplay');
+        const selectedStudentIdForHistoryInput = document.getElementById('selectedStudentIdForHistory');
+        const studentHistorySemesterSelect = document.getElementById('studentHistorySemester');
+        const studentHistoryAcademicYearSelect = document.getElementById('studentHistoryAcademicYear');
+        const loadStudentHistoryBtn = document.getElementById('loadStudentHistoryBtn');
+        const studentHistoryTableContainer = document.getElementById('studentHistoryTableContainer');
+        const studentHistoryTableBody = document.getElementById('studentHistoryTableBody');
+
+        // Tab Elements
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
         // --- APP STATE ---
-        let students = [];
-        let attendanceData = {}; // studentId: { status: 'Present', notes: '', fileInfo: null, timestamp: '' }
+        let students = []; // For daily attendance entry
+        let allLoadedStudentsForSearch = []; // Stores all students loaded for a grade for student history search
+        let attendanceData = {}; 
         let currentHistoryPage = 1;
         let totalHistoryPages = 1;
-        let allHistoryData = [];
-
 
         // --- UTILITY FUNCTIONS ---
         function showLoader() { loader.style.display = 'block'; }
@@ -293,28 +474,50 @@
         function showToast(message, type = 'success') {
             toastElement.textContent = message;
             toastElement.className = `toast ${type} show`;
-            setTimeout(() => {
-                toastElement.className = 'toast';
-            }, 3000);
+            setTimeout(() => { toastElement.className = 'toast'; }, 3000);
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute: 'numeric' });
+        }
+        function formatDateShort(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
         // --- INITIALIZATION ---
         function initializeControls() {
-            // Set date to today
             const today = new Date().toISOString().split('T')[0];
             datePicker.value = today;
 
-            // Populate academic years
             const currentYear = new Date().getFullYear();
+            academicYearSelect.innerHTML = ''; // Clear previous
+            studentHistoryAcademicYearSelect.innerHTML = ''; // Clear previous
             for (let i = 0; i < 5; i++) {
                 const year = currentYear - i;
                 const option = document.createElement('option');
                 option.value = year;
-                option.textContent = year + 543; // Display in Buddhist Era
-                academicYearSelect.appendChild(option);
+                option.textContent = year + 543; // BE
+                academicYearSelect.appendChild(option.cloneNode(true));
+                studentHistoryAcademicYearSelect.appendChild(option);
             }
             academicYearSelect.value = currentYear;
+            studentHistoryAcademicYearSelect.value = currentYear; // Default student history year
+            studentHistorySemesterSelect.value = semesterSelect.value; // Sync semester
         }
+
+        // --- TAB NAVIGATION ---
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
 
         // --- STUDENT & ATTENDANCE LOGIC ---
         async function loadStudents() {
@@ -326,8 +529,9 @@
             attendanceSection.classList.add('hidden');
             dailySummarySection.classList.add('hidden');
             teacherNotesSection.classList.add('hidden');
-            attendanceTableBody.innerHTML = ''; // Clear previous students
+            attendanceTableBody.innerHTML = ''; 
             students = [];
+            allLoadedStudentsForSearch = []; 
             attendanceData = {};
 
             const payload = {
@@ -346,6 +550,7 @@
 
                 if (result.success && result.data) {
                     students = result.data;
+                    allLoadedStudentsForSearch = [...result.data]; 
                     if (students.length === 0) {
                          showToast(`ไม่พบรายชื่อนักเรียนสำหรับระดับชั้น ${gradeLevelSelect.value}`, 'error');
                          attendanceSection.classList.add('hidden');
@@ -354,10 +559,14 @@
                         attendanceSection.classList.remove('hidden');
                         teacherNotesSection.classList.remove('hidden');
                         showToast('โหลดรายชื่อนักเรียนสำเร็จ', 'success');
+                        studentHistorySearchInput.value = '';
+                        studentHistoryNameDisplay.value = '';
+                        selectedStudentIdForHistoryInput.value = '';
+                        studentHistoryTableContainer.classList.add('hidden');
+                        studentHistoryTableBody.innerHTML = '';
                     }
                 } else {
                     showToast(result.message || 'เกิดข้อผิดพลาดในการโหลดรายชื่อนักเรียน', 'error');
-                    console.error("Error loading students:", result.message);
                 }
             } catch (error) {
                 showToast('การเชื่อมต่อกับเซิร์ฟเวอร์ล้มเหลว (โหลดนักเรียน)', 'error');
@@ -368,14 +577,14 @@
         }
 
         function renderAttendanceTable() {
-            attendanceTableBody.innerHTML = ''; // Clear existing rows
+            attendanceTableBody.innerHTML = '';
             students.forEach(student => {
-                const studentId = student.studentId || `id_${Date.now()}_${Math.random()}`; // Ensure an ID
-                attendanceData[studentId] = { status: 'Present', notes: '', fileInfo: null, timestamp: '' }; // Default to Present
+                const studentId = student.studentId || `id_${Date.now()}_${Math.random()}`;
+                attendanceData[studentId] = { status: 'Present', notes: '', fileInfo: null, timestamp: '', studentName: student.fullName, studentNumber: student.studentNumber };
 
                 const row = document.createElement('tr');
                 row.id = `student-row-${studentId}`;
-                row.classList.add('status-present'); // Default row color
+                row.classList.add('status-present');
 
                 row.innerHTML = `
                     <td class="px-4 py-2 whitespace-nowrap">
@@ -385,48 +594,38 @@
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${student.studentId || 'N/A'}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">${student.fullName || 'N/A'}</td>
                     <td class="px-4 py-2 whitespace-nowrap">
-                        <select data-student-id="${studentId}" class="status-select w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
-                            <option value="Present" selected>มาเรียน (Present)</option>
-                            <option value="Sick">ป่วย (Sick)</option>
-                            <option value="Leave">ลา (Leave)</option>
-                            <option value="Absent">ขาด (Absent)</option>
+                        <select data-student-id="${studentId}" class="status-select w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 text-sm">
+                            <option value="Present" selected>มาเรียน</option>
+                            <option value="Sick">ป่วย</option>
+                            <option value="Leave">ลา</option>
+                            <option value="Absent">ขาด</option>
                         </select>
                     </td>
                     <td class="px-4 py-2">
-                        <input type="text" data-student-id="${studentId}" class="notes-input w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500" placeholder="เหตุผล (ถ้ามี)">
+                        <input type="text" data-student-id="${studentId}" class="notes-input w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 text-sm" placeholder="เหตุผล (ถ้ามี)">
                     </td>
                     <td class="px-4 py-2">
-                        <input type="file" data-student-id="${studentId}" class="file-input block w-full text-sm text-slate-500
-                          file:mr-4 file:py-2 file:px-4
-                          file:rounded-full file:border-0
-                          file:text-sm file:font-semibold
-                          file:bg-green-50 file:text-green-700
-                          hover:file:bg-green-100" accept=".pdf,.jpg,.jpeg,.png">
-                        <span class="file-name-display text-xs text-gray-500 block mt-1"></span>
+                        <div class="file-input-wrapper">
+                            <span class="file-input-button">เลือกไฟล์</span>
+                            <input type="file" data-student-id="${studentId}" class="file-input-native" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+                        <div class="file-name-display" data-student-id="${studentId}"></div>
                     </td>
                 `;
                 attendanceTableBody.appendChild(row);
             });
 
-            // Add event listeners for status changes, notes, and files
-            document.querySelectorAll('.status-select').forEach(select => {
-                select.addEventListener('change', handleStatusChange);
-            });
-            document.querySelectorAll('.notes-input').forEach(input => {
-                input.addEventListener('input', handleNotesChange);
-            });
-            document.querySelectorAll('.file-input').forEach(input => {
-                input.addEventListener('change', handleFileChange);
-            });
+            document.querySelectorAll('.status-select').forEach(select => select.addEventListener('change', handleStatusChange));
+            document.querySelectorAll('.notes-input').forEach(input => input.addEventListener('input', handleNotesChange));
+            document.querySelectorAll('.file-input-native').forEach(input => input.addEventListener('change', handleFileChange));
         }
 
         function handleStatusChange(event) {
             const studentId = event.target.dataset.studentId;
             const newStatus = event.target.value;
             attendanceData[studentId].status = newStatus;
-            
             const row = document.getElementById(`student-row-${studentId}`);
-            row.className = ''; // Clear existing status classes
+            row.className = ''; 
             switch (newStatus) {
                 case 'Present': row.classList.add('status-present'); break;
                 case 'Sick': row.classList.add('status-sick'); break;
@@ -434,7 +633,6 @@
                 case 'Absent': row.classList.add('status-absent'); break;
             }
         }
-
         function handleNotesChange(event) {
             const studentId = event.target.dataset.studentId;
             attendanceData[studentId].notes = event.target.value;
@@ -443,11 +641,11 @@
         async function handleFileChange(event) {
             const studentId = event.target.dataset.studentId;
             const file = event.target.files[0];
-            const fileNameDisplay = event.target.nextElementSibling; // The span for file name
-
+            const fileNameDisplayContainer = document.querySelector(`.file-name-display[data-student-id="${studentId}"]`);
+            
             if (file) {
                 showLoader();
-                fileNameDisplay.textContent = `กำลังอัปโหลด: ${file.name}`;
+                fileNameDisplayContainer.innerHTML = `กำลังอัปโหลด: ${file.name}`;
                 try {
                     const base64String = await convertFileToBase64(file);
                     attendanceData[studentId].fileInfo = {
@@ -455,33 +653,41 @@
                         mimeType: file.type,
                         base64Data: base64String
                     };
-                    fileNameDisplay.textContent = `เลือกไฟล์: ${file.name}`;
+                    fileNameDisplayContainer.innerHTML = `<span>${file.name}</span> <span class="file-remove-btn" data-student-id="${studentId}">&times;</span>`;
                     showToast(`ไฟล์ ${file.name} พร้อมสำหรับการบันทึก`, 'success');
+
+                    fileNameDisplayContainer.querySelector('.file-remove-btn').addEventListener('click', () => {
+                        attendanceData[studentId].fileInfo = null;
+                        event.target.value = null; 
+                        fileNameDisplayContainer.innerHTML = '';
+                        showToast('ไฟล์ถูกนำออกแล้ว', 'success');
+                    });
+
                 } catch (error) {
-                    console.error("Error converting file to base64:", error);
                     showToast('เกิดข้อผิดพลาดในการประมวลผลไฟล์', 'error');
-                    fileNameDisplay.textContent = 'การประมวลผลไฟล์ล้มเหลว';
-                    event.target.value = null; // Reset file input
+                    fileNameDisplayContainer.textContent = 'การประมวลผลไฟล์ล้มเหลว';
+                    event.target.value = null;
                 } finally {
                     hideLoader();
                 }
-            } else {
+            } else { 
                 attendanceData[studentId].fileInfo = null;
-                fileNameDisplay.textContent = '';
+                fileNameDisplayContainer.innerHTML = '';
             }
         }
 
-        function convertFileToBase64(file) {
+
+        function convertFileToBase64(file) { 
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(',')[1]); // Get only base64 part
+                reader.onload = () => resolve(reader.result.split(',')[1]);
                 reader.onerror = error => reject(error);
             });
         }
 
         async function saveAttendance() {
-            if (students.length === 0) {
+             if (students.length === 0) {
                 showToast("ไม่มีข้อมูลนักเรียนให้บันทึก", "error");
                 return;
             }
@@ -491,16 +697,16 @@
             const timestamp = new Date().toISOString();
 
             for (const student of students) {
-                 const studentId = student.studentId; // Assuming studentId is reliably present from fetched data
+                 const studentId = student.studentId; 
                  if (attendanceData[studentId]) {
                     recordsToSave.push({
                         studentId: student.studentId,
-                        studentNumber: student.studentNumber,
-                        fullName: student.fullName,
+                        studentNumber: attendanceData[studentId].studentNumber, 
+                        fullName: attendanceData[studentId].studentName, 
                         status: attendanceData[studentId].status,
                         notes: attendanceData[studentId].notes,
-                        fileInfo: attendanceData[studentId].fileInfo, // This will be null or {fileName, mimeType, base64Data}
-                        timestamp: timestamp
+                        fileInfo: attendanceData[studentId].fileInfo, 
+                        timestamp: timestamp 
                     });
                  }
             }
@@ -520,7 +726,7 @@
             try {
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
-                    body: JSON.stringify(payload), // Send as JSON
+                    body: JSON.stringify(payload),
                     headers: { 'Content-Type': 'application/json' }
                 });
                 const result = await response.json();
@@ -529,28 +735,25 @@
                     showToast('บันทึกข้อมูลการเข้าเรียนสำเร็จ!', 'success');
                     updateDailySummary(recordsToSave);
                     dailySummarySection.classList.remove('hidden');
-                    // Optionally, clear inputs or reset states
-                    // loadStudents(); // Reload to reflect any server-side changes or clear inputs
-                    loadAttendanceHistory(); // Refresh history
+                    loadAttendanceSubmissionHistory(); 
+                    document.querySelectorAll('.file-input-native').forEach(input => input.value = null);
+                    document.querySelectorAll('.file-name-display').forEach(div => div.innerHTML = '');
+                    document.querySelectorAll('.notes-input').forEach(input => input.value = '');
+                    teacherNotesTextarea.value = '';
+
                 } else {
                     showToast(result.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
-                    console.error("Error saving attendance:", result.message, result.error);
                 }
             } catch (error) {
                 showToast('การเชื่อมต่อกับเซิร์ฟเวอร์ล้มเหลว (บันทึกข้อมูล)', 'error');
-                console.error('Fetch error (saveAttendance):', error);
             } finally {
                 hideLoader();
             }
         }
         
-        function updateDailySummary(records) {
-            let presentCount = 0;
-            let sickCount = 0;
-            let leaveCount = 0;
-            let absentCount = 0;
+        function updateDailySummary(records) { 
+            let presentCount = 0, sickCount = 0, leaveCount = 0, absentCount = 0;
             const totalStudents = records.length;
-
             records.forEach(record => {
                 switch (record.status) {
                     case 'Present': presentCount++; break;
@@ -559,68 +762,39 @@
                     case 'Absent': absentCount++; break;
                 }
             });
-
             const presentPercent = totalStudents > 0 ? ((presentCount / totalStudents) * 100).toFixed(1) : 0;
-            
             summaryContent.innerHTML = `
-                <div class="p-3 bg-green-100 rounded-lg text-center">
-                    <p class="text-2xl font-bold text-green-700">${presentCount}</p>
-                    <p class="text-sm text-green-600">มาเรียน (${presentPercent}%)</p>
-                </div>
-                <div class="p-3 bg-red-100 rounded-lg text-center">
-                    <p class="text-2xl font-bold text-red-700">${sickCount}</p>
-                    <p class="text-sm text-red-600">ป่วย</p>
-                </div>
-                <div class="p-3 bg-yellow-100 rounded-lg text-center">
-                    <p class="text-2xl font-bold text-yellow-700">${leaveCount}</p>
-                    <p class="text-sm text-yellow-600">ลา</p>
-                </div>
-                <div class="p-3 bg-orange-100 rounded-lg text-center">
-                    <p class="text-2xl font-bold text-orange-700">${absentCount}</p>
-                    <p class="text-sm text-orange-600">ขาด</p>
-                </div>
-            `;
-            dailySummarySection.classList.remove('hidden');
+                <div class="p-3 bg-green-100 rounded-lg text-center"><p class="text-2xl font-bold text-green-700">${presentCount}</p><p class="text-sm text-green-600">มาเรียน (${presentPercent}%)</p></div>
+                <div class="p-3 bg-red-100 rounded-lg text-center"><p class="text-2xl font-bold text-red-700">${sickCount}</p><p class="text-sm text-red-600">ป่วย</p></div>
+                <div class="p-3 bg-yellow-100 rounded-lg text-center"><p class="text-2xl font-bold text-yellow-700">${leaveCount}</p><p class="text-sm text-yellow-600">ลา</p></div>
+                <div class="p-3 bg-orange-100 rounded-lg text-center"><p class="text-2xl font-bold text-orange-700">${absentCount}</p><p class="text-sm text-orange-600">ขาด</p></div>`;
         }
 
-        // --- HISTORY & FILTERING ---
-        async function loadAttendanceHistory(page = 1) {
+        // --- SUBMISSION HISTORY & DETAILS ---
+        async function loadAttendanceSubmissionHistory(page = 1) {
             showLoader();
             currentHistoryPage = page;
-            const gradeFilter = historyGradeFilter.value;
-
             const payload = {
-                action: 'getAttendanceHistory',
+                action: 'getAttendanceHistory', 
                 sheetId: SHEET_ID,
                 page: currentHistoryPage,
                 limit: HISTORY_ITEMS_PER_PAGE,
-                gradeFilter: gradeFilter
+                gradeFilter: historyGradeFilter.value
             };
-
             try {
-                const response = await fetch(API_ENDPOINT, {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    headers: { 'Content-Type': 'application/json'}
-                });
+                const response = await fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
                 const result = await response.json();
-
                 if (result.success) {
-                    allHistoryData = result.data; // Store all data if backend sends it all, or just current page
                     totalHistoryPages = result.totalPages || 1;
-                    renderHistoryTable(result.data); // result.data should be the paged data
+                    renderHistoryTable(result.data);
                     renderPaginationControls();
-                    if (result.data.length === 0) {
-                        showToast('ไม่พบประวัติการบันทึก', 'success');
-                        historyTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4">ไม่พบข้อมูลประวัติ</td></tr>';
-                    }
+                    if (result.data.length === 0) showToast('ไม่พบประวัติการบันทึก', 'success');
                 } else {
                     showToast(result.message || 'เกิดข้อผิดพลาดในการโหลดประวัติ', 'error');
                     historyTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4">ไม่สามารถโหลดข้อมูลได้</td></tr>';
                 }
             } catch (error) {
                 showToast('การเชื่อมต่อกับเซิร์ฟเวอร์ล้มเหลว (โหลดประวัติ)', 'error');
-                console.error('Fetch error (loadAttendanceHistory):', error);
                 historyTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4">การเชื่อมต่อล้มเหลว</td></tr>';
             } finally {
                 hideLoader();
@@ -636,132 +810,275 @@
             historyItems.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${new Date(item.submissionTimestamp).toLocaleString('th-TH')}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${new Date(item.attendanceDate).toLocaleDateString('th-TH')}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${formatDate(item.submissionTimestamp)}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${formatDateShort(item.attendanceDate)}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${item.grade}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${item.semester}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${item.academicYear}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${item.studentCount}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm">
-                        <button class="text-green-600 hover:text-green-800 view-history-detail-btn" data-history-id="${item.id || item.submissionTimestamp}">ดูรายละเอียด</button>
+                        <button class="text-green-600 hover:text-green-800 view-history-detail-btn" data-submission-id="${item.id}" data-attendance-date="${item.attendanceDate}" data-grade="${item.grade}" data-submission-ts="${item.submissionTimestamp}">ดูรายละเอียด</button>
                     </td>
-                `;
+                `; 
                 historyTableBody.appendChild(row);
             });
             
             document.querySelectorAll('.view-history-detail-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    const historyId = e.target.dataset.historyId;
-                    // Implement viewing details: could be a modal or loading this specific record into the main attendance view
-                    showToast(`กำลังโหลดรายละเอียดสำหรับ ID: ${historyId} (ฟังก์ชันนี้ต้องพัฒนาเพิ่มเติม)`, 'success');
-                    // For now, just log. In a full app, you'd fetch and display the detailed record.
-                    console.log("View details for history ID:", historyId);
-                    // Example: Find the item and populate the main form (if it matches current structure)
-                    // const detailItem = allHistoryData.find(d => (d.id || d.submissionTimestamp) === historyId);
-                    // if (detailItem && detailItem.records) {
-                    //    populateAttendanceFromHistory(detailItem);
-                    // }
+                    const submissionId = e.target.dataset.submissionId;
+                    modalAttendanceDate.textContent = formatDateShort(e.target.dataset.attendanceDate);
+                    modalGradeLevel.textContent = e.target.dataset.grade;
+                    modalSubmissionDate.textContent = formatDate(e.target.dataset.submissionTs);
+                    loadSubmissionDetails(submissionId);
                 });
             });
         }
         
-        function renderPaginationControls() {
-            paginationControls.innerHTML = '';
-            if (totalHistoryPages <= 1) return;
+        async function loadSubmissionDetails(submissionId) {
+            showLoader();
+            submissionDetailTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">กำลังโหลด...</td></tr>';
+            modalTeacherNotes.innerHTML = ''; 
+            submissionDetailModal.classList.add('active');
 
-            // Previous Button
-            const prevButton = document.createElement('button');
-            prevButton.textContent = 'ก่อนหน้า';
-            prevButton.classList.add('px-3', 'py-1', 'border', 'rounded-md', 'text-sm');
-            prevButton.disabled = currentHistoryPage === 1;
-            prevButton.onclick = () => loadAttendanceHistory(currentHistoryPage - 1);
-            if(prevButton.disabled) prevButton.classList.add('opacity-50', 'cursor-not-allowed');
-            else prevButton.classList.add('hover:bg-gray-100');
-            paginationControls.appendChild(prevButton);
-
-            // Page Numbers (simplified for brevity, could add more complex logic for many pages)
-            for (let i = 1; i <= totalHistoryPages; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.textContent = i;
-                pageButton.classList.add('px-3', 'py-1', 'border', 'rounded-md', 'text-sm');
-                if (i === currentHistoryPage) {
-                    pageButton.classList.add('bg-green-500', 'text-white');
+            const payload = { action: 'getSubmissionDetails', sheetId: SHEET_ID, submissionId: submissionId };
+            try {
+                const response = await fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
+                const result = await response.json();
+                if (result.success && result.data) {
+                    renderSubmissionDetailTable(result.data);
+                    if (result.data.length > 0 && result.data[0].TeacherNotes) {
+                        modalTeacherNotes.innerHTML = `<strong>บันทึกครู:</strong> <p class="whitespace-pre-wrap">${result.data[0].TeacherNotes}</p>`;
+                    } else {
+                        modalTeacherNotes.innerHTML = '<strong>บันทึกครู:</strong> <em>ไม่มี</em>';
+                    }
                 } else {
-                    pageButton.classList.add('hover:bg-gray-100');
+                    showToast(result.message || 'ไม่สามารถโหลดรายละเอียดได้', 'error');
+                    submissionDetailTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">ไม่สามารถโหลดรายละเอียดได้</td></tr>';
                 }
-                pageButton.onclick = () => loadAttendanceHistory(i);
-                paginationControls.appendChild(pageButton);
+            } catch (error) {
+                showToast('การเชื่อมต่อล้มเหลว (โหลดรายละเอียด)', 'error');
+                submissionDetailTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">การเชื่อมต่อล้มเหลว</td></tr>';
+            } finally {
+                hideLoader();
             }
-
-            // Next Button
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'ถัดไป';
-            nextButton.classList.add('px-3', 'py-1', 'border', 'rounded-md', 'text-sm');
-            nextButton.disabled = currentHistoryPage === totalHistoryPages;
-            nextButton.onclick = () => loadAttendanceHistory(currentHistoryPage + 1);
-             if(nextButton.disabled) nextButton.classList.add('opacity-50', 'cursor-not-allowed');
-            else nextButton.classList.add('hover:bg-gray-100');
-            paginationControls.appendChild(nextButton);
         }
 
-        // --- DATA EXPORT ---
-        function exportToExcel() {
-            // This will redirect to a special Apps Script URL that serves the Excel file.
-            // The Apps Script needs a doGet function to handle this.
+        function renderSubmissionDetailTable(details) {
+            submissionDetailTableBody.innerHTML = '';
+            if (!details || details.length === 0) {
+                submissionDetailTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">ไม่พบข้อมูลนักเรียนสำหรับรายการนี้</td></tr>';
+                return;
+            }
+            details.forEach(record => {
+                const row = document.createElement('tr');
+                let statusClass = '';
+                switch (record.Status) {
+                    case 'Present': statusClass = 'status-present'; break;
+                    case 'Sick': statusClass = 'status-sick'; break;
+                    case 'Leave': statusClass = 'status-leave'; break;
+                    case 'Absent': statusClass = 'status-absent'; break;
+                }
+                row.className = statusClass;
+                row.innerHTML = `
+                    <td class="px-3 py-2 whitespace-nowrap text-sm">${record.StudentNumber || 'N/A'}</td>
+                    <td class="px-3 py-2 whitespace-nowrap text-sm font-medium">${record.FullName || 'N/A'}</td>
+                    <td class="px-3 py-2 whitespace-nowrap text-sm">${record.Status || 'N/A'}</td>
+                    <td class="px-3 py-2 text-sm">${record.Notes || ''}</td>
+                    <td class="px-3 py-2 text-sm">${record.FileURL ? `<a href="${record.FileURL}" target="_blank" class="text-blue-600 hover:underline">ดูเอกสาร</a>` : 'ไม่มี'}</td>
+                `;
+                submissionDetailTableBody.appendChild(row);
+            });
+        }
+        closeSubmissionDetailModalBtn.addEventListener('click', () => submissionDetailModal.classList.remove('active'));
+
+
+        function renderPaginationControls() { 
+            paginationControls.innerHTML = '';
+            if (totalHistoryPages <= 1) return;
+            const createButton = (text, page, isDisabled = false, isActive = false) => {
+                const btn = document.createElement('button');
+                btn.textContent = text;
+                btn.classList.add('px-3', 'py-1', 'border', 'rounded-md', 'text-sm', 'mx-0.5');
+                btn.disabled = isDisabled;
+                if (isDisabled) btn.classList.add('opacity-50', 'cursor-not-allowed');
+                else btn.classList.add('hover:bg-gray-100');
+                if (isActive) btn.classList.add('bg-green-500', 'text-white', 'border-green-500');
+                btn.onclick = () => loadAttendanceSubmissionHistory(page);
+                return btn;
+            };
+            paginationControls.appendChild(createButton('ก่อนหน้า', currentHistoryPage - 1, currentHistoryPage === 1));
+            for (let i = 1; i <= totalHistoryPages; i++) {
+                if (i === currentHistoryPage || totalHistoryPages <= 5 || (i >= currentHistoryPage - 2 && i <= currentHistoryPage + 2) || i === 1 || i === totalHistoryPages) {
+                     paginationControls.appendChild(createButton(i, i, false, i === currentHistoryPage));
+                } else if ( (i === currentHistoryPage - 3 && currentHistoryPage > 4) || (i === currentHistoryPage + 3 && currentHistoryPage < totalHistoryPages - 3) ) {
+                    const span = document.createElement('span');
+                    span.textContent = "...";
+                    span.classList.add('px-2', 'py-1', 'text-sm');
+                    paginationControls.appendChild(span);
+                }
+            }
+            paginationControls.appendChild(createButton('ถัดไป', currentHistoryPage + 1, currentHistoryPage === totalHistoryPages));
+        }
+
+        // --- STUDENT ATTENDANCE HISTORY ---
+        studentHistorySearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            studentSearchResultsDiv.innerHTML = '';
+            if (!searchTerm) {
+                studentSearchResultsDiv.classList.add('hidden');
+                return;
+            }
+
+            const filteredStudents = allLoadedStudentsForSearch.filter(student => 
+                student.fullName.toLowerCase().includes(searchTerm) || 
+                student.studentId.includes(searchTerm)
+            );
+
+            if (filteredStudents.length > 0) {
+                filteredStudents.slice(0, 5).forEach(student => { 
+                    const div = document.createElement('div');
+                    div.textContent = `${student.fullName} (ID: ${student.studentId}, No: ${student.studentNumber})`;
+                    div.classList.add('p-2', 'hover:bg-gray-100', 'cursor-pointer', 'text-sm');
+                    div.onclick = () => {
+                        studentHistorySearchInput.value = student.fullName;
+                        studentHistoryNameDisplay.value = `${student.fullName} (ID: ${student.studentId})`;
+                        selectedStudentIdForHistoryInput.value = student.studentId;
+                        studentSearchResultsDiv.innerHTML = '';
+                        studentSearchResultsDiv.classList.add('hidden');
+                    };
+                    studentSearchResultsDiv.appendChild(div);
+                });
+                studentSearchResultsDiv.classList.remove('hidden');
+            } else {
+                studentSearchResultsDiv.classList.add('hidden');
+            }
+        });
+        document.addEventListener('click', function(event) {
+            if (!studentHistorySearchInput.contains(event.target) && !studentSearchResultsDiv.contains(event.target)) {
+                studentSearchResultsDiv.classList.add('hidden');
+            }
+        });
+
+
+        async function loadStudentIndividualHistory() {
+            const studentId = selectedStudentIdForHistoryInput.value;
+            if (!studentId) {
+                showToast("กรุณาเลือกนักเรียน", "error");
+                return;
+            }
             showLoader();
-            const excelUrl = `${API_ENDPOINT}?action=exportExcel&sheetId=${SHEET_ID}&grade=${gradeLevelSelect.value}&date=${datePicker.value}&semester=${semesterSelect.value}&academicYear=${academicYearSelect.value}`;
-            // It's better to trigger a download directly if the backend is set up for it.
-            // For simplicity, this might just open a new tab to the sheet or a download link.
-            // A more robust way is for Apps Script to return a temporary download URL or file content.
-            // For now, we'll assume the Apps Script `doGet` handles the file generation and download trigger.
-            
-            // Construct the payload for exporting current view if needed, or specific parameters
+            studentHistoryTableBody.innerHTML = '';
+            studentHistoryTableContainer.classList.add('hidden');
+
+            const payload = {
+                action: 'getStudentAttendanceHistory',
+                sheetId: SHEET_ID,
+                studentId: studentId,
+                semester: studentHistorySemesterSelect.value,
+                academicYear: studentHistoryAcademicYearSelect.value
+            };
+
+            try {
+                const response = await fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
+                const result = await response.json();
+                if (result.success && result.data) {
+                    renderStudentHistoryTable(result.data);
+                    studentHistoryTableContainer.classList.remove('hidden');
+                    if (result.data.length === 0) {
+                        showToast('ไม่พบประวัติการเข้าเรียนสำหรับนักเรียนนี้ในช่วงที่เลือก', 'success');
+                        studentHistoryTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">ไม่พบข้อมูล</td></tr>';
+                    }
+                } else {
+                    showToast(result.message || 'ไม่สามารถโหลดประวัตินักเรียนได้', 'error');
+                     studentHistoryTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">ไม่สามารถโหลดข้อมูลได้</td></tr>';
+                }
+            } catch (error) {
+                showToast('การเชื่อมต่อล้มเหลว (โหลดประวัตินักเรียน)', 'error');
+                studentHistoryTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">การเชื่อมต่อล้มเหลว</td></tr>';
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function renderStudentHistoryTable(historyRecords) {
+            studentHistoryTableBody.innerHTML = '';
+            if (!historyRecords || historyRecords.length === 0) {
+                studentHistoryTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">ไม่พบข้อมูล</td></tr>';
+                return;
+            }
+            historyRecords.forEach(record => {
+                const row = document.createElement('tr');
+                let statusClass = '';
+                switch (record.status) {
+                    case 'Present': statusClass = 'status-present'; break;
+                    case 'Sick': statusClass = 'status-sick'; break;
+                    case 'Leave': statusClass = 'status-leave'; break;
+                    case 'Absent': statusClass = 'status-absent'; break;
+                }
+                row.className = statusClass;
+                row.innerHTML = `
+                    <td class="px-4 py-2 whitespace-nowrap text-sm">${formatDateShort(record.attendanceDate)}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm">${record.status}</td>
+                    <td class="px-4 py-2 text-sm">${record.notes || ''}</td>
+                    <td class="px-4 py-2 text-sm">${record.fileUrl ? `<a href="${record.fileUrl}" target="_blank" class="text-blue-600 hover:underline">ดูเอกสาร</a>` : 'ไม่มี'}</td>
+                `;
+                studentHistoryTableBody.appendChild(row);
+            });
+        }
+
+
+        // --- DATA EXPORT ---
+        function exportToExcel() { 
+            showLoader();
             const payload = {
                 action: 'exportExcel',
                 sheetId: SHEET_ID,
-                // Include filters if you want to export specific data
-                // For example, export the currently displayed attendance or a summary
-                date: datePicker.value,
-                grade: gradeLevelSelect.value,
-                semester: semesterSelect.value,
-                academicYear: academicYearSelect.value,
-                // You might want to send the actual attendanceData if exporting the current view
-                // records: Object.values(attendanceData).filter(r => r.status) // only if student has data
             };
 
             fetch(API_ENDPOINT, {
-                method: 'POST',
+                method: 'POST', 
                 body: JSON.stringify(payload),
                 headers: { 'Content-Type': 'application/json' }
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) { 
+                    return response.json().then(err => { throw new Error(err.message || `HTTP error ${response.status}`); });
                 }
-                return response.blob(); // Expecting a blob for file download
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json().then(data => { 
+                        if (!data.success) throw new Error(data.message || "Backend error during export.");
+                        return data; 
+                    });
+                } else {
+                    return response.text(); 
+                }
             })
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                // a.download = `attendance_export_${new Date().toISOString().split('T')[0]}.xlsx`; // Or get filename from header
-                // Try to get filename from Content-Disposition header
-                // const disposition = response.headers.get('Content-Disposition');
-                // if (disposition && disposition.indexOf('attachment') !== -1) {
-                //     var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                //     var matches = filenameRegex.exec(disposition);
-                //     if (matches != null && matches[1]) { 
-                //       a.download = matches[1].replace(/['"]/g, '');
-                //     }
-                // }
-                // For now, use a generic name
-                a.download = `Attendance_Export_${payload.grade}_${payload.date}.xlsx`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                a.remove();
-                showToast('กำลังเริ่มดาวน์โหลดไฟล์ Excel...', 'success');
+            .then(data => { 
+                if (typeof data === 'string') { 
+                    const byteCharacters = atob(data);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    const datePart = payload.date ? new Date(payload.date).toISOString().split('T')[0] : 'Log';
+                    const gradePart = payload.grade || 'All';
+                    a.download = `Attendance_${gradePart}_${datePart}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                    showToast('กำลังเริ่มดาวน์โหลดไฟล์ Excel...', 'success');
+                } else if (data && !data.success) { 
+                    showToast(data.message || 'เกิดข้อผิดพลาดในการสร้างไฟล์ Excel', 'error');
+                }
             })
             .catch(error => {
                 console.error('Excel export error:', error);
@@ -772,69 +1089,63 @@
             });
         }
 
-        function exportToPdf() {
-            // Simple browser print functionality
+        function exportToPdf() { 
             showToast('เตรียมหน้าสำหรับพิมพ์เป็น PDF...', 'success');
-            // Optionally hide irrelevant sections for printing
-            document.getElementById('controls').style.display = 'none';
-            document.getElementById('historySection').style.display = 'none';
-            document.getElementById('exportSection').style.display = 'none';
-            document.querySelector('header').style.display = 'none';
-            document.querySelector('footer').style.display = 'none';
-            
-            // Ensure the sections to print are visible
-            if (attendanceSection.classList.contains('hidden')) {
-                showToast('ไม่มีข้อมูลการเข้าเรียนให้พิมพ์ กรุณาโหลดรายชื่อนักเรียนก่อน', 'error');
-            } else {
-                 window.print();
+            const activeTab = document.querySelector('.tab-content.active');
+            const otherElementsToHide = [
+                document.querySelector('header'), 
+                document.querySelector('footer'),
+                ...document.querySelectorAll('.tab-button'),
+                document.getElementById('exportSection') 
+            ];
+            if (activeTab.id === 'attendanceEntryTab') {
+                otherElementsToHide.push(document.getElementById('controls'));
+            } else if (activeTab.id === 'historyTab') {
+                if (document.getElementById('submissionHistorySection').style.display !== 'none') {
+                    const submissionHistoryControls = document.querySelector('#submissionHistorySection .flex-wrap');
+                    if(submissionHistoryControls) submissionHistoryControls.style.display = 'none';
+                }
+                if (document.getElementById('studentHistorySection').style.display !== 'none') {
+                     const studentHistoryControlsGrid = document.querySelector('#studentHistorySection .grid');
+                     const studentHistoryLoadBtn = document.querySelector('#studentHistorySection button#loadStudentHistoryBtn');
+                     if(studentHistoryControlsGrid) studentHistoryControlsGrid.style.display = 'none';
+                     if(studentHistoryLoadBtn) studentHistoryLoadBtn.style.display = 'none';
+                }
             }
 
-            // Restore visibility after print dialog
-            document.getElementById('controls').style.display = 'block'; // Or its original display style
-            document.getElementById('historySection').style.display = 'block';
-            document.getElementById('exportSection').style.display = 'block';
-            document.querySelector('header').style.display = 'block';
-            document.querySelector('footer').style.display = 'block';
+
+            otherElementsToHide.forEach(el => { if(el) el.style.display = 'none'; });
+            
+            window.print();
+
+            otherElementsToHide.forEach(el => { if(el) el.style.display = ''; }); 
+             if (activeTab.id === 'historyTab') {
+                if (document.getElementById('submissionHistorySection').style.display !== 'none') {
+                    const submissionHistoryControls = document.querySelector('#submissionHistorySection .flex-wrap');
+                    if(submissionHistoryControls) submissionHistoryControls.style.display = '';
+                }
+                 if (document.getElementById('studentHistorySection').style.display !== 'none') {
+                     const studentHistoryControlsGrid = document.querySelector('#studentHistorySection .grid');
+                     const studentHistoryLoadBtn = document.querySelector('#studentHistorySection button#loadStudentHistoryBtn');
+                     if(studentHistoryControlsGrid) studentHistoryControlsGrid.style.display = '';
+                     if(studentHistoryLoadBtn) studentHistoryLoadBtn.style.display = '';
+                }
+            }
         }
         
         // --- EVENT LISTENERS ---
         loadStudentsBtn.addEventListener('click', loadStudents);
         saveAttendanceBtn.addEventListener('click', saveAttendance);
-        loadHistoryBtn.addEventListener('click', () => loadAttendanceHistory(1)); // Load first page on click
-        historyGradeFilter.addEventListener('change', () => loadAttendanceHistory(1)); // Reload on filter change
+        loadHistoryBtn.addEventListener('click', () => loadAttendanceSubmissionHistory(1));
+        historyGradeFilter.addEventListener('change', () => loadAttendanceSubmissionHistory(1));
         exportExcelBtn.addEventListener('click', exportToExcel);
         exportPdfBtn.addEventListener('click', exportToPdf);
+        loadStudentHistoryBtn.addEventListener('click', loadStudentIndividualHistory);
+
 
         // --- INITIAL LOAD ---
         initializeControls();
-        loadAttendanceHistory(); // Load history on page startup
-
-        // --- DEBUG/TESTING: Pre-populate with initial students (as per requirement) ---
-        // This part is for demonstration. In a real scenario, `loadStudents` fetches from backend.
-        // If you want to pre-populate for testing without backend:
-        /*
-        function populateInitialStudentsForDemo() {
-            students = [
-                { studentId: "111111", studentNumber: "1", fullName: "เด็กชาย ขยัน อดทน (Dekchay Khayan Odton)", photoUrl: "https://placehold.co/40x40/10B981/FFFFFF?text=KO", gradeLevel: "P.4" },
-                { studentId: "222222", studentNumber: "2", fullName: "เด็กชาย ใจดี มีเมตตา (Dekchay Jaidee Meemetta)", photoUrl: "https://placehold.co/40x40/10B981/FFFFFF?text=JM", gradeLevel: "P.4" }
-            ];
-            // Filter by selected grade if needed, or assume these match the default selected grade
-            const selectedGrade = gradeLevelSelect.value;
-            students = students.filter(s => s.gradeLevel === selectedGrade);
-
-            if (students.length > 0) {
-                renderAttendanceTable();
-                attendanceSection.classList.remove('hidden');
-                teacherNotesSection.classList.remove('hidden');
-            } else {
-                 attendanceSection.classList.add('hidden');
-                 teacherNotesSection.classList.add('hidden');
-            }
-        }
-        // If you want to use the demo population:
-        // gradeLevelSelect.addEventListener('change', populateInitialStudentsForDemo); // Re-populate on grade change
-        // populateInitialStudentsForDemo(); // Initial population for demo
-        */
+        loadAttendanceSubmissionHistory(); 
 
     </script>
 </body>
