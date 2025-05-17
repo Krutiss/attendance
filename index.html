@@ -669,7 +669,7 @@
                      <button class="view-button" onclick="showDashboard()">ดูแดชบอร์ด</button> <button class="logout-button" onclick="logout()">ออกจากระบบ</button>
                  </div>
             </div>
-            <h2>ชั้นประถมศึกษาปีที่ 5</h2>
+            <h2 id="daily-report-grade-heading">ชั้นประถมศึกษาปีที่ 5</h2>
 
             <div class="controls">
                 <div>
@@ -923,6 +923,9 @@ const firebaseConfig = {
         const analysisGradeFilterSelect = document.getElementById('analysis-grade-filter');
         const dashboardGradeFilterSelect = document.getElementById('dashboard-grade-filter'); // New Dashboard Grade Filter
 
+        // Get reference to the daily report grade heading
+        const dailyReportGradeHeading = document.getElementById('daily-report-grade-heading');
+
 
         // Get references for comparative analysis views
         const comparativeSummaryView = document.getElementById('comparative-summary-view');
@@ -1147,6 +1150,13 @@ const firebaseConfig = {
             const filteredStudents = selectedGrade
                 ? students.filter(student => student.grade === selectedGrade)
                 : students; // Show all students if no grade is selected
+
+             // Update the daily report heading based on the selected grade
+             if (selectedGrade) {
+                 dailyReportGradeHeading.textContent = `ชั้นประถมศึกษาปีที่ ${selectedGrade.replace('P.', '')}`;
+             } else {
+                 dailyReportGradeHeading.textContent = `ชั้นประถมศึกษาปีที่ 5`; // Default or show all
+             }
 
 
             if (filteredStudents.length === 0) {
