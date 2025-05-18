@@ -11,7 +11,7 @@
             font-family: 'Sarabun', sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #e8f5e9; /* Light green background */
+            background-color: #f3e5f5; /* Light purple background */
             color: #333;
             line-height: 1.6; /* Improve readability */
         }
@@ -24,12 +24,12 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
         }
         h1, h2 {
-            color: #1b5e20; /* Dark green */
+            color: #4a148c; /* Dark purple */
             text-align: center;
             margin-bottom: 25px; /* Increased margin */
         }
          h2 {
-             border-bottom: 2px solid #4caf50; /* Add a subtle underline */
+             border-bottom: 2px solid #ab47bc; /* Add a subtle underline (Medium purple) */
              padding-bottom: 10px;
              margin-top: 20px;
          }
@@ -39,10 +39,10 @@
             align-items: center;
             margin-bottom: 25px; /* Increased margin */
             flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            background-color: #f1f8e9; /* Very light green background for controls */
+            background-color: #ede7f6; /* Very light purple background for controls */
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #dcedc8; /* Subtle border */
+            border: 1px solid #d1c4e9; /* Subtle border (Light purple) */
         }
         .controls label {
             margin-right: 10px;
@@ -60,7 +60,7 @@
         }
          .controls button {
              padding: 10px 20px;
-             background-color: #4caf50;
+             background-color: #ab47bc; /* Medium purple */
              color: white;
              border: none;
              border-radius: 5px;
@@ -69,7 +69,7 @@
              transition: background-color 0.3s ease, transform 0.1s ease;
          }
          .controls button:hover {
-             background-color: #388e3c;
+             background-color: #8e24aa; /* Darker purple */
              transform: translateY(-2px); /* Slight lift effect */
          }
          .controls button:active {
@@ -90,7 +90,7 @@
             text-align: left;
         }
         .attendance-table th, .analysis-table th, .student-history-table th {
-            background-color: #4caf50; /* Green */
+            background-color: #ab47bc; /* Medium purple */
             color: white;
             font-weight: bold;
             text-transform: uppercase; /* Uppercase headers */
@@ -118,7 +118,7 @@
          .status-select option {
              padding: 5px; /* Padding for dropdown options */
          }
-        /* Status Colors */
+        /* Status Colors (Kept original status colors) */
         .status-present { background-color: #a5d6a7; color: #1b5e20; font-weight: bold; } /* Light Green, Dark Green Text */
         .status-sick { background-color: #ef9a9a; color: #c62828; font-weight: bold; } /* Light Red, Dark Red Text */
         .status-leave { background-color: #ffe082; color: #f57c00; font-weight: bold; } /* Light Yellow, Dark Orange Text */
@@ -130,7 +130,7 @@
             padding-top: 20px;
         }
         .notes-section h3 {
-            color: #1b5e20;
+            color: #4a148c; /* Dark purple */
             margin-bottom: 10px;
         }
         .notes-section textarea {
@@ -147,7 +147,7 @@
             display: block;
             width: 100%;
             padding: 12px; /* Increased padding */
-            background-color: #4caf50; /* Green */
+            background-color: #ab47bc; /* Medium purple */
             color: white;
             border: none;
             border-radius: 5px;
@@ -157,7 +157,7 @@
             margin-top: 20px; /* Increased margin */
         }
         .save-button:hover {
-            background-color: #388e3c; /* Darker green on hover */
+            background-color: #8e24aa; /* Darker purple */
             transform: translateY(-2px); /* Slight lift effect */
          }
          .save-button:active {
@@ -165,13 +165,13 @@
          }
         .confirmation-message {
             text-align: center;
-            color: #2e7d32; /* Dark green */
+            color: #6a1b9a; /* Dark purple */
             margin-top: 15px;
             font-weight: bold;
             display: none; /* Hidden by default */
             padding: 10px;
-            background-color: #dcedc8; /* Light green background */
-            border: 1px solid #aed581; /* Green border */
+            background-color: #e1bee7; /* Very light purple background */
+            border: 1px solid #ce93d8; /* Light purple border */
             border-radius: 5px;
         }
         .statistics {
@@ -179,17 +179,17 @@
             text-align: center;
             font-weight: bold;
             font-size: 1.1rem;
-            color: #1b5e20; /* Dark green */
+            color: #4a148c; /* Dark purple */
         }
          .error-message {
             text-align: center;
-            color: #c62828; /* Dark Red */
+            color: #c62828; /* Dark Red (kept for errors) */
             margin-top: 15px;
             font-weight: bold;
             display: none; /* Hidden by default */
             padding: 10px;
             background-color: #ffcdd2; /* Light red background */
-            border: 1px solid #ef9a9a;
+            border: 1px solid #ef9a9a; /* Red border */
             border-radius: 5px;
         }
 
@@ -203,10 +203,10 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
         }
         .student-management-container h2 {
-            color: #1b5e20;
+            color: #4a148c; /* Dark purple */
             text-align: center;
             margin-bottom: 25px;
-             border-bottom: 2px solid #4caf50;
+             border-bottom: 2px solid #ab47bc; /* Medium purple */
              padding-bottom: 10px;
              margin-top: 0; /* Remove top margin here */
         }
@@ -216,10 +216,10 @@
             gap: 15px; /* Increased gap */
             margin-bottom: 25px; /* Increased margin */
             align-items: flex-end;
-            background-color: #f1f8e9; /* Very light green background */
+            background-color: #ede7f6; /* Very light purple background */
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #dcedc8; /* Subtle border */
+            border: 1px solid #d1c4e9; /* Subtle border (Light purple) */
         }
         .student-form input[type="text"],
         .student-form input[type="number"],
@@ -244,7 +244,7 @@
          }
          .student-form button {
             padding: 10px 20px;
-            background-color: #4caf50;
+            background-color: #ab47bc; /* Medium purple */
             color: white;
             border: none;
             border-radius: 5px;
@@ -253,7 +253,7 @@
             transition: background-color 0.3s ease, transform 0.1s ease;
          }
          .student-form button:hover {
-            background-color: #388e3c;
+            background-color: #8e24aa; /* Darker purple */
              transform: translateY(-2px);
          }
          .student-form button:active {
@@ -289,7 +289,7 @@
              border-radius: 50%; /* Circular photo */
              margin-right: 10px;
              object-fit: cover; /* Cover the area */
-             border: 2px solid #4caf50; /* Green border */
+             border: 2px solid #ab47bc; /* Medium purple border */
          }
         .student-item button {
             padding: 6px 12px; /* Adjusted padding */
@@ -307,14 +307,14 @@
              transform: translateY(0);
          }
         .student-item .edit-button {
-            background-color: #ff9800; /* Orange */
+            background-color: #ff9800; /* Orange (kept for edit) */
             color: white;
         }
          .student-item .edit-button:hover {
             background-color: #f57c00; /* Darker Orange */
         }
         .student-item .delete-button {
-            background-color: #f44336; /* Red */
+            background-color: #f44336; /* Red (kept for delete) */
             color: white;
         }
          .student-item .delete-button:hover {
@@ -332,7 +332,7 @@
             text-align: center;
         }
         .login-container h2 {
-            color: #1b5e20;
+            color: #4a148c; /* Dark purple */
             margin-bottom: 30px; /* Increased margin */
              border-bottom: none; /* No underline for login title */
              padding-bottom: 0;
@@ -349,7 +349,7 @@
         .login-form button {
             width: 100%;
             padding: 12px; /* Increased padding */
-            background-color: #4caf50;
+            background-color: #ab47bc; /* Medium purple */
             color: white;
             border: none;
             border-radius: 5px;
@@ -358,19 +358,19 @@
             transition: background-color 0.3s ease, transform 0.1s ease;
         }
         .login-form button:hover {
-            background-color: #388e3c;
+            background-color: #8e24aa; /* Darker purple */
              transform: translateY(-2px);
         }
          .login-form button:active {
              transform: translateY(0);
          }
         .login-error {
-            color: #c62828;
+            color: #c62828; /* Dark Red (kept for errors) */
             margin-top: 20px; /* Increased margin */
             display: none;
             padding: 10px;
-            background-color: #ffcdd2;
-            border: 1px solid #ef9a9a;
+            background-color: #ffcdd2; /* Light red background */
+            border: 1px solid #ef9a9a; /* Red border */
             border-radius: 5px;
         }
 
@@ -411,14 +411,14 @@
              transform: translateY(0);
          }
         .view-button {
-             background-color: #0288d1; /* Blue */
+             background-color: #0288d1; /* Blue (kept for view buttons) */
              color: white;
         }
          .view-button:hover {
              background-color: #0277bd; /* Darker Blue */
          }
         .logout-button {
-            background-color: #f44336; /* Red */
+            background-color: #f4436; /* Red (kept for logout) */
             color: white;
         }
          .logout-button:hover {
@@ -436,7 +436,7 @@
         .export-buttons button {
             padding: 10px 20px;
             margin: 0 10px;
-            background-color: #0277bd; /* Light Blue */
+            background-color: #0277bd; /* Light Blue (kept for export) */
             color: white;
             border: none;
             border-radius: 5px; /* Slightly more rounded */
@@ -463,10 +463,10 @@
              display: none;
         }
         .comparative-analysis-container h2 {
-             color: #1b5e20;
+             color: #4a148c; /* Dark purple */
             text-align: center;
             margin-bottom: 25px;
-             border-bottom: 2px solid #4caf50;
+             border-bottom: 2px solid #ab47bc; /* Medium purple */
              padding-bottom: 10px;
              margin-top: 0; /* Remove top margin here */
         }
@@ -487,7 +487,7 @@
             text-align: left;
         }
         .analysis-table th {
-            background-color: #4caf50;
+            background-color: #ab47bc; /* Medium purple */
             color: white;
             font-weight: bold;
             text-transform: uppercase;
@@ -509,12 +509,12 @@
              display: none; /* Hidden by default */
          }
          .student-history-detail h3 {
-             color: #1b5e20;
+             color: #4a148c; /* Dark purple */
              margin-bottom: 15px;
          }
          .student-history-detail .back-button {
              padding: 8px 15px;
-             background-color: #546e7a; /* Blue Grey */
+             background-color: #546e7a; /* Blue Grey (kept) */
              color: white;
              border: none;
              border-radius: 5px;
@@ -551,10 +551,10 @@
              display: none; /* Hidden by default */
          }
          .dashboard-container h2 {
-             color: #1b5e20;
+             color: #4a148c; /* Dark purple */
              text-align: center;
              margin-bottom: 25px;
-             border-bottom: 2px solid #4caf50;
+             border-bottom: 2px solid #ab47bc; /* Medium purple */
              padding-bottom: 10px;
              margin-top: 0;
          }
@@ -571,7 +571,7 @@
              padding-top: 20px;
          }
          .import-section h3 {
-             color: #1b5e20;
+             color: #4a148c; /* Dark purple */
              margin-bottom: 15px;
          }
          .import-form {
@@ -579,10 +579,10 @@
              flex-wrap: wrap;
              gap: 15px;
              align-items: center;
-             background-color: #f1f8e9;
+             background-color: #ede7f6; /* Very light purple */
              padding: 15px;
              border-radius: 8px;
-             border: 1px solid #dcedc8;
+             border: 1px solid #d1c4e9; /* Light purple */
          }
          .import-form input[type="file"] {
              flex-grow: 1;
@@ -596,7 +596,7 @@
          }
          .import-form button {
              padding: 10px 20px;
-             background-color: #0277bd; /* Blue */
+             background-color: #0277bd; /* Blue (kept for import) */
              color: white;
              border: none;
              border-radius: 5px;
@@ -620,9 +620,9 @@
              align-items: center;
              margin-bottom: 20px;
              padding: 15px;
-             background-color: #f1f8e9;
+             background-color: #ede7f6; /* Very light purple */
              border-radius: 8px;
-             border: 1px solid #dcedc8;
+             border: 1px solid #d1c4e9; /* Light purple */
          }
          .student-list-controls label {
              font-weight: bold;
@@ -664,7 +664,7 @@
             width: 90%;
         }
         .modal-content h3 {
-            color: #1b5e20;
+            color: #4a148c; /* Dark purple */
             margin-top: 0;
             margin-bottom: 20px;
         }
@@ -680,14 +680,14 @@
             transition: background-color 0.3s ease;
         }
         .modal-buttons .confirm-button {
-            background-color: #f44336; /* Red for danger */
+            background-color: #f4436; /* Red for danger (kept) */
             color: white;
         }
          .modal-buttons .confirm-button:hover {
              background-color: #d32f2f;
          }
         .modal-buttons .cancel-button {
-            background-color: #ccc;
+            background-color: #ccc; /* Gray (kept) */
             color: #333;
         }
          .modal-buttons .cancel-button:hover {
@@ -708,7 +708,7 @@
              z-index: 1001; /* Above modal overlay */
              display: none; /* Hidden by default */
              font-size: 1.5rem;
-             color: #1b5e20;
+             color: #4a148c; /* Dark purple */
          }
           .loading-indicator i {
               margin-right: 10px;
@@ -2913,24 +2913,24 @@ const firebaseConfig = {
                                 {
                                     label: 'จำนวนนักเรียนที่มาเรียน',
                                     data: presentData,
-                                    borderColor: '#4caf50',
-                                    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                                    borderColor: '#ab47bc', /* Medium purple */
+                                    backgroundColor: 'rgba(171, 71, 188, 0.2)', /* Light purple with opacity */
                                     fill: true,
                                     tension: 0.1
                                 },
                                  {
                                      label: 'จำนวนนักเรียนทั้งหมด (ระดับชั้นที่เลือก)',
                                      data: totalStudentsData,
-                                     borderColor: '#0288d1',
-                                     backgroundColor: 'rgba(2, 136, 209, 0.2)',
+                                     borderColor: '#4a148c', /* Dark purple */
+                                     backgroundColor: 'rgba(74, 20, 140, 0.2)', /* Dark purple with opacity */
                                      fill: true,
                                      tension: 0.1
                                  },
                                 {
                                      label: 'เปอร์เซ็นต์การมาเรียน (%)',
                                      data: percentageData,
-                                     borderColor: '#ff9800',
-                                     backgroundColor: 'rgba(255, 152, 0, 0.2)',
+                                     borderColor: '#ff9800', /* Orange (kept for percentage) */
+                                     backgroundColor: 'rgba(255, 152, 0, 0.2)', /* Light orange with opacity */
                                      fill: false,
                                      tension: 0.1,
                                      yAxisID: 'percentage-y-axis'
@@ -3006,22 +3006,22 @@ const firebaseConfig = {
                                 {
                                     label: 'มาเรียน',
                                     data: presentData,
-                                    backgroundColor: '#4caf50', // Green
+                                    backgroundColor: '#ab47bc', /* Medium purple */
                                 },
                                 {
                                     label: 'ป่วย',
                                     data: sickData,
-                                    backgroundColor: '#f44336', // Red
+                                    backgroundColor: '#f4436', /* Red (kept) */
                                 },
                                 {
                                     label: 'ลา',
                                     data: leaveData,
-                                    backgroundColor: '#ffeb3b', // Yellow
+                                    backgroundColor: '#ffeb3b', /* Yellow (kept) */
                                 },
                                 {
                                     label: 'ขาด',
                                     data: absentData,
-                                    backgroundColor: '#ff9800', // Orange
+                                    backgroundColor: '#ff9800', /* Orange (kept) */
                                 }
                             ]
                         },
